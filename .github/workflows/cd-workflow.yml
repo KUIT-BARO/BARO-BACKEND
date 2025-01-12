@@ -1,0 +1,59 @@
+name: CD with Gradle and Docker
+
+on:
+  push:
+    branches:
+      - 'main'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: ☕️ set up JDK 17        # 프로젝트의 java 버전에 맞추어 설정
+        uses: actions/setup-java@v
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          server-id: github
+          setting-path: ${{ github.workspace }}
+
+      - name: 👏🏻 grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: 🐘 build with Gradle (without test)
+        run: ./gradlew clean build -x test --stacktrace
+
+      - name: 🐳 Docker build & push
+        run:  |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+
+      - name: 🚀 deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: ${{ secrets.EC2_PORT }}
+          envs: GITHUB_SHA
+          script: |
+            echo "✋🏻Stopping existing container"
+            sudo docker stop BARO_CONTAINER
+            sudo docker rm BARO_CONTAINER
+        
+            sudo docker ps -a
+            
+            echo "🥳 Pulling new image"
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+            
+            echo "🌱 Running new container"
+            sudo docker run -d -p 8000:8080 --name BARO_CONTAINER ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+
+            echo "🚮 Cleaning up old images"
+            sudo docker image prune -f
