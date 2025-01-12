@@ -51,7 +51,7 @@ jobs:
       - name: "🚀 deploy to server"
         run: |
           aws ssm send-command \
-            --instance-ids "i-xxxxxxxxxxxxxxxxx" \
+            --instance-ids "${{ secrets.AWS_EC2_ID }}" \
             --document-name "AWS-RunShellScript" \
             --comment "Deploying application" \
             --parameters 'commands=[
