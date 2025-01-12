@@ -26,8 +26,8 @@ jobs:
           server-id: github
           setting-path: ${{ github.workspace }}
 
-      - name: 👏🏻 grant execute permission for gradlew
+      - name: "👏🏻 grant execute permission for gradlew"
         run: chmod +x gradlew
 
-      - name: 🐘 build with Gradle (without test)
-			  run: ./gradlew clean build -x test --stacktrace
+      - name: "🐘 build with Gradle (without test)"
+      	run: ./gradlew clean build -x test --stacktrace
