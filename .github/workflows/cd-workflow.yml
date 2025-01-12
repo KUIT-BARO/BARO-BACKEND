@@ -38,27 +38,27 @@ jobs:
         run:  |
           docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }} .
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+          
+      # AWS 인증
+      - name: AWS configure credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
 
       - name: "🚀 deploy to server"
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_KEY }}
-          port: ${{ secrets.EC2_PORT }}
-          envs: GITHUB_SHA
-          script: |
-            echo "✋🏻Stopping existing container"
-            sudo docker stop BARO_CONTAINER
-            sudo docker rm BARO_CONTAINER
-        
-            sudo docker ps -a
-            
-            echo "🥳 Pulling new image"
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
-            
-            echo "🌱 Running new container"
-            sudo docker run -d -p 8000:8080 --name BARO_CONTAINER ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
-
-            echo "🚮 Cleaning up old images"
-            sudo docker image prune -f
+        run: |
+          aws ssm send-command \
+            --instance-ids "i-xxxxxxxxxxxxxxxxx" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Deploying application" \
+            --parameters 'commands=[
+              "sudo docker stop BARO_CONTAINER || true",
+              "sudo docker rm BARO_CONTAINER || true",
+              "sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}",
+              "sudo docker run -d -p 8000:8080 --name BARO_CONTAINER ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}",
+              "sudo docker image prune -f"
+            ]' \
+            --output text
