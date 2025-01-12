@@ -15,26 +15,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: ☕️ set up JDK 17        # 프로젝트의 java 버전에 맞추어 설정
-        uses: actions/setup-java@v
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           server-id: github
           setting-path: ${{ github.workspace }}
 
-      - name: 👏🏻 grant execute permission for gradlew
+      - name: "👏🏻 grant execute permission for gradlew"
         run: chmod +x gradlew
 
-      - name: 🐘 build with Gradle (without test)
+      - name: "🐘 build with Gradle (without test)"
         run: ./gradlew clean build -x test --stacktrace
 
-      - name: 🐳 Docker build & push
+      - name: "🐳 Docker build & push"
         run:  |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }} .
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
 
-      - name: 🚀 deploy to server
+      - name: "🚀 deploy to server"
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
