@@ -28,6 +28,7 @@ public enum ErrorCode {
     // 404
     USER_NOT_FOUND(NOT_FOUND, "user을 찾을 수 없습니다."),
     REVIEW_NOT_FOUND(NOT_FOUND, "review를 찾을 수 없습니다."),
+    SCHEDULE_NOT_FOUND(NOT_FOUND, "schedule을 찾을 수 없습니다."),
 
     // 409
     DATE_FORMAT_CONFLICT(CONFLICT, "날짜 형식이 올바르지 않습니다."),
