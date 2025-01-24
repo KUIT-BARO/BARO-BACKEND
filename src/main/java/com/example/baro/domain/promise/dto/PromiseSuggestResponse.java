@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Getter
 @Builder
 public class PromiseSuggestResponse {
+    private Long promiseId;
     private String name;
     // private String userName;
     // private String placeName;
@@ -19,6 +20,7 @@ public class PromiseSuggestResponse {
 
     public static PromiseSuggestResponse from(Promise promise) {
         return PromiseSuggestResponse.builder()
+                .promiseId(promise.getId())
                 .name(promise.getName())
                 .dateStart(promise.getDate_start())
                 .dateEnd(promise.getDate_end())
