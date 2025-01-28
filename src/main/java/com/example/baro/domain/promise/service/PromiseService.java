@@ -2,7 +2,7 @@ package com.example.baro.domain.promise.service;
 
 import com.example.baro.common.dto.enums.ErrorCode;
 import com.example.baro.domain.promise.dto.PromiseSuggestRequest;
-import com.example.baro.domain.promise.dto.PromiseSuggestResponse;
+import com.example.baro.domain.promise.dto.response.PromiseSuggestResponseDto;
 import com.example.baro.domain.promise.entity.Promise;
 import com.example.baro.domain.promise.exception.PromiseException;
 import com.example.baro.domain.promise.repository.PromiseRepository;
@@ -22,7 +22,7 @@ public class PromiseService {
     private final LocalTime defaultStartTime = LocalTime.of(9, 0);
     private final LocalTime defaultEndTime = LocalTime.of(18, 0);
 
-    public PromiseSuggestResponse registerPromise(PromiseSuggestRequest request) {
+    public PromiseSuggestResponseDto registerPromise(PromiseSuggestRequest request) {
         Promise promise = Promise.builder()
                 .name(request.getName())
                 .date_start(DateParser.parseDate(request.getDateStart()))
@@ -35,7 +35,7 @@ public class PromiseService {
 
         promiseRepository.save(promise);
 
-        return PromiseSuggestResponse.from(promise);
+        return PromiseSuggestResponseDto.from(promise);
     }
 
     public void deletePromise(Long promiseId) {

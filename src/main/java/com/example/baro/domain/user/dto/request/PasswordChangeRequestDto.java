@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class PasswordChangeRequest {
+public class PasswordChangeRequestDto {
 	private String password;
 
 }

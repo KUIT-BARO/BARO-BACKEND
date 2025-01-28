@@ -2,7 +2,6 @@ package com.example.baro.domain.user.dto.response;
 
 import lombok.Builder;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -17,7 +16,7 @@ public record HomeResponseDto(
 	public record UpcomingDdayDto(
 			Long promiseId,
 			String name,
-			LocalDate date,
+			String date,
 			LocalTime timeStart,
 			LocalTime timeEnd,
 			String place
@@ -28,7 +27,7 @@ public record HomeResponseDto(
 	public record UpcomingScheduleDto(
 			Long promiseId,
 			String name,
-			LocalDate date,
+			String date,
 			LocalTime timeStart,
 			LocalTime timeEnd,
 			String place

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class ErrorResponse {
+public class ErrorResponseDto {
 
     private final LocalDateTime timestamp = LocalDateTime.now();
     private final int statusCode;
@@ -17,12 +17,12 @@ public class ErrorResponse {
     private final String message;
     private final String runtimeValue;
 
-    public static ResponseEntity<ErrorResponse> toResponseEntity(
+    public static ResponseEntity<ErrorResponseDto> toResponseEntity(
             ErrorCode errorCode, String runtimeValue
     ) {
         return ResponseEntity
                 .status(errorCode.getHttpStatus())
-                .body(ErrorResponse.builder()
+                .body(ErrorResponseDto.builder()
                         .statusCode(errorCode.getHttpStatus().value())
                         .statusCodeName(errorCode.getHttpStatus().name())
                         .code(errorCode.name())
