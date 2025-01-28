@@ -1,6 +1,6 @@
 package com.example.baro.domain.promise.service;
 
-import com.example.baro.common.exception.properties.ErrorCode;
+import com.example.baro.common.dto.enums.ErrorCode;
 import com.example.baro.domain.promise.dto.PromiseSuggestRequest;
 import com.example.baro.domain.promise.dto.PromiseSuggestResponse;
 import com.example.baro.domain.promise.entity.Promise;

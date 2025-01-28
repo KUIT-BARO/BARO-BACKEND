@@ -1,6 +1,6 @@
 package com.example.baro.common.exception.dto;
 
-import com.example.baro.common.exception.properties.ErrorCode;
+import com.example.baro.common.dto.enums.ErrorCode;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.ResponseEntity;

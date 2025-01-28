@@ -1,18 +1,8 @@
 package com.example.baro.domain.schedule.service;
 
-import com.example.baro.common.exception.properties.ErrorCode;
-import com.example.baro.domain.schedule.dto.ScheduleResponse;
-import com.example.baro.domain.schedule.entity.Schedule;
-import com.example.baro.domain.schedule.exception.ScheduleException;
-import com.example.baro.domain.schedule.repository.ScheduleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional

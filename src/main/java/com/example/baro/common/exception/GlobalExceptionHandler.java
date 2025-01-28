@@ -4,7 +4,7 @@ package com.example.baro.common.exception;
 import com.example.baro.common.exception.dto.ErrorResponse;
 import com.example.baro.common.exception.dto.ValidationErrorResponse;
 import com.example.baro.common.exception.exceptionClass.CustomException;
-import com.example.baro.common.exception.properties.ErrorCode;
+import com.example.baro.common.dto.enums.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
