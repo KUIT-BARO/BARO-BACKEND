@@ -1,20 +1,24 @@
 package com.example.baro.domain.user.entity;
-
 import com.example.baro.domain.user.util.status.Status;
 import com.example.baro.domain.user.util.status.StatusConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.LocalDateTime;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "schedule")
+public class Schedule {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,24 +35,29 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "user_id", nullable = false, length = 20, unique = true)
-    private String userId;
-
-    @Column(nullable = false, length = 200)
-    private String password;
-
     @Column(nullable = false, length = 30)
-    private String nickname;
+    private String name;
 
-    @Column(name = "profile_image", columnDefinition = "TEXT")
-    private String profileImage;
+    @Column(nullable = false)
+    private LocalDate date;
+
+    @Column(nullable = false)
+    private LocalTime timeStart;
+
+    @Column(nullable = false)
+    private LocalTime timeEnd;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Builder
-    public User(String userId, String password, String nickname, String profileImage){
-        this.userId = userId;
-        this.password = password;
-        this.nickname = nickname;
-        this.profileImage = profileImage;
+    public Schedule(String status, String name, LocalDate date, LocalTime timeStart, LocalTime timeEnd, User user) {
+        this.name = name;
+        this.date = date;
+        this.timeStart = timeStart;
+        this.timeEnd = timeEnd;
+        this.user = user;
     }
 
     @PrePersist
