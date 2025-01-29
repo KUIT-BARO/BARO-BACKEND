@@ -2,6 +2,7 @@ package com.example.baro.domain.user.dto.response;
 
 import lombok.Builder;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -9,35 +10,29 @@ import java.util.List;
 public record HomeResponseDto(
 		String name,
 		UpcomingDdayDto upcomingDday,
-		List<UpcomingScheduleDto> upcomingSchedules,
-		List<ParticipantDto> participants
+		List<UpcomingPromiseDto> upcomingPromises
 ) {
 	@Builder
 	public record UpcomingDdayDto(
 			Long promiseId,
 			String name,
-			String date,
+			LocalDate date,
 			LocalTime timeStart,
 			LocalTime timeEnd,
-			String place
+			String place,
+			int peopleNumber
 	) {
 	}
 
 	@Builder
-	public record UpcomingScheduleDto(
+	public record UpcomingPromiseDto(
 			Long promiseId,
 			String name,
-			String date,
+			LocalDate date,
 			LocalTime timeStart,
 			LocalTime timeEnd,
-			String place
-	) {
-	}
-
-	@Builder
-	public record ParticipantDto(
-			Long userId,
-			String nickname
+			String place,
+			int peopleNumber
 	) {
 	}
 }

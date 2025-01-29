@@ -20,7 +20,7 @@ public class UserPromise {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "promise_id", nullable = false)
     private Promise promise;
 
