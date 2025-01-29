@@ -1,39 +1,67 @@
 package com.example.baro.domain.user.service;
 
+import com.example.baro.common.entity.Promise;
+import com.example.baro.common.entity.User;
+import com.example.baro.common.entity.UserPromise;
 import com.example.baro.domain.user.UserRepository;
 import com.example.baro.domain.user.dto.response.HomeResponseDto;
-import com.example.baro.domain.user.repository.PromisePersonalRepository;
-import com.example.baro.domain.user.repository.PromiseRepository;
+import com.example.baro.domain.user.repository.UserPromiseRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
 	private final UserRepository userRepository;
-	private final PromisePersonalRepository promisePersonalRepository;
-	private final PromiseRepository promiseRepository;
+	private final UserPromiseRepository userPromiseRepository;
 
-	public HomeResponseDto getHomePageInfo() {
-		// 임시 사용자 정보
-		String username = "김철수";
+	@Transactional
+	public HomeResponseDto getHomePageInfo(User user) {
 
-		// 다가오는 일정 조회
-//		List<HomeResponseDto.UpcomingScheduleDto> upcomingSchedules = scheduleRepository.findUpcomingSchedules();
+		List<UserPromise> userPromises = userPromiseRepository.findAllByUserAndDisplayTrue(user);
 
-		// 다가오는 약속 조회
-//		PromiseSuggestResponseDto upcomingDday = promiseRepository.findUpcomingDday();
+		userPromises.sort(Comparator.comparing(up -> up.getPromise().getDate()));
+		List<Promise> promises = userPromises.stream()
+				.map(UserPromise::getPromise)
+				.sorted(Comparator.comparing(Promise::getDate)).toList();
 
-		// 참여자 정보
-//		List<String> participants = userRepository.findParticipantsForUser(1L);
+		if (promises.isEmpty()) {
+			return HomeResponseDto.builder()
+					.name(user.getNickname())
+					.upcomingDday(null)
+					.upcomingPromises(List.of()).build();
+		}
 
-//		return MainPageResponseDto.builder()
-//				.name(username)
-//				.upcomingDday(upcomingDday)
-//				.upcomingSchedules(upcomingSchedules)
-//				.participants(participants)
-//				.build();
-		return null;
+		Promise upCommingPromise = promises.get(0);
+		HomeResponseDto.UpcomingDdayDto upComingDdayDto = HomeResponseDto.UpcomingDdayDto.builder().promiseId(upCommingPromise.getId())
+				.name(upCommingPromise.getName())
+				.date(upCommingPromise.getDate())
+				.timeStart(upCommingPromise.getTimeStart())
+				.timeEnd(upCommingPromise.getTimeEnd())
+				.place(upCommingPromise.getPlace().getName()).build();
+
+		List<HomeResponseDto.UpcomingPromiseDto> upcomingPromiseDtos = new ArrayList<>();
+		for (Promise promise : promises) {
+			HomeResponseDto.UpcomingPromiseDto upcomingPromiseDto = HomeResponseDto.UpcomingPromiseDto.builder().promiseId(upCommingPromise.getId())
+					.name(promise.getName())
+					.date(promise.getDate())
+					.timeStart(promise.getTimeStart())
+					.timeEnd(promise.getTimeEnd())
+					.place(promise.getPlace().getName())
+					.peopleNumber(promise.getPeopleNumber()).build();
+		}
+
+		HomeResponseDto homeResponseDto = HomeResponseDto.builder()
+				.name(user.getNickname())
+				.upcomingDday(upComingDdayDto)
+				.upcomingPromises(upcomingPromiseDtos).build();
+
+		return homeResponseDto;
 	}
 }

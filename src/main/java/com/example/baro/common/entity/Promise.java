@@ -40,6 +40,9 @@ public class Promise {
     @Column(nullable = false, length = 30)
     private String name;
 
+    @Column
+    private LocalDate date;
+
     @Column(nullable = false)
     private LocalDate dateStart;
 
