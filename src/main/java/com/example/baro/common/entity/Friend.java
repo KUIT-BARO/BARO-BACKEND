@@ -30,11 +30,11 @@ public class Friend {
     @Column(nullable = false)
     private boolean isFriend;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "from_user_id", nullable = false)
     private User fromUser;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "to_user_id", nullable = false)
     private User toUser;
 

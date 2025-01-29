@@ -3,7 +3,7 @@ package com.example.baro.domain.user.service;
 import com.example.baro.common.entity.User;
 import com.example.baro.common.exception.exceptionClass.DuplicateUserException;
 import com.example.baro.common.exception.exceptionClass.InvalidRequestException;
-import com.example.baro.domain.user.UserRepository;
+import com.example.baro.domain.user.repository.UserRepository;
 import com.example.baro.domain.user.dto.request.LoginRequestDto;
 import com.example.baro.domain.user.dto.request.SignUpRequestDto;
 import lombok.RequiredArgsConstructor;

@@ -5,6 +5,7 @@ import com.example.baro.common.dto.enums.SuccessCode;
 import com.example.baro.common.entity.User;
 import com.example.baro.common.resolver.LoginUser;
 import com.example.baro.domain.user.dto.response.HomeResponseDto;
+import com.example.baro.domain.user.dto.response.UserPromiseResponseDto;
 import com.example.baro.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,4 +24,11 @@ public class UserController {
 		HomeResponseDto homeResponseDto = userService.getHomePageInfo(user);
 		return ApiResponseDto.success(SuccessCode.USER_DETAIL_GET_SUCCESS, homeResponseDto);
 	}
+
+	@GetMapping("/promises")
+	public ApiResponseDto<UserPromiseResponseDto> getPromisePageInfo(@LoginUser User user) {
+		UserPromiseResponseDto userPromiseResponseDto = userService.getPromisePageInfo(user);
+		return ApiResponseDto.success(SuccessCode.USER_DETAIL_GET_SUCCESS, userPromiseResponseDto);
+	}
+
 }

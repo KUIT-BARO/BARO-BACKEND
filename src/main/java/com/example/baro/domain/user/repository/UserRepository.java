@@ -1,4 +1,4 @@
-package com.example.baro.domain.user;
+package com.example.baro.domain.user.repository;
 
 import com.example.baro.common.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
