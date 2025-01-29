@@ -1,9 +1,10 @@
 package com.example.baro.domain.promise.service;
 
+import com.example.baro.common.Enum.PromisePurpose.PromisePurpose;
 import com.example.baro.common.dto.enums.ErrorCode;
-import com.example.baro.domain.promise.dto.PromiseSuggestRequest;
+import com.example.baro.domain.promise.dto.request.PromiseSuggestRequestDto;
 import com.example.baro.domain.promise.dto.response.PromiseSuggestResponseDto;
-import com.example.baro.domain.promise.entity.Promise;
+import com.example.baro.common.entity.Promise;
 import com.example.baro.domain.promise.exception.PromiseException;
 import com.example.baro.domain.promise.repository.PromiseRepository;
 import com.example.baro.domain.promise.util.DateParser;
@@ -22,15 +23,15 @@ public class PromiseService {
     private final LocalTime defaultStartTime = LocalTime.of(9, 0);
     private final LocalTime defaultEndTime = LocalTime.of(18, 0);
 
-    public PromiseSuggestResponseDto registerPromise(PromiseSuggestRequest request) {
+    public PromiseSuggestResponseDto registerPromise(PromiseSuggestRequestDto request) {
         Promise promise = Promise.builder()
                 .name(request.getName())
-                .date_start(DateParser.parseDate(request.getDateStart()))
-                .date_end(DateParser.parseDate(request.getDateEnd()))
-                .time_start(defaultStartTime)
-                .time_end(defaultEndTime)
-                .peopleNum(request.getPeopleNum())
-                .purpose(request.getPurpose())
+                .dateStart(DateParser.parseDate(request.getDateStart()))
+                .dateEnd(DateParser.parseDate(request.getDateEnd()))
+                .timeStart(defaultStartTime)
+                .timeEnd(defaultEndTime)
+                .peopleNumber(request.getPeopleNum())
+                .purpose(PromisePurpose.fromString(request.getPurpose()))
                 .build();
 
         promiseRepository.save(promise);
