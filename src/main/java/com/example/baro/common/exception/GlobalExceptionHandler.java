@@ -2,9 +2,9 @@ package com.example.baro.common.exception;
 
 
 import com.example.baro.common.exception.dto.ErrorResponse;
-import com.example.baro.common.exception.dto.ValidationErrorResponse;
+import com.example.baro.common.exception.dto.ValidationErrorResponseDto;
 import com.example.baro.common.exception.exceptionClass.CustomException;
-import com.example.baro.common.exception.properties.ErrorCode;
+import com.example.baro.common.dto.enums.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -35,12 +35,12 @@ public class GlobalExceptionHandler {
             BindException.class,
             MethodArgumentNotValidException.class
     })
-    protected ResponseEntity<List<ValidationErrorResponse>> validationException(BindException e,
-                                                                                HttpServletRequest request) {
+    protected ResponseEntity<List<ValidationErrorResponseDto>> validationException(BindException e,
+                                                                                   HttpServletRequest request) {
         BindingResult bindingResult = e.getBindingResult();
-        List<ValidationErrorResponse> errors = new ArrayList<>();
+        List<ValidationErrorResponseDto> errors = new ArrayList<>();
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            ValidationErrorResponse error = new ValidationErrorResponse(
+            ValidationErrorResponseDto error = new ValidationErrorResponseDto(
                     fieldError.getField(),
                     fieldError.getDefaultMessage(),
                     fieldError.getRejectedValue()

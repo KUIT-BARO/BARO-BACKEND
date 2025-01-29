@@ -1,7 +1,7 @@
 package com.example.baro.domain.promise.controller;
 
 import com.example.baro.domain.promise.dto.PromiseSuggestRequest;
-import com.example.baro.domain.promise.dto.PromiseSuggestResponse;
+import com.example.baro.domain.promise.dto.response.PromiseSuggestResponseDto;
 import com.example.baro.domain.promise.service.PromiseService;
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,10 +27,10 @@ public class PromiseController {
             description = "약속 제안서 등록에 성공하였습니다."
     )
     @PostMapping("/suggest")
-    public ResponseEntity<PromiseSuggestResponse> registerPromise(
+    public ResponseEntity<PromiseSuggestResponseDto> registerPromise(
             @RequestBody PromiseSuggestRequest request) {
 
-        PromiseSuggestResponse response = promiseService.registerPromise(request);
+        PromiseSuggestResponseDto response = promiseService.registerPromise(request);
         return ResponseEntity.ok(response);
     }
 
