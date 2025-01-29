@@ -4,10 +4,10 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter(autoApply = true) // 자동으로 모든 관련 필드에 적용
-public class UserStatusConverter implements AttributeConverter<UserStatus, Integer> {
+public class StatusConverter implements AttributeConverter<Status, Integer> {
 
     @Override
-    public Integer convertToDatabaseColumn(UserStatus attribute) {
+    public Integer convertToDatabaseColumn(Status attribute) {
         if (attribute == null) {
             return null;
         }
@@ -15,10 +15,10 @@ public class UserStatusConverter implements AttributeConverter<UserStatus, Integ
     }
 
     @Override
-    public UserStatus convertToEntityAttribute(Integer dbData) {
+    public Status convertToEntityAttribute(Integer dbData) {
         if (dbData == null) {
             return null;
         }
-        return UserStatus.fromCode(dbData); // DB 정수값 -> Enum
+        return Status.fromCode(dbData); // DB 정수값 -> Enum
     }
 }
