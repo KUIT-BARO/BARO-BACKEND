@@ -13,6 +13,9 @@ public enum SuccessCode {
 	 */
 
 	//200 OK
+	USER_SIGNUP_SUCCESS(20002, HttpStatus.OK, "회원가입에 성공하였습니다."),
+	USER_LOGIN_SUCCESS(20003, HttpStatus.OK, "로그인에 성공하였습니다."),
+	USER_LOGOUT_SUCCESS(20004, HttpStatus.OK, "로그아웃에 성공하였습니다."),
 	MOVIE_TIMELINE_GET_SUCCESS(20001, HttpStatus.OK, "영화 시간표 조회 성공"),
 	USER_DETAIL_GET_SUCCESS(20002, HttpStatus.OK, "사용자 정보 조회 성공"),
 	MOVIE_THEATER_GET_SUCCESS(20003, HttpStatus.OK, "영화관 조회 성공"),

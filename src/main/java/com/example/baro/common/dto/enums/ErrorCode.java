@@ -11,6 +11,7 @@ import static org.springframework.http.HttpStatus.*;
 public enum ErrorCode {
 
     // 400
+    INVAILD_REQUEST_BODY(40005, BAD_REQUEST, "요청 데이터가 유효하지 않습니다."),
     REFRESH_TOKEN_REQUIRED(40001, BAD_REQUEST, "refresh token이 필요합니다."),
     PHOTO_NETWORK_ERROR(40002, BAD_REQUEST, "스토리지에 사진을 저장하는 데 실패했습니다."),
     SOCIAL_INFO_NOT_EXTRACTED(40003, BAD_REQUEST, "이메일을 추출할 수 없습니다."),
@@ -19,8 +20,6 @@ public enum ErrorCode {
     // 401
     SECURITY_UNAUTHORIZED(40101, UNAUTHORIZED, "인증 정보가 유효하지 않습니다"),
     SECURITY_INVALID_TOKEN(40102, UNAUTHORIZED, "토큰이 유효하지 않습니다."),
-    SECURITY_INVALID_REFRESH_TOKEN(40103, UNAUTHORIZED, "refresh token이 유효하지 않습니다."),
-    SECURITY_INVALID_ACCESS_TOKEN(40104, UNAUTHORIZED, "access token이 유효하지 않습니다."),
 
     // 403
     SECURITY_ACCESS_DENIED(40301, FORBIDDEN, "접근 권한이 없습니다."),
@@ -33,6 +32,7 @@ public enum ErrorCode {
 
     // 409
     DATE_FORMAT_CONFLICT(40901, CONFLICT, "날짜 형식이 올바르지 않습니다."),
+    DUPLICATE_ENTITY_CONFLICT(40902, CONFLICT, "이미 존재하는 사용자입니다."),
 
     // 500
     SERVER_ERROR(50001, INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다.");
