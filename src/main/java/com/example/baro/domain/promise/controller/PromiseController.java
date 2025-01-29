@@ -1,6 +1,6 @@
 package com.example.baro.domain.promise.controller;
 
-import com.example.baro.domain.promise.dto.PromiseSuggestRequest;
+import com.example.baro.domain.promise.dto.request.PromiseSuggestRequestDto;
 import com.example.baro.domain.promise.dto.response.PromiseSuggestResponseDto;
 import com.example.baro.domain.promise.service.PromiseService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class PromiseController {
     )
     @PostMapping("/suggest")
     public ResponseEntity<PromiseSuggestResponseDto> registerPromise(
-            @RequestBody PromiseSuggestRequest request) {
+            @RequestBody PromiseSuggestRequestDto request) {
 
         PromiseSuggestResponseDto response = promiseService.registerPromise(request);
         return ResponseEntity.ok(response);

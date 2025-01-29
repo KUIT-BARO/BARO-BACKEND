@@ -1,4 +1,4 @@
-package com.example.baro.domain.user.util.status;
+package com.example.baro.common.Enum.status;
 
 import lombok.Getter;
 

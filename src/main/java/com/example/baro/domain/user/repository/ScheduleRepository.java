@@ -1,10 +1,9 @@
-package com.example.baro.domain.schedule.repository;
+package com.example.baro.domain.user.repository;
 
-import com.example.baro.domain.schedule.entity.Schedule;
+import com.example.baro.common.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findAllByUserId(Long userId);

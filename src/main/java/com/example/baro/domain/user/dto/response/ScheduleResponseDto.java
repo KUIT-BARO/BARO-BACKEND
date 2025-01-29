@@ -1,23 +1,25 @@
 
-package com.example.baro.domain.schedule.dto.response;
+package com.example.baro.domain.user.dto.response;
 
-import com.example.baro.domain.schedule.entity.Schedule;
-import java.sql.Time;
-import java.util.Date;
+import com.example.baro.common.entity.Schedule;
+import com.example.baro.common.entity.User;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public record ScheduleResponseDto(
         Long id,
-        Long userId,
+        User userId,
         String name,
-        Date date,
-        Time timeStart,
-        Time timeEnd
+        LocalDate date,
+        LocalTime timeStart,
+        LocalTime timeEnd
 ) {
 
     public static ScheduleResponseDto from(Schedule schedule) {
         return new ScheduleResponseDto(
                 schedule.getId(),
-                schedule.getUserId(),
+                schedule.getUser(),
                 schedule.getName(),
                 schedule.getDate(),
                 schedule.getTimeStart(),

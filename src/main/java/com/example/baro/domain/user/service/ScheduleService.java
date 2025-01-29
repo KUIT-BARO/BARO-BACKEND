@@ -1,4 +1,4 @@
-package com.example.baro.domain.schedule.service;
+package com.example.baro.domain.user.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

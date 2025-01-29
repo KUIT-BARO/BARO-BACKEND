@@ -1,20 +1,23 @@
-package com.example.baro.domain.user.entity;
+package com.example.baro.common.entity;
 
-import com.example.baro.domain.user.util.status.Status;
-import com.example.baro.domain.user.util.status.StatusConverter;
+import com.example.baro.common.Enum.status.Status;
+import com.example.baro.common.Enum.status.StatusConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "keyword_tag")
+public class KeywordTag {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,24 +34,12 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "user_id", nullable = false, length = 20, unique = true)
-    private String userId;
-
-    @Column(nullable = false, length = 200)
-    private String password;
-
-    @Column(nullable = false, length = 30)
-    private String nickname;
-
-    @Column(name = "profile_image", columnDefinition = "TEXT")
-    private String profileImage;
+    @Column(nullable = false, length = 10)
+    private String name;
 
     @Builder
-    public User(String userId, String password, String nickname, String profileImage){
-        this.userId = userId;
-        this.password = password;
-        this.nickname = nickname;
-        this.profileImage = profileImage;
+    public KeywordTag(int status, String name) {
+        this.name = name;
     }
 
     @PrePersist
