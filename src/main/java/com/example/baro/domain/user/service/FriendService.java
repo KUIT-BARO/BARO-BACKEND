@@ -43,5 +43,6 @@ public class FriendService {
 	}
 
 	public void deleteFriend(User user, FriendDeleteRequestDto requestDto) {
+		friendRepository.deleteFriend(user.getId(), requestDto.getFriendId());
 	}
 }

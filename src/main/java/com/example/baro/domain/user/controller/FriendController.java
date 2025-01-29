@@ -39,6 +39,6 @@ public class FriendController {
 	@DeleteMapping
 	public ApiResponseDto<Void> deleteFriend(@RequestBody FriendDeleteRequestDto requestDto, @LoginUser User user) {
 		friendService.deleteFriend(user, requestDto);
-//		return ApiResponseDto.success(HttpStatus.NO_CONTENT);
+		return ApiResponseDto.success(SuccessCode.FRIEND_DELETE_SUCCESS);
 	}
 }

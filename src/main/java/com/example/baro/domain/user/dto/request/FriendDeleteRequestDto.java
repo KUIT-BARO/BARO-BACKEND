@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @Builder
 public class FriendDeleteRequestDto {
-	private String code;
+	private Long friendId;
 }
