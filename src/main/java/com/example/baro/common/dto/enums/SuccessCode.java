@@ -21,6 +21,7 @@ public enum SuccessCode {
 
 	//201 CREATED
 	USER_SIGNUP_SUCCESS(20101, HttpStatus.CREATED, "회원가입에 성공하였습니다."),
+	FRIEND_REQUEST_SUCCESS(20102, HttpStatus.CREATED, "친구 추가에 성공하였습니다."),
 	MOVIE_BOOKING_POST_SUCCESS(20102, HttpStatus.CREATED, "영화 예매 성공");
 
 	private final int code;
