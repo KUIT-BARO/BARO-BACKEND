@@ -1,6 +1,6 @@
 package com.example.baro.common.exception.exceptionClass;
 
-import com.example.baro.common.exception.properties.ErrorCode;
+import com.example.baro.common.dto.enums.ErrorCode;
 import lombok.Getter;
 
 @Getter
