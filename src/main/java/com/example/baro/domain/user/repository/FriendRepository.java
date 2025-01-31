@@ -13,7 +13,8 @@ import java.util.List;
 
 @Repository
 public interface FriendRepository extends JpaRepository<Friend, Long> {
-	@Query("SELECT f FROM Friend f WHERE f.isFriend = true AND (f.fromUser.id = :userId OR f.toUser.id = :userId)")
+
+	@Query("SELECT f FROM Friend f WHERE f.fromUser.id = :userId OR f.toUser.id = :userId")
 	List<Friend> findFriendsByUserId(@Param("userId") Long userId);
 
 	@Modifying
@@ -23,8 +24,7 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 	@Modifying
 	@Transactional
 	default void sendFriendRequest(User fromUser, User toUser) {
-		Friend friend = Friend.builder().isFriend(false).fromUser(fromUser).toUser(toUser).build();
-		save(friend);
+		save(new Friend(fromUser, toUser));
+		save(new Friend(toUser, fromUser));
 	}
-
 }

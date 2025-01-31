@@ -57,7 +57,7 @@ public class UserService {
 					.date(promise.getDate())
 					.timeStart(promise.getTimeStart())
 					.timeEnd(promise.getTimeEnd())
-					.place(promise.getRegion().getName())
+					.place(promise.getPlace().getName())
 					.peopleNumber(promise.getPeopleNumber()).build();
 		}
 

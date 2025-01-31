@@ -16,7 +16,7 @@ public record FriendListResponseDto(
 			Long friendId,
 			String code,
 			String nickname,
-			String profileImage
+			int profileImage
 	) {
 	}
 }
