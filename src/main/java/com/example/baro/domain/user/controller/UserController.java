@@ -6,6 +6,7 @@ import com.example.baro.common.entity.User;
 import com.example.baro.common.resolver.LoginUser;
 import com.example.baro.domain.user.dto.response.FindUserListResponseDto;
 import com.example.baro.domain.user.dto.response.HomeResponseDto;
+import com.example.baro.domain.user.dto.response.UserPromiseListResponseDto;
 import com.example.baro.domain.user.dto.response.UserPromiseResponseDto;
 import com.example.baro.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,8 @@ public class UserController {
 	}
 
 	@GetMapping("/promises")
-	public ApiResponseDto<UserPromiseResponseDto> getPromisePageInfo(@LoginUser User user) {
-		UserPromiseResponseDto userPromiseResponseDto = userService.getPromisePageInfo(user);
+	public ApiResponseDto<UserPromiseListResponseDto> getPromisePageInfo(@LoginUser User user) {
+		UserPromiseListResponseDto userPromiseResponseDto = userService.getPromisePageInfo(user);
 		return ApiResponseDto.success(SuccessCode.USER_DETAIL_GET_SUCCESS, userPromiseResponseDto);
 	}
 
