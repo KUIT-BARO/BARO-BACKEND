@@ -34,7 +34,7 @@ public class PromisePersonal {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "promise_id", nullable = false)
     private Promise promise;
 

@@ -27,21 +27,17 @@ public class Friend {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(nullable = false)
-    private boolean isFriend;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "from_user_id", nullable = false)
     private User fromUser;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "to_user_id", nullable = false)
     private User toUser;
 
     @Builder
-    public Friend(User fromUser, User toUser, boolean isFriend) {
+    public Friend(User fromUser, User toUser) {
         this.fromUser = fromUser;
         this.toUser = toUser;
-        this.isFriend = isFriend;
     }
 }

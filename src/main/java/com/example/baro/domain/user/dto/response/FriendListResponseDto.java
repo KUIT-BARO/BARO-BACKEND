@@ -14,13 +14,9 @@ public record FriendListResponseDto(
 	@Builder
 	public record FriendDto(
 			Long friendId,
-			String userId,
 			String code,
 			String nickname,
-			String profileImage,
-			String status,
-			@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime createdAt,
-			@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime updatedAt
+			int profileImage
 	) {
 	}
 }
