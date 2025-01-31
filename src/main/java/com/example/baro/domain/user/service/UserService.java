@@ -1,12 +1,11 @@
 package com.example.baro.domain.user.service;
 
 import com.example.baro.common.entity.Promise;
-import com.example.baro.common.entity.PromisePersonal;
 import com.example.baro.common.entity.User;
 import com.example.baro.common.entity.UserPromise;
+import com.example.baro.domain.user.dto.response.FindUserListResponseDto;
 import com.example.baro.domain.user.repository.UserRepository;
 import com.example.baro.domain.user.dto.response.HomeResponseDto;
-import com.example.baro.domain.user.dto.response.UserPromiseResponseDto;
 import com.example.baro.domain.user.repository.PromisePersonalRepository;
 import com.example.baro.domain.user.repository.UserPromiseRepository;
 import jakarta.transaction.Transactional;
@@ -69,9 +68,26 @@ public class UserService {
 		return homeResponseDto;
 	}
 
-	public UserPromiseResponseDto getPromisePageInfo(User user) {
-		List<PromisePersonal> promisePersonals = promisePersonalRepository.findAllByUser(user);
+//	public UserPromiseResponseDto getPromisePageInfo(User user) {
+//		List<PromisePersonal> promisePersonals = promisePersonalRepository.findAllByUser(user);
+//
+//		return null;
+//	}
 
-		return null;
+	public FindUserListResponseDto searchUsersByCode(Long userId, String code) {
+		List<Object[]> results = userRepository.searchUsersWithFriendStatus(userId, code);
+		List<FindUserListResponseDto.FindUserDto> userDtos = new ArrayList<>();
+		for (Object[] result : results) {
+			User user = (User) result[0];
+			boolean isFriend = (Boolean) result[1];
+			FindUserListResponseDto.FindUserDto userDto = FindUserListResponseDto.FindUserDto.builder()
+					.userId(user.getId())
+					.isFriend(isFriend)
+					.code(user.getUserId())
+					.nickname(user.getNickname())
+					.profileImage(user.getProfileImage()).build();
+			userDtos.add(userDto);
+		}
+		return FindUserListResponseDto.builder().users(userDtos).build();
 	}
 }
