@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.time.LocalDate;
 
 @Builder
-public record PromiseSuggestResponseDto(
+public record PromiseViewResponseDto(
         Long promiseId,          // 약속 ID
         String name,             // 약속명
         PromisePurpose purpose,          // 약속 목적

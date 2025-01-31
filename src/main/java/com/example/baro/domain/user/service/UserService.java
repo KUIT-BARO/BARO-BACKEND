@@ -47,6 +47,7 @@ public class UserService {
 		Promise upCommingPromise = promises.get(0);
 		HomeResponseDto.UpcomingDdayDto upComingDdayDto = HomeResponseDto.UpcomingDdayDto.builder().promiseId(upCommingPromise.getId())
 				.name(upCommingPromise.getName())
+				.purpose(upCommingPromise.getPurpose())
 				.date(upCommingPromise.getDate())
 				.timeStart(upCommingPromise.getTimeStart())
 				.timeEnd(upCommingPromise.getTimeEnd())
@@ -56,6 +57,7 @@ public class UserService {
 		for (Promise promise : promises) {
 			HomeResponseDto.UpcomingPromiseDto upcomingPromiseDto = HomeResponseDto.UpcomingPromiseDto.builder().promiseId(upCommingPromise.getId())
 					.name(promise.getName())
+					.purpose(promise.getPurpose())
 					.date(promise.getDate())
 					.timeStart(promise.getTimeStart())
 					.timeEnd(promise.getTimeEnd())
@@ -92,9 +94,9 @@ public class UserService {
 				UserPromiseListResponseDto.PendingPromisesDto pendingPromisesDto = UserPromiseListResponseDto.PendingPromisesDto.builder()
 						.promiseId(promise.getId())
 						.name(promise.getName())
-						.date(promise.getDate())
-						.timeStart(promise.getTimeStart())
-						.timeEnd(promise.getTimeEnd())
+						.purpose(promise.getPurpose())
+						.dateStart(promise.getDateStart())
+						.dateEnd((promise.getDateEnd()))
 						.place(promise.getPlace().getName())
 						.peopleNumber(promise.getPeopleNumber()).build();
 				pendingPromiseDtos.add(pendingPromisesDto);
@@ -107,6 +109,7 @@ public class UserService {
 				UserPromiseListResponseDto.UpcomingPromiseDto promiseDto = UserPromiseListResponseDto.UpcomingPromiseDto.builder()
 						.promiseId(promise.getId())
 						.name(promise.getName())
+						.purpose(promise.getPurpose())
 						.date(promise.getDate())
 						.timeStart(promise.getTimeStart())
 						.timeEnd(promise.getTimeEnd())

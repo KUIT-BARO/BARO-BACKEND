@@ -1,5 +1,6 @@
 package com.example.baro.domain.user.dto.response;
 
+import com.example.baro.common.Enum.PromisePurpose.PromisePurpose;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -16,9 +17,9 @@ public record UserPromiseListResponseDto(
 	public record PendingPromisesDto(
 			Long promiseId,
 			String name,
-			LocalDate date,
-			LocalTime timeStart,
-			LocalTime timeEnd,
+			PromisePurpose purpose,
+			LocalDate dateStart,
+			LocalDate dateEnd,
 			String place,
 			int peopleNumber
 	) {
@@ -28,6 +29,7 @@ public record UserPromiseListResponseDto(
 	public record UpcomingPromiseDto(
 			Long promiseId,
 			String name,
+			PromisePurpose purpose,
 			LocalDate date,
 			LocalTime timeStart,
 			LocalTime timeEnd,

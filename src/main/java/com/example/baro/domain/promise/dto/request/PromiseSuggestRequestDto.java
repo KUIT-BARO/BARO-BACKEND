@@ -7,6 +7,6 @@ public class PromiseSuggestRequestDto {
     private String name;
     private String dateStart;
     private String dateEnd;
-    private int peopleNum;
+    private int peopleNumber;
     private String purpose;
 }
