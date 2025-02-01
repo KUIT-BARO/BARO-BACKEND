@@ -43,10 +43,10 @@ public class User {
     private String nickname;
 
     @Column(name = "profile_image", columnDefinition = "TEXT")
-    private String profileImage;
+    private int profileImage;
 
     @Builder
-    public User(String userId, String password, String nickname, String profileImage){
+    public User(String userId, String password, String nickname, int profileImage){
         this.userId = userId;
         this.password = password;
         this.nickname = nickname;
