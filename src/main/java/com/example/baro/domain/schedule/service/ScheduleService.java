@@ -1,72 +1,131 @@
 package com.example.baro.domain.schedule.service;
 
 import com.example.baro.common.dto.enums.ErrorCode;
-import com.example.baro.common.dto.enums.SuccessCode;
 
-import com.example.baro.domain.promise.util.DateParser;
+import com.example.baro.common.entity.User;
+import com.example.baro.common.exception.exceptionClass.CustomException;
 import com.example.baro.domain.schedule.dto.request.ScheduleRequestDto;
+import com.example.baro.domain.schedule.dto.response.ScheduleListResponseDto;
 import com.example.baro.domain.schedule.dto.response.ScheduleResponseDto;
 import com.example.baro.common.entity.Schedule;
 import com.example.baro.domain.schedule.exception.ScheduleException;
 import com.example.baro.domain.schedule.repository.ScheduleRepository;
+import com.example.baro.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class ScheduleService {
 
-    // private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
 
-    public ScheduleResponseDto registerSchedule(ScheduleRequestDto request) {
+    public ScheduleResponseDto registerSchedule(ScheduleRequestDto request, User user) {
 
         Schedule schedule = Schedule.builder()
-                // .userId(scheduleId)
                 .name(request.getName())
-                .date(DateParser.parseDate(request.getDate()))
-                .time_start(request.getTime_start())
-                .time_end(request.getTime_end())
+                .date(request.getDate())
+                .timeStart(request.getTime_start())
+                .timeEnd(request.getTime_end())
+                .user(user)
                 .build();
         scheduleRepository.save(schedule);
 
-        return ScheduleResponseDto.from(schedule);
+        ScheduleResponseDto.ScheduleDto scheduleDto = ScheduleResponseDto.ScheduleDto.builder()
+                .id(schedule.getId())
+                .name(schedule.getName())
+                .date(schedule.getDate())
+                .time_start(schedule.getTimeStart())
+                .time_end(schedule.getTimeEnd())
+                .build();
+
+        return ScheduleResponseDto.builder()
+                .schedule(scheduleDto)
+                .build();
     }
 
-    public List<ScheduleResponseDto> getScheduleByUser(Long userId) {
+    public ScheduleListResponseDto getScheduleByUser(Long userId) {
 
-        // isUserExist(userId);
-        return scheduleRepository.findByUserId(userId)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(ScheduleResponseDto::from)
-                .collect(Collectors.toList());
+        isUserExist(userId);
+        List<Schedule> schedules = scheduleRepository.findByUserId(userId);
+
+        List<ScheduleListResponseDto.ScheduleDto> scheduleDtos = schedules.stream()
+                .map(schedule -> ScheduleListResponseDto.ScheduleDto.builder()
+                        .id(schedule.getId())
+                        .name(schedule.getName())
+                        .date(schedule.getDate())
+                        .time_start(schedule.getTimeStart())
+                        .time_end(schedule.getTimeEnd())
+                        .build())
+                .toList();
+
+        return ScheduleListResponseDto.builder()
+                .schedules(scheduleDtos)
+                .build();
+    }
+
+    public ScheduleListResponseDto getMySchedule(Long userId) {
+
+        List<Schedule> schedules = scheduleRepository.findByUserId(userId);
+
+        List<ScheduleListResponseDto.ScheduleDto> scheduleDtos = schedules.stream()
+                .map(schedule -> ScheduleListResponseDto.ScheduleDto.builder()
+                        .id(schedule.getId())
+                        .name(schedule.getName())
+                        .date(schedule.getDate())
+                        .time_start(schedule.getTimeStart())
+                        .time_end(schedule.getTimeEnd())
+                        .build())
+                .toList();
+
+        return ScheduleListResponseDto.builder()
+                .schedules(scheduleDtos)
+                .build();
     }
 
     public void deleteSchedule(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new ScheduleException(ErrorCode.SCHEDULE_NOT_FOUND));
 
+        Schedule schedule = returnScheduleExist(scheduleId);
         scheduleRepository.delete(schedule);
     }
 
-    public ScheduleResponseDto updateSchedule(ScheduleRequestDto request){
-        Schedule schedule = Schedule.builder()
-                // .userId(scheduleId)
-                .name(request.getName())
-                .date(DateParser.parseDate(request.getDate()))
-                .time_start(request.getTime_start())
-                .time_end(request.getTime_end())
+    public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleRequestDto request){
+
+       Schedule schedule = returnScheduleExist(scheduleId);
+
+        schedule.update(request.getName(),
+                request.getDate(),
+                request.getTime_start(),
+                request.getTime_end());
+        scheduleRepository.save(schedule);
+
+        ScheduleResponseDto.ScheduleDto scheduleDto = ScheduleResponseDto.ScheduleDto.builder()
+                .id(schedule.getId())
+                .name(schedule.getName())
+                .date(schedule.getDate())
+                .time_start(schedule.getTimeStart())
+                .time_end(schedule.getTimeEnd())
                 .build();
-        scheduleRepository.update(schedule);
-        return ScheduleResponseDto.from(schedule);
+
+        return ScheduleResponseDto.builder()
+                .schedule(scheduleDto)
+                .build();
+    }
+
+    public void isUserExist(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public Schedule returnScheduleExist(Long scheduleId) {
+        return scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.SCHEDULE_NOT_FOUND));
     }
 }
 

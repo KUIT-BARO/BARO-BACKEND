@@ -7,7 +7,6 @@ import java.time.LocalTime;
 
 @Getter
 public class ScheduleRequestDto {
-    private Long id;
 
     private String name;
 

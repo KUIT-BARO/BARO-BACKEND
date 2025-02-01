@@ -1,5 +1,6 @@
 spring:
   profiles:
+    active: "h2"
     group:
       "local": "localDB, devPort, web-mvc"
       "dev": "devDB, devPort, web-mvc"
@@ -117,7 +118,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     show-sql: true
 
   h2:

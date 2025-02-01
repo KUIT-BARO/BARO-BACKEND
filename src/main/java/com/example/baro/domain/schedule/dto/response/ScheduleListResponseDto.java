@@ -1,11 +1,13 @@
 package com.example.baro.domain.schedule.dto.response;
 
 import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+@Builder
 public record ScheduleListResponseDto (
     List<ScheduleDto> schedules
 ) {
