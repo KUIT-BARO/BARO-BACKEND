@@ -4,7 +4,7 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter(autoApply = true) // 자동으로 모든 관련 필드에 적용
-public class UserProfileConverter implements AttributeConverter<DayOfWeek, Integer> {
+public class DayOfWeekConverter implements AttributeConverter<DayOfWeek, Integer> {
 
     @Override
     public Integer convertToDatabaseColumn(DayOfWeek attribute) {

@@ -12,16 +12,16 @@ import java.io.Serializable;
 @Embeddable
 @NoArgsConstructor
 @EqualsAndHashCode
-public class PromiseKeywordId implements Serializable {
-    @Column(name = "promise_id", nullable = false)
-    private Long searchId;
+public class PromisePersonalKeywordId implements Serializable {
+    @Column(name = "promise_personal_id", nullable = false)
+    private Long promisePersonalId;
 
     @JoinColumn(name = "keyword_id", nullable = false)
     private Long keywordId;
 
     @Builder
-    public PromiseKeywordId(Long searchId, Long keywordId) {
-        this.searchId = searchId;
+    public PromisePersonalKeywordId(Long promisePersonalId, Long keywordId) {
+        this.promisePersonalId = promisePersonalId;
         this.keywordId = keywordId;
     }
 }

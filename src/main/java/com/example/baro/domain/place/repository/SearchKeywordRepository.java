@@ -1,4 +1,4 @@
-package com.example.baro.domain.user.repository;
+package com.example.baro.domain.place.repository;
 
 import com.example.baro.common.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +14,9 @@ public interface SearchKeywordRepository extends JpaRepository<SearchKeyword, Se
 			"JOIN sk.search s " +
 			"WHERE s.user.id = :userId")
 	List<Keyword> findKeywordsByUserId(@Param("userId") Long userId);
+
+	@Query("SELECT sk.keyword FROM Search s " +
+			"JOIN SearchKeyword sk ON sk.search.id = s.id " +
+			"WHERE s.id = :searchId")
+	List<Keyword> findKeywordsBySearchId(@Param("searchId") Long searchId);
 }

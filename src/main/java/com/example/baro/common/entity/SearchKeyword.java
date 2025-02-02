@@ -9,28 +9,25 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "user_promise")
-public class UserPromise {
+@Table(name = "search_keyword")
+public class SearchKeyword {
+    @EmbeddedId
+    private SearchKeywordId id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @MapsId("searchId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "search_id", nullable = false)
+    private Search search;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "promise_id", nullable = false)
-    private Promise promise;
+    @MapsId("keywordId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "keyword_id", nullable = false)
+    private Keyword keyword;
 
-    @Column(nullable = false)
-    private boolean display;
 
     @Builder
-    public UserPromise(User user, Promise promise, boolean display) {
-        this.user = user;
-        this.promise = promise;
-        this.display = display;
+    public SearchKeyword(Search search, Keyword keyword) {
+        this.search = search;
+        this.keyword = keyword;
     }
 }

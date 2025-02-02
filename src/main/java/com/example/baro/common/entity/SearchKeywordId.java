@@ -1,29 +1,23 @@
 package com.example.baro.common.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity
-@Table(name = "search_keyword")
-public class SearchKeyword {
+import java.io.Serializable;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "search_id", nullable = false)
-    private Search search;
+@Embeddable
+@NoArgsConstructor
+@EqualsAndHashCode
+public class SearchKeywordId implements Serializable {
+    @Column(name = "search_id", nullable = false)
+    private Long searchId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "keyword_id", nullable = false)
-    private Keyword keyword;
-
+    private Long keywordId;
 
     @Builder
-    public SearchKeyword(Search search, Keyword keyword) {
-        this.search = search;
-        this.keyword = keyword;
+    public SearchKeywordId(Long searchId, Long keywordId) {
+        this.searchId = searchId;
+        this.keywordId = keywordId;
     }
 }

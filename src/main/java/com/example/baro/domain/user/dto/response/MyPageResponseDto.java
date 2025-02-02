@@ -1,17 +1,18 @@
 package com.example.baro.domain.user.dto.response;
-import com.example.baro.common.Enum.dayOfWeek.DayOfWeek;
 import com.example.baro.common.Enum.userProfile.UserProfile;
 import lombok.Builder;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
 
 @Builder
-public record UserMyResponseDto(
+public record MyPageResponseDto(
 		UserDto user,
 		List<ScheduleDto> schedules,
-		List<KeywordDto> keywords
+		List<SavedPlaceDto> savedPlaces,
+		List<MyReviewDto> myReviews
 ) {
 	@Builder
 	public record UserDto(
@@ -30,14 +31,19 @@ public record UserMyResponseDto(
 	){
 	}
 	@Builder
-	public record  KeywordDto(
+	public record  SavedPlaceDto(
 			Long keywordId,
 			String keyword
 	){}
 	@Builder
-	public record  ReviewDto(
-			Long keywordId,
-			String keyword
+	public record  MyReviewDto(
+			Long placeId,
+			String name,
+			String note,
+			Integer score,
+			BigDecimal latitude, // 위도
+			BigDecimal longitude, // 경도
+			List<String> Keywords
 	){}
 
 }

@@ -1,17 +1,17 @@
 
 package com.example.baro.domain.user.dto.response;
 
+import com.example.baro.common.Enum.dayOfWeek.DayOfWeek;
 import com.example.baro.common.entity.Schedule;
 import com.example.baro.common.entity.User;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record ScheduleResponseDto(
         Long id,
         User userId,
         String name,
-        LocalDate date,
+        DayOfWeek dayOfWeek,
         LocalTime timeStart,
         LocalTime timeEnd
 ) {
@@ -21,7 +21,7 @@ public record ScheduleResponseDto(
                 schedule.getId(),
                 schedule.getUser(),
                 schedule.getName(),
-                schedule.getDate(),
+                schedule.getDayOfWeek(),
                 schedule.getTimeStart(),
                 schedule.getTimeEnd()
         );
