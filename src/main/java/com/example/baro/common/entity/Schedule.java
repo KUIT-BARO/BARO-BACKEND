@@ -1,4 +1,6 @@
 package com.example.baro.common.entity;
+import com.example.baro.common.Enum.dayOfWeek.DayOfWeek;
+import com.example.baro.common.Enum.dayOfWeek.DayOfWeekConverter;
 import com.example.baro.common.Enum.status.Status;
 import com.example.baro.common.Enum.status.StatusConverter;
 import jakarta.persistence.*;
@@ -39,7 +41,8 @@ public class Schedule {
     private String name;
 
     @Column(nullable = false)
-    private LocalDate date;
+    @Convert(converter = DayOfWeekConverter.class)
+    private DayOfWeek dayOfWeek;
 
     @Column(nullable = false)
     private LocalTime timeStart;
@@ -51,10 +54,14 @@ public class Schedule {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "place_id", nullable = true)
+    private Place place;
+
     @Builder
-    public Schedule(String status, String name, LocalDate date, LocalTime timeStart, LocalTime timeEnd, User user) {
+    public Schedule(String status, String name, DayOfWeek dayOfWeek, LocalTime timeStart, LocalTime timeEnd, User user) {
         this.name = name;
-        this.date = date;
+        this.dayOfWeek = dayOfWeek;
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
         this.user = user;

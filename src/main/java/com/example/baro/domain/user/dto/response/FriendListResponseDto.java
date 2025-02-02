@@ -1,5 +1,6 @@
 package com.example.baro.domain.user.dto.response;
 
+import com.example.baro.common.Enum.userProfile.UserProfile;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 
@@ -16,7 +17,7 @@ public record FriendListResponseDto(
 			Long friendId,
 			String code,
 			String nickname,
-			int profileImage
+			UserProfile profileImage
 	) {
 	}
 }

@@ -1,6 +1,5 @@
-package com.example.baro.common.Enum.PromisePurpose;
+package com.example.baro.common.Enum.promisePurpose;
 
-import com.example.baro.common.Enum.status.Status;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

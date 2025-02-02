@@ -17,6 +17,7 @@ public enum SuccessCode {
 	USER_LOGOUT_SUCCESS(20002, HttpStatus.OK, "로그아웃에 성공하였습니다."),
 	USER_DETAIL_GET_SUCCESS(20003, HttpStatus.OK, "사용자 정보 조회 성공"),
 	FRIEND_DETAIL_GET_SUCCESS(20004, HttpStatus.OK, "친구 정보 조회 성공"),
+	USER_PROFILE_IMAGE_CHANGE_SUCCESS(20005, HttpStatus.OK, "프로필 이미지 변경에 성공하셨습니다."),
 	FRIEND_DELETE_SUCCESS(20003, HttpStatus.OK, "친구 삭제 성공"),
 
 	//201 CREATED
