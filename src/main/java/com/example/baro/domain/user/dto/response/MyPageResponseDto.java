@@ -1,24 +1,43 @@
 package com.example.baro.domain.user.dto.response;
-
+import com.example.baro.common.Enum.dayOfWeek.DayOfWeek;
+import com.example.baro.common.Enum.userProfile.UserProfile;
 import lombok.Builder;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 @Builder
-public record MyPageResponseDto(
-		String nickname,
-		String code,
-		List<ScheduleDto> schedule
+public record UserMyResponseDto(
+		UserDto user,
+		List<ScheduleDto> schedules,
+		List<KeywordDto> keywords
 ) {
 	@Builder
-	public record ScheduleDto(
-			String type, // "user" or "promise"
-			Long id,
-			String day, // e.g., "Monday", "Tuesday"
-			String name, // e.g., "수업1", "수업2"
-			LocalTime timeStart, // e.g., "09:00:00"
-			LocalTime timeEnd // e.g., "11:00:00"
-	) {
+	public record UserDto(
+			String nickname,
+			String userId,
+			UserProfile userProfile
+	){
 	}
+	@Builder
+	public record ScheduleDto(
+			String name,
+			DayOfWeek dayOfWeek,
+			LocalTime timeStart,
+			LocalTime timeEnd,
+			String place
+	){
+	}
+	@Builder
+	public record  KeywordDto(
+			Long keywordId,
+			String keyword
+	){}
+	@Builder
+	public record  ReviewDto(
+			Long keywordId,
+			String keyword
+	){}
+
 }

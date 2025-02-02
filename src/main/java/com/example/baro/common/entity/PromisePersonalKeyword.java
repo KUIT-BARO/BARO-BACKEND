@@ -12,9 +12,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "promise_keyword")
 public class PromiseKeyword {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private PromiseKeywordId id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "keyword_id", nullable = false)
