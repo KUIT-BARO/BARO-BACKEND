@@ -66,4 +66,11 @@ public class Schedule {
             this.status = Status.ACTIVE;
         }
     }
+
+    public void update(String name, LocalDate date, LocalTime timeStart, LocalTime timeEnd) {
+        this.name = name;
+        this.date = date;
+        this.timeStart = timeStart;
+        this.timeEnd = timeEnd;
+    }
 }
