@@ -1,8 +1,13 @@
 package com.example.baro.domain.promise.controller;
 
+import com.example.baro.common.dto.ApiResponseDto;
+import com.example.baro.common.dto.enums.ErrorCode;
+import com.example.baro.common.dto.enums.SuccessCode;
 import com.example.baro.domain.promise.dto.request.PromiseSuggestRequestDto;
 import com.example.baro.domain.promise.dto.response.PromiseSuggestResponseDto;
+import com.example.baro.domain.promise.dto.response.PromiseViewResponseDto;
 import com.example.baro.domain.promise.service.PromiseService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,6 +23,7 @@ public class PromiseController {
 
     private final PromiseService promiseService;
 
+    // 아래 부분 컨벤션에 맞게 수정해주세요
     @Operation(
             summary = "약속 제안서 등록",
             description = "약속 제안서를 등록합니다. "
@@ -47,4 +53,18 @@ public class PromiseController {
         promiseService.deletePromise(promiseId);
         return ResponseEntity.noContent().build();
     }
+
+
+    @GetMapping("/{promiseId}")
+    public ApiResponseDto<PromiseViewResponseDto> getPromiseSuggestment(@PathVariable Long promiseId) {
+        try {
+            PromiseViewResponseDto promiseDto = promiseService.getPromiseSuggestmentById(promiseId);
+            return ApiResponseDto.success(SuccessCode.PROMISE_GET_SUCCESS, promiseDto);
+        } catch (EntityNotFoundException et){
+            return ApiResponseDto.fail(ErrorCode.PROMISE_NOT_FOUND);
+        } catch (Exception e) {
+            return ApiResponseDto.fail(ErrorCode.SERVER_ERROR);
+        }
+    }
+
 }
