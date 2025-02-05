@@ -9,24 +9,25 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "promise_keyword")
-public class PromiseKeyword {
+@Table(name = "promise_personal_keyword")
+public class PromisePersonalKeyword {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private PromisePersonalKeywordId id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "keyword_id", nullable = false)
-    private Keyword keyword;
-
+    @MapsId("promisePersonalId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "promise_personal_id", nullable = false)
     private PromisePersonal promisePersonal;
 
+    @MapsId("keywordId")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "keyword_id", nullable = false)
+    private Keyword keyword;
+
     @Builder
-    public PromiseKeyword(Keyword keyword, PromisePersonal promisePersonal) {
-        this.keyword = keyword;
+    public PromisePersonalKeyword( PromisePersonal promisePersonal, Keyword keyword) {
         this.promisePersonal = promisePersonal;
+        this.keyword = keyword;
     }
 }
