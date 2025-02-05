@@ -8,7 +8,6 @@ import com.example.baro.domain.promise.dto.request.PromiseVoteRequestDto;
 import com.example.baro.domain.promise.dto.response.PromiseConfirmResponseDto;
 import com.example.baro.domain.promise.dto.response.PromiseSuggestResponseDto;
 import com.example.baro.domain.promise.dto.response.PromiseViewResponseDto;
-import com.example.baro.domain.promise.dto.response.VotingPageResponseDto;
 import com.example.baro.domain.promise.service.PromiseService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

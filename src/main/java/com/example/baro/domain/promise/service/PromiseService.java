@@ -18,13 +18,11 @@ import com.example.baro.domain.promise.repository.PromiseRepository;
 import com.example.baro.domain.promise.util.DateParser;
 import com.example.baro.domain.user.repository.PromisePersonalRepository;
 import com.example.baro.domain.user.repository.UserPromiseRepository;
-import com.example.baro.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +116,7 @@ public class PromiseService {
         PromisePersonal promisePersonal = promisePersonalRepository.findById(promiseId)
                 .orElseThrow(() -> new PromiseException(ErrorCode.PROMISE_NOT_FOUND));
 
-        List<PromisePersonal> promisePersonals = promisePersonalRepository.findAllByPromiseId(promiseId)
+        List<PromisePersonal> promisePersonals = promisePersonalRepository.findAllByPromiseId(promiseId);
 
         promisePersonal.vote();
 
@@ -129,7 +127,7 @@ public class PromiseService {
 
     public PromiseConfirmResponseDto getConfirmPromisePage(Long promiseId) {
         Promise promise = findPromiseById(promiseId);
-        List<PromisePersonal> promisePersonals = promisePersonalRepository.findAllByPromiseId(promiseId)
+        List<PromisePersonal> promisePersonals = promisePersonalRepository.findAllByPromiseId(promiseId);
 
         if (!isReadyToConfirm(promisePersonals, promise.getPeopleNumber())) {
             throw new PromiseException(ErrorCode.PROMISE_NOT_YET_VOTE_CONFLICT);

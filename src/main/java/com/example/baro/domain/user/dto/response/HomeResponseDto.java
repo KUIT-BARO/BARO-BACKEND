@@ -1,6 +1,6 @@
 package com.example.baro.domain.user.dto.response;
 
-import com.example.baro.common.Enum.PromisePurpose.PromisePurpose;
+import com.example.baro.common.Enum.promisePurpose.PromisePurpose;
 import lombok.Builder;
 
 import java.time.LocalDate;
