@@ -8,9 +8,6 @@ import java.time.LocalTime;
 
 @Getter
 public class PromiseVoteRequestDto {
-    LocalDate date;
-    LocalTime timeStart;
-    LocalTime timeEnd;
+    Long promisePersonalTimeId;
     Long placeId;
-    String placeName;
 }

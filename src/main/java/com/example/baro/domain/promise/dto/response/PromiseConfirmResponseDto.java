@@ -14,8 +14,7 @@ public record PromiseConfirmResponseDto (
     public record PromiseConfirmDto (
             Long promiseId,
             String name,
-            LocalDate dateStart,
-            LocalDate dateEnd,
+            LocalDate date,
             int peopleNum,
             PromisePurpose purpose,
             String placeName,

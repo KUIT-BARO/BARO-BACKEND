@@ -1,20 +1,17 @@
 package com.example.baro.common.entity;
+
 import com.example.baro.common.Enum.status.Status;
 import com.example.baro.common.Enum.status.StatusConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "promise_personal_time")
-public class PromisePersonalTime {
+@Table(name = "promise_personal_place")
+public class PromisePersonalPlace {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,28 +21,27 @@ public class PromisePersonalTime {
     @Convert(converter = StatusConverter.class)
     private Status status;
 
-    @Column(nullable = false)
-    private LocalDate date;
-
-    @Column(nullable = false)
-    private LocalTime timeStart;
-
-    @Column(nullable = false)
-    private LocalTime timeEnd;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "promise_individual_id", nullable = false)
+    @JoinColumn(name = "promise_personal_id", nullable = false)
     private PromisePersonal promisePersonal;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "place_id", nullable = false)
+    private Place place;
 
     @Column(nullable = false)
     private int voteCount;
 
-    @Builder
-    public PromisePersonalTime(Status status, LocalDate date, LocalTime timeStart, LocalTime timeEnd, PromisePersonal promisePersonal) {
-        this.date = date;
-        this.timeStart = timeStart;
-        this.timeEnd = timeEnd;
+    public PromisePersonalPlace(Status status, PromisePersonal promisePersonal, Place place) {
         this.promisePersonal = promisePersonal;
+        this.place = place;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.status == null) {
+            this.status = Status.INACTIVE;
+        }
     }
 
     public void vote(){

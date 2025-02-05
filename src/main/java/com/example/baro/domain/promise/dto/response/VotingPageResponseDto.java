@@ -13,6 +13,7 @@ public record VotingPageResponseDto (
 ){
     @Builder
     public record PromisePersonalTimeDto (
+            Long promisePersonalTimeId,
             LocalDate date,
             LocalTime timeStart,
             LocalTime timeEnd

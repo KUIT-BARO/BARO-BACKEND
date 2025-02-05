@@ -8,11 +8,9 @@ import com.example.baro.common.exception.exceptionClass.CustomException;
 import com.example.baro.domain.place.repository.PlaceRepository;
 import com.example.baro.domain.promise.dto.request.PromiseSuggestRequestDto;
 import com.example.baro.domain.promise.dto.request.PromiseVoteRequestDto;
-import com.example.baro.domain.promise.dto.response.PromiseConfirmResponseDto;
-import com.example.baro.domain.promise.dto.response.PromiseSuggestResponseDto;
-import com.example.baro.domain.promise.dto.response.PromiseViewResponseDto;
-import com.example.baro.domain.promise.dto.response.VotingPageResponseDto;
+import com.example.baro.domain.promise.dto.response.*;
 import com.example.baro.domain.promise.exception.PromiseException;
+import com.example.baro.domain.promise.repository.PromisePersonalPlaceRepository;
 import com.example.baro.domain.promise.repository.PromisePersonalTimeRepository;
 import com.example.baro.domain.promise.repository.PromiseRepository;
 import com.example.baro.domain.promise.util.DateParser;
@@ -24,8 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -36,6 +33,7 @@ public class PromiseService {
     private final PlaceRepository placeRepository;
     private final UserPromiseRepository userPromiseRepository;
     private final PromisePersonalTimeRepository promisePersonalTimeRepository;
+    private final PromisePersonalPlaceRepository promisePersonalPlaceRepository;
     private final LocalTime defaultStartTime = LocalTime.of(9, 0);
     private final LocalTime defaultEndTime = LocalTime.of(18, 0);
     private final PromisePersonalRepository promisePersonalRepository;
@@ -45,8 +43,6 @@ public class PromiseService {
                 .name(request.getName())
                 .dateStart(DateParser.parseDate(request.getDateStart()))
                 .dateEnd(DateParser.parseDate(request.getDateEnd()))
-                .timeStart(defaultStartTime)
-                .timeEnd(defaultEndTime)
                 .peopleNumber(request.getPeopleNumber())
                 .purpose(PromisePurpose.fromString(request.getPurpose()))
                 .build();
@@ -86,10 +82,11 @@ public class PromiseService {
     public VotingPageResponseDto getVotingPromisePage(Long promiseId) {
 
         List<PromisePersonalTime> personalTimes = getOverlappingPersonalTimes(promiseId);
-        List<Place> places = placeRepository.findAllByPromiseId(promiseId);
+        List<PromisePersonalPlace> places = getOverlappingPersonalPlaces(promiseId);
 
         List<VotingPageResponseDto.PromisePersonalTimeDto> promisePersonalTimeDtoList = personalTimes.stream()
                 .map(promisePersonalTime -> VotingPageResponseDto.PromisePersonalTimeDto.builder()
+                        .promisePersonalTimeId(promisePersonalTime.getId())
                         .date(promisePersonalTime.getDate())
                         .timeStart(promisePersonalTime.getTimeStart())
                         .timeEnd(promisePersonalTime.getTimeEnd())
@@ -99,7 +96,7 @@ public class PromiseService {
         List<VotingPageResponseDto.PlaceDto> pladeDtoList = places.stream()
                 .map(place -> VotingPageResponseDto.PlaceDto.builder()
                         .placeId(place.getId())
-                        .placeName(place.getName())
+                        .placeName(place.getPlace().getName())
                         .build())
                 .toList();
 
@@ -109,7 +106,7 @@ public class PromiseService {
                 .build();
     }
 
-    public void votePromise(PromiseVoteRequestDto request, Long promiseId){
+    public PromiseVoteResponseDto votePromise(PromiseVoteRequestDto request, Long promiseId){
         Promise promise = promiseRepository.findById(promiseId)
                 .orElseThrow(() -> new PromiseException(ErrorCode.PROMISE_NOT_FOUND));
 
@@ -120,9 +117,33 @@ public class PromiseService {
 
         promisePersonal.vote();
 
+        PromisePersonalTime promisePersonalTime = promisePersonalTimeRepository.findById(request.getPromisePersonalTimeId())
+                .orElseThrow(() -> new PromiseException(ErrorCode.TIME_NOT_FOUND));
+        promisePersonalTime.vote();
+
+        PromisePersonalPlace promisePersonalPlace =  promisePersonalPlaceRepository.findById(request.getPlaceId())
+                .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
+        promisePersonalPlace.vote();
+
         if(isReadyToConfirm(promisePersonals, promise.getPeopleNumber())){
-            promise.confirm();
+
+            PromisePersonalTime mostVotedTime = getMostVotedTime(promisePersonals);
+            Place mostVotedPlace = getMostVotedPlace(promisePersonals).getPlace();
+
+            promise.confirm(mostVotedTime.getDate(), mostVotedTime.getTimeStart(), mostVotedTime.getTimeEnd(),mostVotedPlace);
         }
+
+        PromiseVoteResponseDto.PromiseVoteDto promiseVoteDto = PromiseVoteResponseDto.PromiseVoteDto.builder()
+                .date(promisePersonalTime.getDate())
+                .timeStart(promisePersonalTime.getTimeStart())
+                .timeEnd(promisePersonalTime.getTimeEnd())
+                .placeName(promisePersonalPlace.getPlace().getName())
+                .status(promisePersonal.getStatus())
+                .build();
+
+        return PromiseVoteResponseDto.builder()
+                .promiseVoteDto(promiseVoteDto)
+                .build();
     }
 
     public PromiseConfirmResponseDto getConfirmPromisePage(Long promiseId) {
@@ -142,8 +163,7 @@ public class PromiseService {
         PromiseConfirmResponseDto.PromiseConfirmDto promiseConfirmDto = PromiseConfirmResponseDto.PromiseConfirmDto.builder()
                 .promiseId(promiseId)
                 .name(promise.getName())
-                .dateStart(promise.getDateStart())
-                .dateEnd(promise.getDateEnd())
+                .date(promise.getDate())
                 .peopleNum(promise.getPeopleNumber())
                 .purpose(promise.getPurpose())
                 .placeName(place.getName())
@@ -202,6 +222,33 @@ public class PromiseService {
         return (p1.getTimeStart().isBefore(p2.getTimeEnd()) && p1.getTimeEnd().isAfter(p2.getTimeStart()));
     }
 
+    public List<PromisePersonalPlace> getOverlappingPersonalPlaces(Long promiseId) {
+        Promise promise = findPromiseById(promiseId);
+        List<PromisePersonal> promisePersonals = promisePersonalRepository.findAllByPromiseId(promiseId);
+
+        if (!isReadyToVote(promisePersonals, promise.getPeopleNumber())) {
+            throw new PromiseException(ErrorCode.PROMISE_NOT_YET_AGREE_CONFLICT);
+        }
+
+        List<Long> activePersonalPromiseIds = promisePersonalRepository.findActivePersonalPromiseIdsByPromiseId(promiseId);
+        List<PromisePersonalPlace> personalPlaces = promisePersonalPlaceRepository.findByPromisePersonalIdIn(activePersonalPromiseIds);
+
+        return findOverlappingPersonalPlaces(personalPlaces);
+    }
+
+    private List<PromisePersonalPlace> findOverlappingPersonalPlaces(List<PromisePersonalPlace> personalPlaces) {
+        Map<String, Long> placeCountMap = new HashMap<>();
+
+        for (PromisePersonalPlace place : personalPlaces) {
+            placeCountMap.put(place.getPlace().getName(), placeCountMap.getOrDefault(place.getPlace().getName(), 0L) + 1);
+        }
+
+        return personalPlaces.stream()
+                .filter(place -> placeCountMap.get(place.getPlace().getName()) > 1)
+                .distinct()
+                .toList();
+    }
+
     private Promise findPromiseById(Long promiseId) {
         return promiseRepository.findById(promiseId)
                 .orElseThrow(() -> new PromiseException(ErrorCode.PROMISE_NOT_FOUND));
@@ -219,5 +266,21 @@ public class PromiseService {
                 .filter(p -> p.getStatus() == Status.SUSPENDED)
                 .count();
         return activeCount == peopleNumber;
+    }
+
+    private PromisePersonalTime getMostVotedTime(List<PromisePersonal> promisePersonals) {
+        return promisePersonals.stream()
+                .map(p -> promisePersonalTimeRepository.findByPromisePersonalId(p.getId()))
+                .filter(Objects::nonNull)
+                .max(Comparator.comparingInt(PromisePersonalTime::getVoteCount))
+                .orElse(null);
+    }
+
+    private PromisePersonalPlace getMostVotedPlace(List<PromisePersonal> promisePersonals) {
+        return promisePersonals.stream()
+                .map(p -> promisePersonalPlaceRepository.findByPromisePersonalId(p.getId()))
+                .filter(Objects::nonNull)
+                .max(Comparator.comparingInt(PromisePersonalPlace::getVoteCount))
+                .orElse(null);
     }
 }

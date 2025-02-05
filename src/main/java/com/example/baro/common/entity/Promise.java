@@ -94,8 +94,12 @@ public class Promise {
         }
     }
 
-    public void confirm(){
+    public void confirm(LocalDate date, LocalTime timeStart, LocalTime timeEnd, Place place) {
         this.status = Status.ACTIVE;
+        this.date = date;
+        this.timeStart = timeStart;
+        this.timeEnd = timeEnd;
+        this.place = place;
     }
 
 }

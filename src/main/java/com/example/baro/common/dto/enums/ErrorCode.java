@@ -30,6 +30,7 @@ public enum ErrorCode {
     SCHEDULE_NOT_FOUND(40403, NOT_FOUND, "schedule을 찾을 수 없습니다."),
     PROMISE_NOT_FOUND(40404, NOT_FOUND, "promise를 찾을 수 없습니다. "),
     PLACE_NOT_FOUND(40405, NOT_FOUND, "place를 찾을 수 없습니다. "),
+    TIME_NOT_FOUND(40406, NOT_FOUND, "해당 시간을 찾을 수 없습니다. "),
 
     // 409
     DATE_FORMAT_CONFLICT(40901, CONFLICT, "날짜 형식이 올바르지 않습니다."),

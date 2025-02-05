@@ -6,5 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PromisePersonalTimeRepository extends JpaRepository<PromisePersonalTime, Long> {
+    PromisePersonalTime findByPromisePersonalId(Long promisePersonalId);
+
     List<PromisePersonalTime> findByPromisePersonalIdIn(List<Long> personalPromiseIds);
 }
