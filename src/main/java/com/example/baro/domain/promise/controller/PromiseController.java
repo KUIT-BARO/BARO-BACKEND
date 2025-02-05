@@ -23,7 +23,6 @@ public class PromiseController {
 
     private final PromiseService promiseService;
 
-    // 아래 부분 컨벤션에 맞게 수정해주세요
     @Operation(
             summary = "약속 제안서 등록",
             description = "약속 제안서를 등록합니다. "
