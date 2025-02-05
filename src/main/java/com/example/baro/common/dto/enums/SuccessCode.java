@@ -21,11 +21,14 @@ public enum SuccessCode {
 	FRIEND_DELETE_SUCCESS(20006, HttpStatus.OK, "친구 삭제 성공"),
 	USER_SEARCH_SUCCESS(20007, HttpStatus.OK, "사용자 검색 성공"),
 	PROMISE_GET_SUCCESS(20008, HttpStatus.OK, "약속 정보 조회 성공"),
+	UPCOMING_PROMISE_DELETE_SUCCESS(20010, HttpStatus.OK, "약속이 정상적으로 삭제되었습니다."),
 
 	//201 CREATED
 	USER_SIGNUP_SUCCESS(20101, HttpStatus.CREATED, "회원가입에 성공하였습니다."),
 	FRIEND_REQUEST_SUCCESS(20102, HttpStatus.CREATED, "친구 추가에 성공하였습니다."),
 	LINK_CREATE_SUCCESS(20103, HttpStatus.CREATED, "링크 생성 성공");
+
+
 
 	private final int code;
 	private final HttpStatus httpStatus;
