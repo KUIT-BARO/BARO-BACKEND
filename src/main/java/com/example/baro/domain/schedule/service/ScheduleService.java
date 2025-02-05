@@ -1,5 +1,6 @@
 package com.example.baro.domain.schedule.service;
 
+import com.example.baro.common.Enum.dayOfWeek.DayOfWeek;
 import com.example.baro.common.dto.enums.ErrorCode;
 
 import com.example.baro.common.entity.User;
@@ -30,7 +31,7 @@ public class ScheduleService {
 
         Schedule schedule = Schedule.builder()
                 .name(request.getName())
-                .date(request.getDate())
+                .dayOfWeek(DayOfWeek.fromString(request.getDayOfWeek()))
                 .timeStart(request.getTimeStart())
                 .timeEnd(request.getTimeEnd())
                 .user(user)
@@ -40,7 +41,7 @@ public class ScheduleService {
         ScheduleResponseDto.ScheduleDto scheduleDto = ScheduleResponseDto.ScheduleDto.builder()
                 .id(schedule.getId())
                 .name(schedule.getName())
-                .date(schedule.getDate())
+                .dayOfWeek(schedule.getDayOfWeek().toJavaDayOfWeek())
                 .timeStart(schedule.getTimeStart())
                 .timeEnd(schedule.getTimeEnd())
                 .build();
@@ -59,7 +60,7 @@ public class ScheduleService {
                 .map(schedule -> ScheduleListResponseDto.ScheduleDto.builder()
                         .id(schedule.getId())
                         .name(schedule.getName())
-                        .date(schedule.getDate())
+                        .dayOfWeek(schedule.getDayOfWeek().toJavaDayOfWeek())
                         .timeStart(schedule.getTimeStart())
                         .timeEnd(schedule.getTimeEnd())
                         .build())
@@ -78,9 +79,9 @@ public class ScheduleService {
                 .map(schedule -> ScheduleListResponseDto.ScheduleDto.builder()
                         .id(schedule.getId())
                         .name(schedule.getName())
-                        .date(schedule.getDate())
-                        .time_start(schedule.getTimeStart())
-                        .time_end(schedule.getTimeEnd())
+                        .dayOfWeek(schedule.getDayOfWeek().toJavaDayOfWeek())
+                        .timeStart(schedule.getTimeStart())
+                        .timeEnd(schedule.getTimeEnd())
                         .build())
                 .toList();
 
@@ -100,7 +101,7 @@ public class ScheduleService {
        Schedule schedule = returnScheduleExist(scheduleId);
 
         schedule.update(request.getName(),
-                request.getDayOfWeek(),
+                DayOfWeek.fromString(request.getDayOfWeek()),
                 request.getTimeStart(),
                 request.getTimeEnd());
         scheduleRepository.save(schedule);
@@ -108,7 +109,7 @@ public class ScheduleService {
         ScheduleResponseDto.ScheduleDto scheduleDto = ScheduleResponseDto.ScheduleDto.builder()
                 .id(schedule.getId())
                 .name(schedule.getName())
-                .
+                .dayOfWeek(schedule.getDayOfWeek().toJavaDayOfWeek())
                 .timeStart(schedule.getTimeStart())
                 .timeEnd(schedule.getTimeEnd())
                 .build();
