@@ -1,4 +1,4 @@
-package com.example.baro.common.Enum.PromisePurpose;
+package com.example.baro.common.Enum.promisePurpose;
 
 import lombok.Getter;
 

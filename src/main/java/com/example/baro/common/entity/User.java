@@ -1,5 +1,7 @@
 package com.example.baro.common.entity;
 
+import com.example.baro.common.Enum.userProfile.UserProfile;
+import com.example.baro.common.Enum.userProfile.UserProfileConverter;
 import com.example.baro.common.Enum.status.Status;
 import com.example.baro.common.Enum.status.StatusConverter;
 import jakarta.persistence.*;
@@ -42,21 +44,24 @@ public class User {
     @Column(nullable = false, length = 30)
     private String nickname;
 
-    @Column(name = "profile_image", columnDefinition = "TEXT")
-    private int profileImage;
+    @Column(nullable = false)
+    @Convert(converter = UserProfileConverter.class)
+    private UserProfile profileImage;
 
     @Builder
     public User(String userId, String password, String nickname, int profileImage){
         this.userId = userId;
         this.password = password;
         this.nickname = nickname;
-        this.profileImage = profileImage;
     }
 
     @PrePersist
     protected void onCreate() {
         if (this.status == null) {
             this.status = Status.ACTIVE;
+        }
+        if (this.profileImage == null) {
+            this.profileImage = UserProfile.NONE;
         }
     }
 }

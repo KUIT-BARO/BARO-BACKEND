@@ -26,9 +26,6 @@ public class Search {
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "keyword_id", nullable = false)
-    private Keyword keyword;
 
     @Column(columnDefinition = "TEXT")
     private String note;
@@ -43,7 +40,6 @@ public class Search {
     public Search(User user, Place place, Keyword keyword, String note, Integer score, String image) {
         this.user = user;
         this.place = place;
-        this.keyword = keyword;
         this.note = note;
         this.score = score;
         this.image = image;
