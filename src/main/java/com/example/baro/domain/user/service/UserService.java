@@ -8,7 +8,6 @@ import com.example.baro.domain.user.dto.request.ProfileImageChangeRequestDto;
 import com.example.baro.domain.user.dto.response.MyPageResponseDto;
 import com.example.baro.domain.user.repository.*;
 import com.example.baro.domain.user.dto.response.HomeResponseDto;
-import com.example.baro.domain.user.dto.response.UserPromiseResponseDto;
 
 import com.example.baro.common.Enum.status.Status;
 import com.example.baro.common.entity.Promise;
@@ -18,7 +17,6 @@ import com.example.baro.common.entity.UserPromise;
 import com.example.baro.domain.user.dto.response.FindUserListResponseDto;
 import com.example.baro.domain.user.dto.response.UserPromiseListResponseDto;
 import com.example.baro.domain.user.repository.UserRepository;
-import com.example.baro.domain.user.dto.response.HomeResponseDto;
 import com.example.baro.domain.user.repository.PromisePersonalRepository;
 import com.example.baro.domain.user.repository.UserPromiseRepository;
 

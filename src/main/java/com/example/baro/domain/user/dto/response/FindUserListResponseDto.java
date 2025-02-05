@@ -1,5 +1,6 @@
 package com.example.baro.domain.user.dto.response;
 
+import com.example.baro.common.Enum.userProfile.UserProfile;
 import lombok.Builder;
 import java.util.List;
 
@@ -12,7 +13,7 @@ public record FindUserListResponseDto(List<FindUserDto> users) {
 			boolean isFriend,
 			String code,
 			String nickname,
-			int profileImage
+			UserProfile profileImage
 	) {
 	}
 }
