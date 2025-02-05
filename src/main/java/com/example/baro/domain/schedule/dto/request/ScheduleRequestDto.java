@@ -2,6 +2,7 @@ package com.example.baro.domain.schedule.dto.request;
 
 import lombok.Getter;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -10,10 +11,10 @@ public class ScheduleRequestDto {
 
     private String name;
 
-    private LocalDate date;
+    private String dayOfWeek;
 
-    private LocalTime time_start;
+    private LocalTime timeStart;
 
-    private LocalTime time_end;
+    private LocalTime timeEnd;
 
 }

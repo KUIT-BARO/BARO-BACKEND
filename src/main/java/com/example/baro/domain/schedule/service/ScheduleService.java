@@ -31,8 +31,8 @@ public class ScheduleService {
         Schedule schedule = Schedule.builder()
                 .name(request.getName())
                 .date(request.getDate())
-                .timeStart(request.getTime_start())
-                .timeEnd(request.getTime_end())
+                .timeStart(request.getTimeStart())
+                .timeEnd(request.getTimeEnd())
                 .user(user)
                 .build();
         scheduleRepository.save(schedule);
@@ -41,8 +41,8 @@ public class ScheduleService {
                 .id(schedule.getId())
                 .name(schedule.getName())
                 .date(schedule.getDate())
-                .time_start(schedule.getTimeStart())
-                .time_end(schedule.getTimeEnd())
+                .timeStart(schedule.getTimeStart())
+                .timeEnd(schedule.getTimeEnd())
                 .build();
 
         return ScheduleResponseDto.builder()
@@ -60,8 +60,8 @@ public class ScheduleService {
                         .id(schedule.getId())
                         .name(schedule.getName())
                         .date(schedule.getDate())
-                        .time_start(schedule.getTimeStart())
-                        .time_end(schedule.getTimeEnd())
+                        .timeStart(schedule.getTimeStart())
+                        .timeEnd(schedule.getTimeEnd())
                         .build())
                 .toList();
 
@@ -100,17 +100,17 @@ public class ScheduleService {
        Schedule schedule = returnScheduleExist(scheduleId);
 
         schedule.update(request.getName(),
-                request.getDate(),
-                request.getTime_start(),
-                request.getTime_end());
+                request.getDayOfWeek(),
+                request.getTimeStart(),
+                request.getTimeEnd());
         scheduleRepository.save(schedule);
 
         ScheduleResponseDto.ScheduleDto scheduleDto = ScheduleResponseDto.ScheduleDto.builder()
                 .id(schedule.getId())
                 .name(schedule.getName())
-                .date(schedule.getDate())
-                .time_start(schedule.getTimeStart())
-                .time_end(schedule.getTimeEnd())
+                .
+                .timeStart(schedule.getTimeStart())
+                .timeEnd(schedule.getTimeEnd())
                 .build();
 
         return ScheduleResponseDto.builder()

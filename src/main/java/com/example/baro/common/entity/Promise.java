@@ -14,6 +14,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -70,6 +72,7 @@ public class Promise {
     @JoinColumn(name = "place_id")
     private Place place;
 
+
     @Builder
     public Promise(String status, String name, LocalDate dateStart, LocalDate dateEnd, LocalTime timeStart,
                    LocalTime timeEnd, Integer peopleNumber, PromisePurpose purpose, Region region, Place place) {
@@ -90,4 +93,9 @@ public class Promise {
             this.status = Status.INACTIVE;
         }
     }
+
+    public void confirm(){
+        this.status = Status.ACTIVE;
+    }
+
 }

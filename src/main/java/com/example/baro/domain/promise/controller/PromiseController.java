@@ -4,8 +4,11 @@ import com.example.baro.common.dto.ApiResponseDto;
 import com.example.baro.common.dto.enums.ErrorCode;
 import com.example.baro.common.dto.enums.SuccessCode;
 import com.example.baro.domain.promise.dto.request.PromiseSuggestRequestDto;
+import com.example.baro.domain.promise.dto.request.PromiseVoteRequestDto;
+import com.example.baro.domain.promise.dto.response.PromiseConfirmResponseDto;
 import com.example.baro.domain.promise.dto.response.PromiseSuggestResponseDto;
 import com.example.baro.domain.promise.dto.response.PromiseViewResponseDto;
+import com.example.baro.domain.promise.dto.response.VotingPageResponseDto;
 import com.example.baro.domain.promise.service.PromiseService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -67,4 +70,46 @@ public class PromiseController {
         }
     }
 
+    @Operation(
+            summary = "투표 페이지 조회",
+            description = "최종 약속 선정을 위한 투표 페이지를 조회합니다."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "투표 페이지 조회에 성공하였습니다."
+    )
+    @GetMapping("/vote/{promiseId}")
+    public ApiResponseDto<VotingPageResponseDto> getVotingPage(@PathVariable Long promiseId) {
+        VotingPageResponseDto response = promiseService.getVotingPromisePage(promiseId);
+        return ApiResponseDto.success(SuccessCode.PROMISE_VOTE_PAGE_GET_SUCCESS, response);
+    }
+
+    @Operation(
+            summary = "투표 완료",
+            description = "약속 선정을 위한 투표를 합니다."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "약속 선정 투표에 성공하였습니다."
+    )
+    @PostMapping("/vote/{promiseId}")
+    public ApiResponseDto<Void> votePromise(@RequestBody PromiseVoteRequestDto request,
+                                            @PathVariable Long promiseId) {
+        promiseService.votePromise(request, promiseId);
+        return ApiResponseDto.success(SuccessCode.PROMISE_VOTE_POST_SUCCESS);
+    }
+
+    @Operation(
+            summary = "확정된 약속 조회",
+            description = "확정된 약속을 조회합니다."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "확정된 약속 조회에 성공하였습니다."
+    )
+    @GetMapping("/confirm/{promiseId}")
+    public ApiResponseDto<PromiseConfirmResponseDto> getPromiseConfirmPage(@PathVariable Long promiseId) {
+        PromiseConfirmResponseDto response = promiseService.getConfirmPromisePage(promiseId);
+        return ApiResponseDto.success(SuccessCode.PROMISE_CONFIRM_PAGE_GET_SUCCESS, response);
+    }
 }

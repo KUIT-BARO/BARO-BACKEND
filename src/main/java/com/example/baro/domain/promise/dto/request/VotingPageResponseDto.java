@@ -20,7 +20,6 @@ public record VotingPageResponseDto (
 
     @Builder
     public record PlaceDto(
-            Long placeId,
             String placeName
     ){}
 

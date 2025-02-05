@@ -59,4 +59,8 @@ public class PromisePersonal {
             this.status = Status.INACTIVE;
         }
     }
+
+    public void vote(){
+        this.status = Status.SUSPENDED;
+    }
 }

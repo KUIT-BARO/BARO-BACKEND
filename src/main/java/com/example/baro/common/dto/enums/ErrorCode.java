@@ -29,10 +29,13 @@ public enum ErrorCode {
     REVIEW_NOT_FOUND(40402, NOT_FOUND, "review를 찾을 수 없습니다."),
     SCHEDULE_NOT_FOUND(40403, NOT_FOUND, "schedule을 찾을 수 없습니다."),
     PROMISE_NOT_FOUND(40404, NOT_FOUND, "promise를 찾을 수 없습니다. "),
+    PLACE_NOT_FOUND(40405, NOT_FOUND, "place를 찾을 수 없습니다. "),
 
     // 409
     DATE_FORMAT_CONFLICT(40901, CONFLICT, "날짜 형식이 올바르지 않습니다."),
     DUPLICATE_ENTITY_CONFLICT(40902, CONFLICT, "이미 존재하는 사용자입니다."),
+    PROMISE_NOT_YET_VOTE_CONFLICT(40903, CONFLICT, "모든 사용자가 투표하지 않았습니다. "),
+    PROMISE_NOT_YET_AGREE_CONFLICT(40904, CONFLICT, "모든 사용자가 제안을 수락하지 않았습니다. "),
 
     // 500
     SERVER_ERROR(50001, INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다.");

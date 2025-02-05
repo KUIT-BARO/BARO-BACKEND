@@ -24,7 +24,9 @@ public enum SuccessCode {
 	SCHEDULE_GET_SUCCESS(20009, HttpStatus.OK, "시간표 조회 성공"),
 	SCHEDULE_UPDATE_SUCCESS(20010, HttpStatus.OK, "시간표 수정 성공"),
 	MY_SCHEDULE_GET_SUCCESS(20011, HttpStatus.OK, "나의 시간표 조회 성공"),
-
+	PROMISE_VOTE_PAGE_GET_SUCCESS(20012, HttpStatus.OK, "약속 투표 페이지 조회 성공"),
+	PROMISE_CONFIRM_PAGE_GET_SUCCESS(20013, HttpStatus.OK, "확정된 약속 페이지 조회 성공"),
+	PROMISE_VOTE_POST_SUCCESS(20014, HttpStatus.OK, "약속 선정 투표에 성공했습니다,"),
 
 	//201 CREATED
 	USER_SIGNUP_SUCCESS(20101, HttpStatus.CREATED, "회원가입에 성공하였습니다."),

@@ -11,5 +11,6 @@ public class PromiseVoteRequestDto {
     LocalDate date;
     LocalTime timeStart;
     LocalTime timeEnd;
+    Long placeId;
     String placeName;
 }

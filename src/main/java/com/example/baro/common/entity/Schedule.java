@@ -74,9 +74,9 @@ public class Schedule {
         }
     }
 
-    public void update(String name, LocalDate date, LocalTime timeStart, LocalTime timeEnd) {
+    public void update(String name, DayOfWeek dayOfWeek, LocalTime timeStart, LocalTime timeEnd) {
         this.name = name;
-        this.date = date;
+        this.dayOfWeek = dayOfWeek;
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
     }
