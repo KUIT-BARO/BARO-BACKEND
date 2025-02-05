@@ -8,16 +8,12 @@ import com.example.baro.common.resolver.LoginUser;
 import com.example.baro.domain.user.dto.request.ProfileImageChangeRequestDto;
 import com.example.baro.domain.user.dto.response.HomeResponseDto;
 import com.example.baro.domain.user.dto.response.MyPageResponseDto;
-import com.example.baro.domain.user.dto.response.UserPromiseResponseDto;
 import com.example.baro.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.baro.domain.user.dto.response.FindUserListResponseDto;
-import com.example.baro.domain.user.dto.response.HomeResponseDto;
 import com.example.baro.domain.user.dto.response.UserPromiseListResponseDto;
-import com.example.baro.domain.user.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
