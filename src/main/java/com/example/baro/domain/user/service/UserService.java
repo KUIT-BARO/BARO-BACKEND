@@ -9,6 +9,19 @@ import com.example.baro.domain.user.dto.response.MyPageResponseDto;
 import com.example.baro.domain.user.repository.*;
 import com.example.baro.domain.user.dto.response.HomeResponseDto;
 import com.example.baro.domain.user.dto.response.UserPromiseResponseDto;
+
+import com.example.baro.common.Enum.status.Status;
+import com.example.baro.common.entity.Promise;
+import com.example.baro.common.entity.PromisePersonal;
+import com.example.baro.common.entity.User;
+import com.example.baro.common.entity.UserPromise;
+import com.example.baro.domain.user.dto.response.FindUserListResponseDto;
+import com.example.baro.domain.user.dto.response.UserPromiseListResponseDto;
+import com.example.baro.domain.user.repository.UserRepository;
+import com.example.baro.domain.user.dto.response.HomeResponseDto;
+import com.example.baro.domain.user.repository.PromisePersonalRepository;
+import com.example.baro.domain.user.repository.UserPromiseRepository;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,6 +65,7 @@ public class UserService {
 		Promise upCommingPromise = promises.get(0);
 		HomeResponseDto.UpcomingDdayDto upComingDdayDto = HomeResponseDto.UpcomingDdayDto.builder().promiseId(upCommingPromise.getId())
 				.name(upCommingPromise.getName())
+				.purpose(upCommingPromise.getPurpose())
 				.date(upCommingPromise.getDate())
 				.timeStart(upCommingPromise.getTimeStart())
 				.timeEnd(upCommingPromise.getTimeEnd())
@@ -61,6 +75,7 @@ public class UserService {
 		for (Promise promise : promises) {
 			HomeResponseDto.UpcomingPromiseDto upcomingPromiseDto = HomeResponseDto.UpcomingPromiseDto.builder().promiseId(upCommingPromise.getId())
 					.name(promise.getName())
+					.purpose(promise.getPurpose())
 					.date(promise.getDate())
 					.timeStart(promise.getTimeStart())
 					.timeEnd(promise.getTimeEnd())
@@ -76,10 +91,74 @@ public class UserService {
 		return homeResponseDto;
 	}
 
-	public UserPromiseResponseDto getPromisePageInfo(User user) {
-		List<PromisePersonal> promisePersonals = promisePersonalRepository.findAllByUser(user);
+	public UserPromiseListResponseDto getPromisePageInfo(User user) {
+		List<UserPromise> userPromises = userPromiseRepository.findAllByUserAndDisplayTrue(user);
+		List<PromisePersonal> promisePersonals = promisePersonalRepository.findAllByUserAndStatus(user, Status.SUSPENDED);
 
-		return null;
+		promisePersonals.sort(Comparator.comparing(up -> up.getPromise().getDate()));
+		List<Promise> pendingPromises = promisePersonals.stream()
+				.map(PromisePersonal::getPromise)
+				.sorted(Comparator.comparing(Promise::getDate)).toList();
+
+		userPromises.sort(Comparator.comparing(up -> up.getPromise().getDate()));
+		List<Promise> promises = userPromises.stream()
+				.map(UserPromise::getPromise)
+				.sorted(Comparator.comparing(Promise::getDate)).toList();
+
+
+		List<UserPromiseListResponseDto.PendingPromisesDto> pendingPromiseDtos = new ArrayList<>();
+		if (!pendingPromises.isEmpty()) {
+			for (Promise promise : pendingPromises) {
+				UserPromiseListResponseDto.PendingPromisesDto pendingPromisesDto = UserPromiseListResponseDto.PendingPromisesDto.builder()
+						.promiseId(promise.getId())
+						.name(promise.getName())
+						.purpose(promise.getPurpose())
+						.dateStart(promise.getDateStart())
+						.dateEnd((promise.getDateEnd()))
+						.place(promise.getPlace().getName())
+						.peopleNumber(promise.getPeopleNumber()).build();
+				pendingPromiseDtos.add(pendingPromisesDto);
+			}
+		}
+
+		List<UserPromiseListResponseDto.UpcomingPromiseDto> upcomingPromiseDtos = new ArrayList<>();
+		if (!promises.isEmpty()) {
+			for (Promise promise : promises) {
+				UserPromiseListResponseDto.UpcomingPromiseDto promiseDto = UserPromiseListResponseDto.UpcomingPromiseDto.builder()
+						.promiseId(promise.getId())
+						.name(promise.getName())
+						.purpose(promise.getPurpose())
+						.date(promise.getDate())
+						.timeStart(promise.getTimeStart())
+						.timeEnd(promise.getTimeEnd())
+						.place(promise.getPlace().getName())
+						.peopleNumber(promise.getPeopleNumber()).build();
+				upcomingPromiseDtos.add(promiseDto);
+			}
+		}
+
+		UserPromiseListResponseDto responseDto = UserPromiseListResponseDto.builder()
+				.pendingPromises(pendingPromiseDtos)
+				.upcomingPromises(upcomingPromiseDtos).build();
+		return responseDto;
+	}
+
+	@Transactional
+	public FindUserListResponseDto searchUsersByCode(Long userId, String code) {
+		List<Object[]> results = userRepository.searchUsersWithFriendStatus(userId, code);
+		List<FindUserListResponseDto.FindUserDto> userDtos = new ArrayList<>();
+		for (Object[] result : results) {
+			User user = (User) result[0];
+			boolean isFriend = (Boolean) result[1];
+			FindUserListResponseDto.FindUserDto userDto = FindUserListResponseDto.FindUserDto.builder()
+					.userId(user.getId())
+					.isFriend(isFriend)
+					.code(user.getUserId())
+					.nickname(user.getNickname())
+					.profileImage(user.getProfileImage()).build();
+			userDtos.add(userDto);
+		}
+		return FindUserListResponseDto.builder().users(userDtos).build();
 	}
 
 

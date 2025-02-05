@@ -8,19 +8,18 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Builder
-public record HomeResponseDto(
+public record UserPromiseListResponseDto(
 		String name,
-		UpcomingDdayDto upcomingDday,
+		List<PendingPromisesDto> pendingPromises,
 		List<UpcomingPromiseDto> upcomingPromises
 ) {
 	@Builder
-	public record UpcomingDdayDto(
+	public record PendingPromisesDto(
 			Long promiseId,
 			String name,
 			PromisePurpose purpose,
-			LocalDate date,
-			LocalTime timeStart,
-			LocalTime timeEnd,
+			LocalDate dateStart,
+			LocalDate dateEnd,
 			String place,
 			int peopleNumber
 	) {
