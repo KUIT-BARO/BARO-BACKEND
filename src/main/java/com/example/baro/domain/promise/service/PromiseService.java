@@ -90,6 +90,7 @@ public class PromiseService {
                         .date(promisePersonalTime.getDate())
                         .timeStart(promisePersonalTime.getTimeStart())
                         .timeEnd(promisePersonalTime.getTimeEnd())
+                        .status(promisePersonalTime.getStatus())
                         .build())
                 .toList();
 
@@ -97,6 +98,7 @@ public class PromiseService {
                 .map(place -> VotingPageResponseDto.PlaceDto.builder()
                         .placeId(place.getId())
                         .placeName(place.getPlace().getName())
+                        .status(place.getStatus())
                         .build())
                 .toList();
 

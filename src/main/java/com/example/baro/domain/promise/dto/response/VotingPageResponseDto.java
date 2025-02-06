@@ -1,5 +1,6 @@
 package com.example.baro.domain.promise.dto.response;
 
+import com.example.baro.common.Enum.status.Status;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -16,13 +17,15 @@ public record VotingPageResponseDto (
             Long promisePersonalTimeId,
             LocalDate date,
             LocalTime timeStart,
-            LocalTime timeEnd
+            LocalTime timeEnd,
+            Status status
     ){}
 
     @Builder
     public record PlaceDto(
             Long placeId,
-            String placeName
+            String placeName,
+            Status status
     ){}
 
 }
