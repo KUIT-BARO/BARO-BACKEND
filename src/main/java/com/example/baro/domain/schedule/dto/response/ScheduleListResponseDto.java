@@ -10,7 +10,8 @@ import java.util.List;
 
 @Builder
 public record ScheduleListResponseDto (
-    List<ScheduleDto> schedules
+        Long userId,
+        List<ScheduleDto> schedules
 ) {
 
     @Builder

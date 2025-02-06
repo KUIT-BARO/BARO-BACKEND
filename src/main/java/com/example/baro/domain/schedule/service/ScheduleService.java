@@ -67,6 +67,7 @@ public class ScheduleService {
                 .toList();
 
         return ScheduleListResponseDto.builder()
+                .userId(userId)
                 .schedules(scheduleDtos)
                 .build();
     }
@@ -86,6 +87,7 @@ public class ScheduleService {
                 .toList();
 
         return ScheduleListResponseDto.builder()
+                .userId(userId)
                 .schedules(scheduleDtos)
                 .build();
     }

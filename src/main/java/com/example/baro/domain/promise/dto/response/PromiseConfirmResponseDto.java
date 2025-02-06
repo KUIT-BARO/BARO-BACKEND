@@ -18,7 +18,7 @@ public record PromiseConfirmResponseDto (
             int peopleNum,
             PromisePurpose purpose,
             String placeName,
-            String UserName
+            String leaderName
     ){}
 }
 

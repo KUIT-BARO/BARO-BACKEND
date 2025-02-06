@@ -38,13 +38,14 @@ public class PromiseService {
     private final LocalTime defaultEndTime = LocalTime.of(18, 0);
     private final PromisePersonalRepository promisePersonalRepository;
 
-    public PromiseSuggestResponseDto registerPromise(PromiseSuggestRequestDto request) {
+    public PromiseSuggestResponseDto registerPromise(PromiseSuggestRequestDto request, String userName) {
         Promise promise = Promise.builder()
                 .name(request.getName())
                 .dateStart(DateParser.parseDate(request.getDateStart()))
                 .dateEnd(DateParser.parseDate(request.getDateEnd()))
                 .peopleNumber(request.getPeopleNumber())
                 .purpose(PromisePurpose.fromString(request.getPurpose()))
+                .leaderName(userName)
                 .build();
 
         promiseRepository.save(promise);
@@ -55,8 +56,10 @@ public class PromiseService {
                 .purpose(promise.getPurpose())
                 .dateStart(promise.getDateStart())
                 .dateEnd(promise.getDateEnd())
-                .place(promise.getPlace().getName())
-                .peopleNumber(promise.getPeopleNumber()).build();
+                .placeName(promise.getPlace().getName())
+                .peopleNumber(promise.getPeopleNumber())
+                .leaderName(promise.getLeaderName())
+              .build();
     }
 
     public void deletePromise(Long promiseId) {
@@ -156,9 +159,6 @@ public class PromiseService {
             throw new PromiseException(ErrorCode.PROMISE_NOT_YET_VOTE_CONFLICT);
         }
 
-        UserPromise userPromise = userPromiseRepository.findById(promise.getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
         Place place = placeRepository.findById(promise.getPlace().getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
 
@@ -169,7 +169,7 @@ public class PromiseService {
                 .peopleNum(promise.getPeopleNumber())
                 .purpose(promise.getPurpose())
                 .placeName(place.getName())
-                .UserName(userPromise.getUser().getNickname())
+                .leaderName(promise.getLeaderName())
                 .build();
 
         return PromiseConfirmResponseDto.builder()

@@ -3,6 +3,8 @@ package com.example.baro.domain.promise.controller;
 import com.example.baro.common.dto.ApiResponseDto;
 import com.example.baro.common.dto.enums.ErrorCode;
 import com.example.baro.common.dto.enums.SuccessCode;
+import com.example.baro.common.entity.User;
+import com.example.baro.common.resolver.LoginUser;
 import com.example.baro.domain.promise.dto.request.PromiseSuggestRequestDto;
 import com.example.baro.domain.promise.dto.request.PromiseVoteRequestDto;
 import com.example.baro.domain.promise.dto.response.PromiseConfirmResponseDto;
@@ -36,11 +38,11 @@ public class PromiseController {
             description = "약속 제안서 등록에 성공하였습니다."
     )
     @PostMapping("/suggest")
-    public ResponseEntity<PromiseSuggestResponseDto> registerPromise(
-            @RequestBody PromiseSuggestRequestDto request) {
+    public ApiResponseDto<PromiseSuggestResponseDto> registerPromise(
+            @RequestBody PromiseSuggestRequestDto request, @LoginUser User user) {
 
-        PromiseSuggestResponseDto response = promiseService.registerPromise(request);
-        return ResponseEntity.ok(response);
+        PromiseSuggestResponseDto response = promiseService.registerPromise(request, user.getNickname());
+        return  ApiResponseDto.success(SuccessCode.PROMISE_GET_SUCCESS, response);
     }
 
     @Operation(

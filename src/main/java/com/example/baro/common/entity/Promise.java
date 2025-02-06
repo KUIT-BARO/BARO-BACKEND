@@ -64,6 +64,10 @@ public class Promise {
     @Convert(converter = StatusConverter.class)
     private PromisePurpose purpose;
 
+
+    @Column(nullable = false, length = 30)
+    private String leaderName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id")
     private Region region;
@@ -75,7 +79,7 @@ public class Promise {
 
     @Builder
     public Promise(String status, String name, LocalDate dateStart, LocalDate dateEnd, LocalTime timeStart,
-                   LocalTime timeEnd, Integer peopleNumber, PromisePurpose purpose, Region region, Place place) {
+                   LocalTime timeEnd, Integer peopleNumber, PromisePurpose purpose, String leaderName, Region region, Place place) {
         this.name = name;
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
@@ -83,6 +87,7 @@ public class Promise {
         this.timeEnd = timeEnd;
         this.peopleNumber = peopleNumber;
         this.purpose = purpose;
+        this.leaderName = leaderName;
         this.region = region;
         this.place = place;
     }
