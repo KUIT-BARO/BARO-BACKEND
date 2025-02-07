@@ -1,4 +1,6 @@
 package com.example.baro.common.entity;
+import com.example.baro.common.Enum.status.Status;
+import com.example.baro.common.Enum.status.StatusConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,6 +21,10 @@ public class PromisePersonalTime {
     private Long id;
 
     @Column(nullable = false)
+    @Convert(converter = StatusConverter.class)
+    private Status status;
+
+    @Column(nullable = false)
     private LocalDate date;
 
     @Column(nullable = false)
@@ -31,11 +37,19 @@ public class PromisePersonalTime {
     @JoinColumn(name = "promise_individual_id", nullable = false)
     private PromisePersonal promisePersonal;
 
+    @Column(nullable = false)
+    private int voteCount;
+
     @Builder
-    public PromisePersonalTime(LocalDate date, LocalTime timeStart, LocalTime timeEnd, PromisePersonal promisePersonal) {
+    public PromisePersonalTime(Status status, LocalDate date, LocalTime timeStart, LocalTime timeEnd, PromisePersonal promisePersonal) {
         this.date = date;
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
         this.promisePersonal = promisePersonal;
+    }
+
+    public void vote(){
+        this.status = Status.SUSPENDED;
+        this.voteCount++;
     }
 }

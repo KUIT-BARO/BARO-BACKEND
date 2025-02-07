@@ -15,4 +15,9 @@ public interface PromisePersonalRepository extends JpaRepository<PromisePersonal
 	List<PromisePersonal> findAllByUser(User user);
 
 	List<PromisePersonal> findAllByUserAndStatus(User user, Status status);
+
+	List<PromisePersonal> findAllByPromiseId(Long promiseId);
+
+	@Query("SELECT p.id FROM PromisePersonal p WHERE p.promise.id = :promiseId AND p.status = 'ACTIVE'")
+	List<Long> findActivePersonalPromiseIdsByPromiseId(@Param("promiseId") Long promiseId);
 }
