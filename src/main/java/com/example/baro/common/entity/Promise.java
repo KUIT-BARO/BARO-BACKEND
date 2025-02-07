@@ -14,6 +14,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -62,6 +64,10 @@ public class Promise {
     @Convert(converter = StatusConverter.class)
     private PromisePurpose purpose;
 
+
+    @Column(nullable = false, length = 30)
+    private String leaderName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id")
     private Region region;
@@ -70,9 +76,10 @@ public class Promise {
     @JoinColumn(name = "place_id")
     private Place place;
 
+
     @Builder
     public Promise(String status, String name, LocalDate dateStart, LocalDate dateEnd, LocalTime timeStart,
-                   LocalTime timeEnd, Integer peopleNumber, PromisePurpose purpose, Region region, Place place) {
+                   LocalTime timeEnd, Integer peopleNumber, PromisePurpose purpose, String leaderName, Region region, Place place) {
         this.name = name;
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
@@ -80,6 +87,7 @@ public class Promise {
         this.timeEnd = timeEnd;
         this.peopleNumber = peopleNumber;
         this.purpose = purpose;
+        this.leaderName = leaderName;
         this.region = region;
         this.place = place;
     }
@@ -87,7 +95,16 @@ public class Promise {
     @PrePersist
     protected void onCreate() {
         if (this.status == null) {
-            this.status = Status.ACTIVE;
+            this.status = Status.INACTIVE;
         }
     }
+
+    public void confirm(LocalDate date, LocalTime timeStart, LocalTime timeEnd, Place place) {
+        this.status = Status.ACTIVE;
+        this.date = date;
+        this.timeStart = timeStart;
+        this.timeEnd = timeEnd;
+        this.place = place;
+    }
+
 }

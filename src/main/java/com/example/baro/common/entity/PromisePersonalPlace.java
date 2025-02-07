@@ -4,19 +4,14 @@ import com.example.baro.common.Enum.status.Status;
 import com.example.baro.common.Enum.status.StatusConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "promise_personal")
-public class PromisePersonal {
+@Table(name = "promise_personal_place")
+public class PromisePersonalPlace {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,30 +21,19 @@ public class PromisePersonal {
     @Convert(converter = StatusConverter.class)
     private Status status;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "promise_personal_id", nullable = false)
+    private PromisePersonal promisePersonal;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "promise_id", nullable = false)
-    private Promise promise;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 
-    @Builder
-    public PromisePersonal(String status, Promise promise, User user, Place place) {
-        this.promise = promise;
-        this.user = user;
+    @Column(nullable = false)
+    private int voteCount;
+
+    public PromisePersonalPlace(Status status, PromisePersonal promisePersonal, Place place) {
+        this.promisePersonal = promisePersonal;
         this.place = place;
     }
 
@@ -62,5 +46,6 @@ public class PromisePersonal {
 
     public void vote(){
         this.status = Status.SUSPENDED;
+        this.voteCount++;
     }
 }
