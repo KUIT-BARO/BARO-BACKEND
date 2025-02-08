@@ -1,10 +1,8 @@
-package com.example.baro.domain.schedule.dto.response;
+package com.example.baro.domain.user.dto.response;
 
 import lombok.Builder;
-import lombok.Data;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 

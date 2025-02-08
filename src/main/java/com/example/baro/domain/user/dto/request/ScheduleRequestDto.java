@@ -1,9 +1,7 @@
-package com.example.baro.domain.schedule.dto.request;
+package com.example.baro.domain.user.dto.request;
 
 import lombok.Getter;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter

@@ -7,10 +7,7 @@ import com.example.baro.common.entity.User;
 import com.example.baro.common.resolver.LoginUser;
 import com.example.baro.domain.promise.dto.request.PromiseSuggestRequestDto;
 import com.example.baro.domain.promise.dto.request.PromiseVoteRequestDto;
-import com.example.baro.domain.promise.dto.response.PromiseConfirmResponseDto;
-import com.example.baro.domain.promise.dto.response.PromiseSuggestResponseDto;
-import com.example.baro.domain.promise.dto.response.PromiseViewResponseDto;
-import com.example.baro.domain.promise.dto.response.VotingPageResponseDto;
+import com.example.baro.domain.promise.dto.response.*;
 import com.example.baro.domain.promise.service.PromiseService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -113,5 +110,19 @@ public class PromiseController {
     public ApiResponseDto<PromiseConfirmResponseDto> getPromiseConfirmPage(@PathVariable Long promiseId) {
         PromiseConfirmResponseDto response = promiseService.getConfirmPromisePage(promiseId);
         return ApiResponseDto.success(SuccessCode.PROMISE_CONFIRM_PAGE_GET_SUCCESS, response);
+    }
+
+    @Operation(
+            summary = "리뷰된 장소 조회",
+            description = "리뷰된 장소를 조회합니다."
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "리뷰된 장소 조회에 성공하였습니다."
+    )
+    @GetMapping("/user-place")
+    public ApiResponseDto<UserPlaceListResponseDto> getPromiseConfirmPage(@LoginUser User user) {
+        UserPlaceListResponseDto response = promiseService.getUserPlace(user.getId());
+        return ApiResponseDto.success(SuccessCode.USER_PLACE_GET_SUCCESS, response);
     }
 }
