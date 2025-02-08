@@ -44,7 +44,7 @@ public class Place {
     @Column(nullable = false, precision = 10, scale = 7)
     private BigDecimal longitude; // 경도
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, unique = true)
     private String address;
 
     @Builder
