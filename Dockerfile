@@ -1,4 +1,23 @@
+# Amazon Corretto 17 기반 이미지 사용
 FROM amazoncorretto:17
+
+# 환경변수 정의 (빌드 시 전달)
+ARG DATASOURCE_PASSWORD
+ARG DATASOURCE_URL
+ARG DATASOURCE_URL_DEV
+ARG DATASOURCE_USERNAME
+
+# 컨테이너 실행 시 유지될 환경변수
+ENV DATASOURCE_PASSWORD=$DATASOURCE_PASSWORD
+ENV DATASOURCE_URL=$DATASOURCE_URL
+ENV DATASOURCE_URL_DEV=$DATASOURCE_URL_DEV
+ENV DATASOURCE_USERNAME=$DATASOURCE_USERNAME
+
+# 컨테이너에서 사용할 포트 설정
 EXPOSE 8080
+
+# JAR 파일 복사
 COPY ./build/libs/*.jar ./app.jar
+
+# 애플리케이션 실행
 ENTRYPOINT ["java", "-jar", "app.jar"]
