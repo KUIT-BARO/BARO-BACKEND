@@ -1,15 +1,15 @@
-package com.example.baro.domain.schedule.service;
+package com.example.baro.domain.user.service;
 
 import com.example.baro.common.Enum.dayOfWeek.DayOfWeek;
 import com.example.baro.common.dto.enums.ErrorCode;
 
 import com.example.baro.common.entity.User;
 import com.example.baro.common.exception.exceptionClass.CustomException;
-import com.example.baro.domain.schedule.dto.request.ScheduleRequestDto;
-import com.example.baro.domain.schedule.dto.response.ScheduleListResponseDto;
-import com.example.baro.domain.schedule.dto.response.ScheduleResponseDto;
+import com.example.baro.domain.user.dto.request.ScheduleRequestDto;
+import com.example.baro.domain.user.dto.response.ScheduleListResponseDto;
+import com.example.baro.domain.user.dto.response.ScheduleResponseDto;
 import com.example.baro.common.entity.Schedule;
-import com.example.baro.domain.schedule.exception.ScheduleException;
+import com.example.baro.domain.user.exception.ScheduleException;
 import com.example.baro.domain.user.repository.ScheduleRepository;
 import com.example.baro.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
