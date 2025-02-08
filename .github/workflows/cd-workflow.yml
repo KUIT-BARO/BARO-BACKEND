@@ -36,7 +36,14 @@ jobs:
 
       - name: "🐳 Docker build & push"
         run:  |
-          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }} .
+          docker build -f Dockerfile \
+            --build-arg DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }} \
+            --build-arg DATASOURCE_URL=${{ secrets.DATASOURCE_URL }} \
+            --build-arg DATASOURCE_URL_DEV=${{ secrets.DATASOURCE_URL_DEV }} \
+            --build-arg DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }} \
+            --build-arg SPRING_PROFILES_ACTIVE=dev \
+            -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }} .
+
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
           
       # AWS 인증
