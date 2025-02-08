@@ -6,6 +6,7 @@ import com.example.baro.common.dto.enums.ErrorCode;
 import com.example.baro.common.entity.*;
 import com.example.baro.common.exception.exceptionClass.CustomException;
 import com.example.baro.domain.place.repository.PlaceRepository;
+import com.example.baro.domain.place.repository.SearchRepository;
 import com.example.baro.domain.promise.dto.request.PromiseSuggestRequestDto;
 import com.example.baro.domain.promise.dto.request.PromiseVoteRequestDto;
 import com.example.baro.domain.promise.dto.response.*;
@@ -18,11 +19,15 @@ import com.example.baro.domain.user.repository.PromisePersonalRepository;
 import com.example.baro.domain.user.repository.UserPromiseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -31,12 +36,32 @@ public class PromiseService {
 
     private final PromiseRepository promiseRepository;
     private final PlaceRepository placeRepository;
-    private final UserPromiseRepository userPromiseRepository;
+    private final SearchRepository searchRepository;
     private final PromisePersonalTimeRepository promisePersonalTimeRepository;
     private final PromisePersonalPlaceRepository promisePersonalPlaceRepository;
     private final LocalTime defaultStartTime = LocalTime.of(9, 0);
     private final LocalTime defaultEndTime = LocalTime.of(18, 0);
     private final PromisePersonalRepository promisePersonalRepository;
+
+    public UserPlaceListResponseDto getUserPlace(Long userId){
+        List<Place> places = searchRepository.findPlacesByUserId(userId, PageRequest.of(0, 6));
+
+        if (places == null || places.isEmpty()) {
+            places = placeRepository.findRandomPlaces(PageRequest.of(0, 6));
+        }
+
+        List<UserPlaceListResponseDto.UserPlaceDto> placeDtoList = places.stream()
+                .map(place -> UserPlaceListResponseDto.UserPlaceDto.builder()
+                        .placeId(place.getId())
+                        .address(place.getAddress())
+                        .placeName(place.getName())
+                        .build())
+                .toList();
+
+        return UserPlaceListResponseDto.builder()
+                .userPlaceDto(placeDtoList)
+                .build();
+    }
 
     public PromiseSuggestResponseDto registerPromise(PromiseSuggestRequestDto request, String userName) {
         Promise promise = Promise.builder()
@@ -285,4 +310,5 @@ public class PromiseService {
                 .max(Comparator.comparingInt(PromisePersonalPlace::getVoteCount))
                 .orElse(null);
     }
+
 }

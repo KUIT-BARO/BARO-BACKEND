@@ -1,13 +1,13 @@
-package com.example.baro.domain.schedule.controller;
+package com.example.baro.domain.user.controller;
 
 import com.example.baro.common.dto.ApiResponseDto;
 import com.example.baro.common.dto.enums.SuccessCode;
 import com.example.baro.common.entity.User;
 import com.example.baro.common.resolver.LoginUser;
-import com.example.baro.domain.schedule.dto.request.ScheduleRequestDto;
-import com.example.baro.domain.schedule.dto.response.ScheduleListResponseDto;
-import com.example.baro.domain.schedule.dto.response.ScheduleResponseDto;
-import com.example.baro.domain.schedule.service.ScheduleService;
+import com.example.baro.domain.user.dto.request.ScheduleRequestDto;
+import com.example.baro.domain.user.dto.response.ScheduleListResponseDto;
+import com.example.baro.domain.user.dto.response.ScheduleResponseDto;
+import com.example.baro.domain.user.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
