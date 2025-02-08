@@ -10,14 +10,13 @@ import com.example.baro.domain.schedule.dto.response.ScheduleListResponseDto;
 import com.example.baro.domain.schedule.dto.response.ScheduleResponseDto;
 import com.example.baro.common.entity.Schedule;
 import com.example.baro.domain.schedule.exception.ScheduleException;
-import com.example.baro.domain.schedule.repository.ScheduleRepository;
+import com.example.baro.domain.user.repository.ScheduleRepository;
 import com.example.baro.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional

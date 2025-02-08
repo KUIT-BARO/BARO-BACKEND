@@ -187,7 +187,7 @@ public class PromiseService {
         }
 
         // 활성화된 PersonalPromise에 속한 userId 가져오기
-        List<Long> activePersonalPromiseIds = promisePersonalRepository.findActivePersonalPromiseIdsByPromiseId(promiseId);
+        List<Long> activePersonalPromiseIds = promisePersonalRepository.findActivePersonalPromiseIdsByPromiseId(promiseId, Status.ACTIVE);
 
         // 해당 PersonalPromise들의 모든 개인 시간(PromisePersonalTime) 조회
         List<PromisePersonalTime> personalTimes = promisePersonalTimeRepository.findByPromisePersonalIdIn(activePersonalPromiseIds);
@@ -232,7 +232,7 @@ public class PromiseService {
             throw new PromiseException(ErrorCode.PROMISE_NOT_YET_AGREE_CONFLICT);
         }
 
-        List<Long> activePersonalPromiseIds = promisePersonalRepository.findActivePersonalPromiseIdsByPromiseId(promiseId);
+        List<Long> activePersonalPromiseIds = promisePersonalRepository.findActivePersonalPromiseIdsByPromiseId(promiseId, Status.ACTIVE);
         List<PromisePersonalPlace> personalPlaces = promisePersonalPlaceRepository.findByPromisePersonalIdIn(activePersonalPromiseIds);
 
         return findOverlappingPersonalPlaces(personalPlaces);
