@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: "h2"
+    active:
     group:
       "local": "localDB, devPort, web-mvc"
       "dev": "devDB, devPort, web-mvc"
@@ -109,7 +109,7 @@ spring:
   config:
     activate:
       on-profile: "h2DB"
-
+  
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:file:./data/demo
@@ -119,6 +119,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+      globally_quoted_identifiers: true
     show-sql: true
 
   h2:
