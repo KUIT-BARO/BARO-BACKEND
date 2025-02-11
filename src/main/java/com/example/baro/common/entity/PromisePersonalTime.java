@@ -34,18 +34,27 @@ public class PromisePersonalTime {
     private LocalTime timeEnd;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "promise_individual_id", nullable = false)
+    @JoinColumn(name = "promise_personal_id", nullable = false)
     private PromisePersonal promisePersonal;
 
     @Column(nullable = false)
     private int voteCount;
 
     @Builder
-    public PromisePersonalTime(Status status, LocalDate date, LocalTime timeStart, LocalTime timeEnd, PromisePersonal promisePersonal) {
+    public PromisePersonalTime(Status status, LocalDate date, LocalTime timeStart, LocalTime timeEnd, PromisePersonal promisePersonal, int voteCount) {
         this.date = date;
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
         this.promisePersonal = promisePersonal;
+        this.voteCount = voteCount;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.status == null) {
+            this.status = Status.INACTIVE;
+        }
+        this.voteCount = 0;
     }
 
     public void vote(){
