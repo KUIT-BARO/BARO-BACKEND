@@ -4,6 +4,7 @@ import com.example.baro.common.Enum.status.Status;
 import com.example.baro.common.Enum.status.StatusConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,16 +26,18 @@ public class PromisePersonalPlace {
     @JoinColumn(name = "promise_personal_id", nullable = false)
     private PromisePersonal promisePersonal;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 
     @Column(nullable = false)
     private int voteCount;
 
-    public PromisePersonalPlace(Status status, PromisePersonal promisePersonal, Place place) {
+    @Builder
+    public PromisePersonalPlace(Status status, PromisePersonal promisePersonal, Place place, int voteCount) {
         this.promisePersonal = promisePersonal;
         this.place = place;
+        this.voteCount = voteCount;
     }
 
     @PrePersist
@@ -42,6 +45,7 @@ public class PromisePersonalPlace {
         if (this.status == null) {
             this.status = Status.INACTIVE;
         }
+        this.voteCount = 0;
     }
 
     public void vote(){
