@@ -13,7 +13,9 @@ public record PromiseSuggestResponseDto(
 		PromisePurpose purpose,          // 약속 목적
 		LocalDate dateStart,     // 시작일
 		LocalDate dateEnd,       // 종료일
-		String place,            // 장소
-		int peopleNumber         // 참여 인원 수
+		String placeName,
+		String address, // 장소
+		int peopleNumber,     // 참여 인원 수
+		String leaderName
 ) {
 }

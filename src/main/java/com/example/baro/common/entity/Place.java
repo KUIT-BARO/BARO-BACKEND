@@ -44,11 +44,15 @@ public class Place {
     @Column(nullable = false, precision = 10, scale = 7)
     private BigDecimal longitude; // 경도
 
+    @Column(nullable = false, length = 50, unique = true)
+    private String address;
+
     @Builder
-    public Place(String status, String name, BigDecimal latitude, BigDecimal longitude) {
+    public Place(String status, String name, BigDecimal latitude, BigDecimal longitude, String address) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.address = address;
     }
 
     @PrePersist

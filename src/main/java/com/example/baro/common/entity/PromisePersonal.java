@@ -56,7 +56,11 @@ public class PromisePersonal {
     @PrePersist
     protected void onCreate() {
         if (this.status == null) {
-            this.status = Status.ACTIVE;
+            this.status = Status.INACTIVE;
         }
+    }
+
+    public void vote(){
+        this.status = Status.SUSPENDED;
     }
 }

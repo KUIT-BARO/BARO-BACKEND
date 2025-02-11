@@ -73,4 +73,11 @@ public class Schedule {
             this.status = Status.ACTIVE;
         }
     }
+
+    public void update(String name, DayOfWeek dayOfWeek, LocalTime timeStart, LocalTime timeEnd) {
+        this.name = name;
+        this.dayOfWeek = dayOfWeek;
+        this.timeStart = timeStart;
+        this.timeEnd = timeEnd;
+    }
 }
