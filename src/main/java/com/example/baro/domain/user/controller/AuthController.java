@@ -58,7 +58,7 @@ public class AuthController {
 			// 세션에서 사용자 정보 제거
 			session.invalidate();  // 세션을 무효화하여 모든 정보 삭제
 			return ApiResponseDto.success(SuccessCode.USER_LOGOUT_SUCCESS);
-		} catch (Exception e) {
+		} catch (Exception e) { 
 			return ApiResponseDto.fail(ErrorCode.SERVER_ERROR);
 		}
 	}
