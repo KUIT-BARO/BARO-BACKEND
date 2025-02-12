@@ -51,10 +51,10 @@ public class Promise {
     @Column(nullable = false)
     private LocalDate dateEnd;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalTime timeStart;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalTime timeEnd;
 
     @Column(nullable = false, columnDefinition = "TINYINT UNSIGNED")

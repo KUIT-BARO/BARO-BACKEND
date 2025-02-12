@@ -16,18 +16,13 @@ import com.example.baro.domain.promise.repository.PromisePersonalTimeRepository;
 import com.example.baro.domain.promise.repository.PromiseRepository;
 import com.example.baro.domain.promise.util.DateParser;
 import com.example.baro.domain.user.repository.PromisePersonalRepository;
-import com.example.baro.domain.user.repository.UserPromiseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -39,8 +34,6 @@ public class PromiseService {
     private final SearchRepository searchRepository;
     private final PromisePersonalTimeRepository promisePersonalTimeRepository;
     private final PromisePersonalPlaceRepository promisePersonalPlaceRepository;
-    private final LocalTime defaultStartTime = LocalTime.of(9, 0);
-    private final LocalTime defaultEndTime = LocalTime.of(18, 0);
     private final PromisePersonalRepository promisePersonalRepository;
 
     public UserPlaceListResponseDto getUserPlace(Long userId){
@@ -117,7 +110,7 @@ public class PromiseService {
         List<PromisePersonalTime> personalTimes = getOverlappingPersonalTimes(promiseId);
         List<PromisePersonalPlace> places = getOverlappingPersonalPlaces(promiseId);
 
-        List<VotingPageResponseDto.PromisePersonalTimeDto> promisePersonalTimeDtoList = personalTimes.stream()
+        List<VotingPageResponseDto.PromisePersonalTimeDto> timeDtoList = personalTimes.stream()
                 .map(promisePersonalTime -> VotingPageResponseDto.PromisePersonalTimeDto.builder()
                         .promisePersonalTimeId(promisePersonalTime.getId())
                         .date(promisePersonalTime.getDate())
@@ -127,7 +120,7 @@ public class PromiseService {
                         .build())
                 .toList();
 
-        List<VotingPageResponseDto.PlaceDto> pladeDtoList = places.stream()
+        List<VotingPageResponseDto.PlaceDto> placeDtoList = places.stream()
                 .map(place -> VotingPageResponseDto.PlaceDto.builder()
                         .placeId(place.getId())
                         .placeName(place.getPlace().getName())
@@ -136,8 +129,8 @@ public class PromiseService {
                 .toList();
 
         return VotingPageResponseDto.builder()
-                .promisePersonalTimeDtoList(promisePersonalTimeDtoList)
-                .placeDtoList(pladeDtoList)
+                .promisePersonalTimeDtoList(timeDtoList)
+                .placeDtoList(placeDtoList)
                 .build();
     }
 
