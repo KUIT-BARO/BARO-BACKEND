@@ -14,28 +14,31 @@ import lombok.NoArgsConstructor;
 @Table(name = "promise_personal_place")
 public class PromisePersonalPlace {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private PromisePersonalPlaceId id;
 
     @Column(nullable = false)
     @Convert(converter = StatusConverter.class)
     private Status status;
 
+    @MapsId("promisePersonalId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "promise_personal_id", nullable = false)
     private PromisePersonal promisePersonal;
 
+    @MapsId("placeId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
+
 
     @Column(nullable = false)
     private int voteCount;
 
     @Builder
-    public PromisePersonalPlace(Status status, PromisePersonal promisePersonal, Place place, int voteCount) {
+    public PromisePersonalPlace(PromisePersonal promisePersonal, Place place) {
         this.promisePersonal = promisePersonal;
+        this.place = place;
         this.place = place;
         this.voteCount = voteCount;
     }

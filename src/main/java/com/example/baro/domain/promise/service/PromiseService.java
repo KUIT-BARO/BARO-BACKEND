@@ -129,7 +129,7 @@ public class PromiseService {
 
         List<VotingPageResponseDto.PlaceDto> pladeDtoList = places.stream()
                 .map(place -> VotingPageResponseDto.PlaceDto.builder()
-                        .placeId(place.getId())
+                        .placeId(place.getPlace().getId())
                         .placeName(place.getPlace().getName())
                         .status(place.getStatus())
                         .build())

@@ -79,19 +79,18 @@ public class UserService {
 					.timeEnd(promise.getTimeEnd())
 					.place(promise.getPlace().getName())
 					.peopleNumber(promise.getPeopleNumber()).build();
+			upcomingPromiseDtos.add(upcomingPromiseDto);
 		}
 
-		HomeResponseDto homeResponseDto = HomeResponseDto.builder()
+		return HomeResponseDto.builder()
 				.name(user.getNickname())
 				.upcomingDday(upComingDdayDto)
 				.upcomingPromises(upcomingPromiseDtos).build();
-
-		return homeResponseDto;
 	}
 
 	public UserPromiseListResponseDto getPromisePageInfo(User user) {
 		List<UserPromise> userPromises = userPromiseRepository.findAllByUserAndDisplayTrue(user);
-		List<PromisePersonal> promisePersonals = promisePersonalRepository.findAllByUserAndStatus(user, Status.SUSPENDED);
+		List<PromisePersonal> promisePersonals = promisePersonalRepository.findAllByUserAndStatus(user, Status.INACTIVE);
 
 		promisePersonals.sort(Comparator.comparing(up -> up.getPromise().getDate()));
 		List<Promise> pendingPromises = promisePersonals.stream()
@@ -135,10 +134,9 @@ public class UserService {
 			}
 		}
 
-		UserPromiseListResponseDto responseDto = UserPromiseListResponseDto.builder()
+		return UserPromiseListResponseDto.builder()
 				.pendingPromises(pendingPromiseDtos)
 				.upcomingPromises(upcomingPromiseDtos).build();
-		return responseDto;
 	}
 
 	@Transactional

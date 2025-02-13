@@ -25,7 +25,6 @@ public class PromiseController {
 
     private final PromiseService promiseService;
 
-    // 아래 부분 컨벤션에 맞게 수정해주세요
     @Operation(
             summary = "약속 제안서 등록",
             description = "약속 제안서를 등록합니다. "
@@ -51,9 +50,9 @@ public class PromiseController {
             description = "약속 제안서 삭제에 성공하였습니다."
     )
     @DeleteMapping("/suggest/{promiseId}")
-    public ResponseEntity<Void> deletePromise(@PathVariable Long promiseId) {
+    public ApiResponseDto deletePromise(@PathVariable Long promiseId) {
         promiseService.deletePromise(promiseId);
-        return ResponseEntity.noContent().build();
+        return ApiResponseDto.success(SuccessCode.UPCOMING_PROMISE_DELETE_SUCCESS);
     }
 
 
