@@ -29,13 +29,14 @@ public class PlaceController {
         return ApiResponseDto.success(SuccessCode.NOTE_CREATE_SUCCESS);
     }
 
-    // 사용하는 곳이 없음
     @GetMapping("/search")
-    public List<PlaceSearchResponseDto> getNearbyPlacesWithFilteredKeywords(
+    public ApiResponseDto<PlaceSearchResponseDto> searchPlaces(
             @RequestParam double latitude,
             @RequestParam double longitude,
-            @RequestParam(required = false) List<Long> keywordIds) {
-        return searchService.getPlacesWithFilteredKeywords(latitude, longitude, keywordIds);
+            @RequestParam(required = false) List<Long> keywordIds
+    ) {
+        PlaceSearchResponseDto placeSearchResponseDto = searchService.getPlacesWithFilteredKeywords(latitude, longitude, keywordIds);
+        return ApiResponseDto.success(SuccessCode.NOTE_CREATE_SUCCESS, placeSearchResponseDto);
     }
 
 

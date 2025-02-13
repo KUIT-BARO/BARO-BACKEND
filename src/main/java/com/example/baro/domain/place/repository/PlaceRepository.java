@@ -1,6 +1,7 @@
 package com.example.baro.domain.place.repository;
 
 import com.example.baro.common.entity.Place;
+import com.example.baro.domain.place.repository.projection.PlaceSearchProjection;
 import org.springframework.data.domain.Pageable;
 import com.example.baro.common.entity.Place;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -57,7 +58,7 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
         WHERE kc.count >= mv.median
         ORDER BY p.id, kc.count DESC;
         """, nativeQuery = true)
-    List<Object[]> findPlacesWithAllKeywords(
+    List<PlaceSearchProjection> findPlacesWithAllKeywords(
             @Param("latitude") double latitude,
             @Param("longitude") double longitude
     );
@@ -101,7 +102,7 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
         JOIN keyword k ON fk.keyword_id = k.id
         ORDER BY p.id, fk.count DESC
         """, nativeQuery = true)
-    List<Object[]> findPlacesWithFilteredKeywords(
+    List<PlaceSearchProjection> findPlacesWithFilteredKeywords(
             @Param("latitude") double latitude,
             @Param("longitude") double longitude,
             @Param("keywordIds") List<Long> keywordIds

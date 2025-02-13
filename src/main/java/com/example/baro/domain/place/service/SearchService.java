@@ -8,6 +8,7 @@ import com.example.baro.domain.place.dto.response.PlaceSearchResponseDto;
 import com.example.baro.domain.place.repository.PlaceRepository;
 import com.example.baro.domain.place.repository.SearchKeywordRepository;
 import com.example.baro.domain.place.repository.SearchRepository;
+import com.example.baro.domain.place.repository.projection.PlaceSearchProjection;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -59,52 +60,43 @@ public class SearchService {
 
 
     @Transactional(readOnly = true)
-    public List<PlaceSearchResponseDto> getPlacesWithFilteredKeywords(double latitude, double longitude, List<Long> keywordIds) {
-        List<Object[]> results;
-        // 키워드 요청이 없으면 모든 키워드를 포함하는 쿼리 실행
-        if (keywordIds == null || keywordIds.isEmpty()) {
-            results = placeRepository.findPlacesWithAllKeywords(latitude, longitude);
-        } else {
-            results = placeRepository.findPlacesWithFilteredKeywords(latitude, longitude, keywordIds);
-        }
+    public PlaceSearchResponseDto getPlacesWithFilteredKeywords(double latitude, double longitude, List<Long> keywordIds) {
 
-        // 결과를 placeId 기준으로 그룹핑 (한 장소에 여러 개의 키워드를 추가할 수 있도록 함)
-        Map<Long, PlaceSearchResponseDto> placeMap = new LinkedHashMap<>();
+        // 키워드 필터링 여부에 따라 적절한 Repository 메서드 호출
+        List<PlaceSearchProjection> results = (keywordIds == null || keywordIds.isEmpty())
+                ? placeRepository.findPlacesWithAllKeywords(latitude, longitude)
+                : placeRepository.findPlacesWithFilteredKeywords(latitude, longitude, keywordIds);
 
-        for (Object[] row : results) {
-            Long placeId = (Long) row[0];              // place_id
-            String placeName = (String) row[4];        // place_name
-            String address = (String) row[7];          // place_address
-            double placeLat = (double) row[5];         // place_latitude
-            double placeLon = (double) row[6];         // place_longitude
+        // placeId 기준으로 그룹화
+        Map<Long, PlaceSearchResponseDto.PlaceDto> placeMap = new LinkedHashMap<>();
 
-            Long keywordId = (Long) row[8];            // keyword_id
-            String keywordName = (String) row[9];      // keyword_name
-            int keywordCount = ((Number) row[10]).intValue(); // keyword_count
-
-            // placeId가 없으면 빌더 생성
-            placeMap.computeIfAbsent(placeId, k -> PlaceSearchResponseDto.builder()
-                    .id(placeId)
-                    .name(placeName)
-                    .address(address)
-                    .latitude(placeLat)
-                    .longitude(placeLon)
-                    .keywords(new ArrayList<>())
-                    .build()
+        for (PlaceSearchProjection result : results) {
+            // placeId가 없는 경우, 새로운 DTO 객체 생성하여 Map에 저장
+            placeMap.computeIfAbsent(result.getPlaceId(), id ->
+                    PlaceSearchResponseDto.PlaceDto.builder()
+                            .id(result.getPlaceId())
+                            .name(result.getPlaceName())
+                            .address(result.getPlaceAddress())
+                            .latitude(result.getPlaceLatitude())
+                            .longitude(result.getPlaceLongitude())
+                            .keywords(new ArrayList<>()) //  ArrayList 초기화
+                            .build()
             );
 
-            // 키워드 추가
-            placeMap.get(placeId).keywords().add(
+            // 기존 객체의 키워드 리스트 가져와서 추가
+            placeMap.get(result.getPlaceId()).keywords().add(
                     PlaceSearchResponseDto.KeywordDto.builder()
-                            .id(keywordId)
-                            .name(keywordName)
-                            .count(keywordCount)
+                            .id(result.getKeywordId())
+                            .name(result.getKeywordName())
+                            .count(result.getKeywordCount())
                             .build()
             );
         }
 
-        // 빌더 객체에서 최종 DTO 객체 생성
-        return placeMap.values().stream().toList();
+        // 최종 변환된 DTO 리스트 반환
+        return PlaceSearchResponseDto.builder()
+                .places(new ArrayList<>(placeMap.values())) // `Collection`을 `List`로 변환하여 전달
+                .build();
     }
 
 }

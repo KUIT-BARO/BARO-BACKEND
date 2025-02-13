@@ -15,12 +15,13 @@ import lombok.NoArgsConstructor;
 public class PromisePersonalPlace {
 
     @EmbeddedId
-    private PromisePersonalKeywordId id;
+    private PromisePersonalPlaceId id;
 
     @Column(nullable = false)
     @Convert(converter = StatusConverter.class)
     private Status status;
 
+    @MapsId("promisePersonalId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "promise_personal_id", nullable = false)
     private PromisePersonal promisePersonal;
