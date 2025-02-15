@@ -111,7 +111,7 @@ public class PromiseService {
     public VotingPageResponseDto getVotingPromisePage(Long promiseId) {
 
         List<PromisePersonalTime> personalTimes = getOverlappingPersonalTimes(promiseId);
-        List<PromisePersonalPlace> places = getOverlappingPersonalPlaces(promiseId);
+        List<PromisePersonalPlace> personalPlaces = getOverlappingPersonalPlaces(promiseId);
 
         List<VotingPageResponseDto.PromisePersonalTimeDto> timeDtoList = personalTimes.stream()
                 .map(promisePersonalTime -> VotingPageResponseDto.PromisePersonalTimeDto.builder()
@@ -123,11 +123,11 @@ public class PromiseService {
                         .build())
                 .toList();
 
-        List<VotingPageResponseDto.PlaceDto> placeDtoList = places.stream()
-                .map(place -> VotingPageResponseDto.PlaceDto.builder()
-                        .placeId(place.getId())
-                        .placeName(place.getPlace().getName())
-                        .status(place.getStatus())
+        List<VotingPageResponseDto.PlaceDto> placeDtoList = personalPlaces.stream()
+                .map(personalPlace -> VotingPageResponseDto.PlaceDto.builder()
+                        .promisePersonalPlaceId(personalPlace.getId())
+                        .placeName(personalPlace.getPlace().getName())
+                        .status(personalPlace.getStatus())
                         .build())
                 .toList();
 
@@ -144,7 +144,7 @@ public class PromiseService {
         PromisePersonalTime promisePersonalTime = promisePersonalTimeRepository.findById(request.getPromisePersonalTimeId())
                 .orElseThrow(() -> new PromiseException(ErrorCode.TIME_NOT_FOUND));
 
-        PromisePersonalPlace promisePersonalPlace =  promisePersonalPlaceRepository.findById(request.getPlaceId())
+        PromisePersonalPlace promisePersonalPlace =  promisePersonalPlaceRepository.findById(request.getPromisePersonalPlaceId())
                 .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
 
         PromiseVote promisevote = PromiseVote.builder()
@@ -235,8 +235,13 @@ public class PromiseService {
             for (int j = i + 1; j < personalTimes.size(); j++) {
                 PromisePersonalTime other = personalTimes.get(j);
 
-                if (isOverlapping(current, other) && !overlappingTimes.contains(current)) {
-                    overlappingTimes.add(current);
+                if (isOverlapping(current, other)) {
+                    if (!overlappingTimes.contains(current)) {
+                        overlappingTimes.add(current);
+                    }
+                    if (!overlappingTimes.contains(other)) {
+                        overlappingTimes.add(other);
+                    }
                 }
             }
         }

@@ -23,7 +23,7 @@ public record VotingPageResponseDto (
 
     @Builder
     public record PlaceDto(
-            Long placeId,
+            Long promisePersonalPlaceId,
             String placeName,
             Status status
     ){}
