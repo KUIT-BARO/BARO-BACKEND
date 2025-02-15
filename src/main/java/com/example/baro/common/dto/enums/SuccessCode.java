@@ -41,8 +41,6 @@ public enum SuccessCode {
 	SCHEDULE_DELETE_SUCCESS(20402, HttpStatus.NO_CONTENT, "시간표 삭제 성공");
 
 
-
-
 	private final int code;
 	private final HttpStatus httpStatus;
 	private final String message;
