@@ -61,7 +61,7 @@ public class ScheduleController {
             description = "나의 시간표 조회에 성공하였습니다."
     )
 
-    @GetMapping("my-schedule")
+    @GetMapping("/my-schedule")
     public ApiResponseDto<ScheduleListResponseDto> getMYSchedule(@LoginUser User user) {
         ScheduleListResponseDto response = scheduleService.getMySchedule(user.getId());
         return ApiResponseDto.success(SuccessCode.MY_SCHEDULE_GET_SUCCESS, response);
