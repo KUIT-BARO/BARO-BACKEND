@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Promise", description = "약속 제안서 관련 API. 토큰이 필요합니다.")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/promise")
+@RequestMapping("/promise")
 public class PromiseController {
 
     private final PromiseService promiseService;
