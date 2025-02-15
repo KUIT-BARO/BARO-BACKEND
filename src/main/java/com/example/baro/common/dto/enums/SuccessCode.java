@@ -28,6 +28,7 @@ public enum SuccessCode {
 	PROMISE_CONFIRM_PAGE_GET_SUCCESS(20013, HttpStatus.OK, "확정된 약속 페이지 조회 성공"),
 	PROMISE_VOTE_POST_SUCCESS(20014, HttpStatus.OK, "약속 선정 투표에 성공"),
 	USER_PLACE_GET_SUCCESS(20015, HttpStatus.OK, "사용자의 리뷰된 장소 조회에 성공"),
+    UPCOMING_PROMISE_DELETE_SUCCESS(20016, HttpStatus.OK, "약속이 정상적으로 삭제되었습니다."),
 
 	//201 CREATED
 	USER_SIGNUP_SUCCESS(20101, HttpStatus.CREATED, "회원가입에 성공하였습니다."),
@@ -38,6 +39,8 @@ public enum SuccessCode {
 
 	//204 NO CONTENT
 	SCHEDULE_DELETE_SUCCESS(20402, HttpStatus.NO_CONTENT, "시간표 삭제 성공");
+
+
 
 
 	private final int code;
