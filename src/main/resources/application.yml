@@ -43,6 +43,10 @@ spring:
   config:
     activate:
       on-profile: "devDB"
+  session:
+    cookie:
+      same-site: None
+      secure: true
 
   datasource:
     url: ${DATASOURCE_URL_DEV}?serverTimezone=Asia/Seoul
