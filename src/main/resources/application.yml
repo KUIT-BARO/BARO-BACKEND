@@ -46,7 +46,7 @@ spring:
   session:
     cookie:
       same-site: None  
-      secure: false
+      secure: true
 
   datasource:
     url: ${DATASOURCE_URL_DEV}?serverTimezone=Asia/Seoul
