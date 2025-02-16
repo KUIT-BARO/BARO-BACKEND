@@ -276,13 +276,24 @@ public class PromiseService {
     private List<PromisePersonalPlace> findOverlappingPersonalPlaces(List<PromisePersonalPlace> personalPlaces) {
         Map<String, Long> placeCountMap = new HashMap<>();
 
+        // 장소별 선택 횟수 카운트
         for (PromisePersonalPlace place : personalPlaces) {
-            placeCountMap.put(place.getPlace().getName(), placeCountMap.getOrDefault(place.getPlace().getName(), 0L) + 1);
+            placeCountMap.put(
+                    place.getPlace().getName(),
+                    placeCountMap.getOrDefault(place.getPlace().getName(), 0L) + 1
+            );
         }
 
+        // 2명 이상 선택한 장소 중 하나만 반환
         return personalPlaces.stream()
-                .filter(place -> placeCountMap.get(place.getPlace().getName()) > 1)
-                .distinct()
+                .filter(place -> placeCountMap.get(place.getPlace().getName()) > 1) // 중복된 장소만 필터링
+                .collect(Collectors.toMap(
+                        place -> place.getPlace().getName(), // 키: 장소 이름
+                        place -> place, // 값: 해당 장소 객체
+                        (existing, replacement) -> existing // 중복 시 기존 값 유지
+                ))
+                .values()
+                .stream()
                 .toList();
     }
 
