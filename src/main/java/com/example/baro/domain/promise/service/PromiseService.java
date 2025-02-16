@@ -119,7 +119,6 @@ public class PromiseService {
                         .date(promisePersonalTime.getDate())
                         .timeStart(promisePersonalTime.getTimeStart())
                         .timeEnd(promisePersonalTime.getTimeEnd())
-                        .status(promisePersonalTime.getStatus())
                         .build())
                 .toList();
 
@@ -127,7 +126,6 @@ public class PromiseService {
                 .map(personalPlace -> VotingPageResponseDto.PlaceDto.builder()
                         .promisePersonalPlaceId(personalPlace.getId())
                         .placeName(personalPlace.getPlace().getName())
-                        .status(personalPlace.getStatus())
                         .build())
                 .toList();
 
