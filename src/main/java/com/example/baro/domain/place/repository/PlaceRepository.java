@@ -14,4 +14,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     List<Place> findRandomPlaces(Pageable pageable);
 
     Optional<Place> findByAddress(String address);
+
+    Optional<Place> findByName(String Name);
 }
