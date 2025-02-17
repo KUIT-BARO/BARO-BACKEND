@@ -1,6 +1,7 @@
 package com.example.baro.domain.user.controller;
 
 import com.example.baro.common.dto.ApiResponseDto;
+import com.example.baro.common.dto.enums.ErrorCode;
 import com.example.baro.common.dto.enums.SuccessCode;
 import com.example.baro.common.entity.User;
 import com.example.baro.common.resolver.LoginUser;
@@ -9,6 +10,7 @@ import com.example.baro.domain.user.dto.request.ProfileImageChangeRequestDto;
 import com.example.baro.domain.user.dto.response.HomeResponseDto;
 import com.example.baro.domain.user.dto.response.MyPageResponseDto;
 import com.example.baro.domain.user.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +56,16 @@ public class UserController {
 	public ApiResponseDto<FindUserListResponseDto> searchUsers(@RequestParam String code, @LoginUser User user) {
 		FindUserListResponseDto responseDto = userService.searchUsersByCode(user.getId(), code);
 		return ApiResponseDto.success(SuccessCode.USER_SEARCH_SUCCESS, responseDto);
+	}
+
+	@DeleteMapping("/me")
+	public ApiResponseDto deleteUser(@LoginUser User user) {
+		try {
+			userService.deleteUser(user);
+		} catch (EntityNotFoundException e) {
+			return ApiResponseDto.fail(ErrorCode.USER_NOT_FOUND);
+		}
+		return ApiResponseDto.success(SuccessCode.USER_DELETE_SUCCESS);
 	}
 
 }
