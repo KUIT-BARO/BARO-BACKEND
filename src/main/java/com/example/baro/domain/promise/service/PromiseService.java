@@ -57,7 +57,7 @@ public class PromiseService {
     }
 
     public PromiseSuggestResponseDto registerPromise(PromiseSuggestRequestDto request, String userName) {
-        Place place = placeRepository.findByAddress(request.getAddress())
+        Place place = placeRepository.findByName(request.getPlaceName())
                 .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
 
         Promise promise = Promise.builder()
