@@ -78,10 +78,10 @@ server:
       enabled: true
       max-file-size: 5MB
       max-request-size: 5MB
-    session:
-      cookie:
-        secure: true
-        same-site: None
+  session:
+    cookie:
+      secure: true
+      same-site: none
 
 ---
 
