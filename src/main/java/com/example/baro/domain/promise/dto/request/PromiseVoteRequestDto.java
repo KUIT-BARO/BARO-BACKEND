@@ -9,5 +9,5 @@ import java.time.LocalTime;
 @Getter
 public class PromiseVoteRequestDto {
     Long promisePersonalTimeId;
-    Long promisePersonalPlaceId;
+    Long placeId;
 }
