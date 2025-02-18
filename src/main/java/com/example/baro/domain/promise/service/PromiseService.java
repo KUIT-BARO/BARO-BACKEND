@@ -70,7 +70,7 @@ public class PromiseService {
                 .place(place)
                 .build();
         PromisePersonal promisePersonal = new PromisePersonal(null, promise, user, place);
-
+        promiseRepository.save(promise);
         promisePersonalRepository.save(promisePersonal);
 
       return PromiseSuggestResponseDto.builder()
