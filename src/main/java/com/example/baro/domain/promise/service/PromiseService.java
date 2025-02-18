@@ -56,7 +56,7 @@ public class PromiseService {
                 .build();
     }
 
-    public PromiseSuggestResponseDto registerPromise(PromiseSuggestRequestDto request, String userName) {
+    public PromiseSuggestResponseDto registerPromise(PromiseSuggestRequestDto request, User user) {
         Place place = placeRepository.findByName(request.getPlaceName())
                 .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
 
@@ -66,11 +66,12 @@ public class PromiseService {
                 .dateEnd(DateParser.parseDate(request.getDateEnd()))
                 .peopleNumber(request.getPeopleNumber())
                 .purpose(PromisePurpose.fromString(request.getPurpose()))
-                .leaderName(userName)
+                .leaderName(user.getNickname())
                 .place(place)
                 .build();
+        PromisePersonal promisePersonal = new PromisePersonal(null, promise, user, place);
 
-        promiseRepository.save(promise);
+        promisePersonalRepository.save(promisePersonal);
 
       return PromiseSuggestResponseDto.builder()
                 .promiseId(promise.getId())
