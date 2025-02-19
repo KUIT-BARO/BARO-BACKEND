@@ -17,11 +17,13 @@ import com.example.baro.domain.promise.repository.PromiseRepository;
 import com.example.baro.domain.promise.repository.PromiseVoteRepository;
 import com.example.baro.domain.promise.util.DateParser;
 import com.example.baro.domain.user.repository.PromisePersonalRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.PersistenceContext;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,6 +41,7 @@ public class PromiseService {
     private final PromisePersonalRepository promisePersonalRepository;
     private final PromiseVoteRepository promiseVoteRepository;
 
+    @Transactional
     public UserPlaceListResponseDto getUserPlace(Long userId){
         List<Place> places = searchRepository.findPlacesByUserId(userId, PageRequest.of(0, 6));
 
@@ -59,6 +62,7 @@ public class PromiseService {
                 .build();
     }
 
+    @Transactional
     public PromiseSuggestResponseDto registerPromise(PromiseSuggestRequestDto request, User user) {
         Place place = placeRepository.findById(request.getPlaceId())
                 .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
@@ -88,6 +92,7 @@ public class PromiseService {
               .build();
     }
 
+    @Transactional
     public void deletePromise(Long promiseId) {
         Promise promise = promiseRepository.findById(promiseId)
                 .orElseThrow(() -> new PromiseException(ErrorCode.PROMISE_NOT_FOUND));
@@ -108,6 +113,7 @@ public class PromiseService {
                 .peopleNumber(promise.getPeopleNumber()).build();
     }
 
+    @Transactional
     public VotingPageResponseDto getVotingPromisePage(Long promiseId) {
 
         List<PromisePersonalTime> personalTimes = getOverlappingPersonalTimes(promiseId);
@@ -121,6 +127,7 @@ public class PromiseService {
                         .timeEnd(promisePersonalTime.getTimeEnd())
                         .build())
                 .toList();
+
 
         List<VotingPageResponseDto.PlaceDto> placeDtoList = personalPlaces.stream()
                 .map(personalPlace -> VotingPageResponseDto.PlaceDto.builder()
@@ -152,17 +159,13 @@ public class PromiseService {
                 .build();
         promiseVoteRepository.save(promisevote);
 
+
         List<PromiseVote> promiseVotes = promiseVoteRepository.findByPromiseId(promiseId);
 
         if(isReadyToConfirm(promiseVotes, promise.getPeopleNumber())){
 
             PromisePersonalTime mostVotedTime = getMostVotedTime(promiseId);
             PromisePersonalPlace mostVotedPlace = getMostVotedPlace(promiseId);
-
-            for (PromiseVote vote : promiseVotes) {
-                vote.confirm();
-            }
-
             promise.confirm(mostVotedTime.getDate(), mostVotedTime.getTimeStart(), mostVotedTime.getTimeEnd(),mostVotedPlace.getPlace());
         }
 
@@ -179,6 +182,7 @@ public class PromiseService {
                 .build();
     }
 
+    @Transactional
     public PromiseConfirmResponseDto getConfirmPromisePage(Long promiseId) {
         Promise promise = findPromiseById(promiseId);
         List<PromiseVote> promiseVotes = promiseVoteRepository.findByPromiseId(promiseId);
@@ -205,6 +209,7 @@ public class PromiseService {
                 .build();
     }
 
+    @Transactional
     public List<PromisePersonalTime> getOverlappingPersonalTimes(Long promiseId) {
         Promise promise = findPromiseById(promiseId);
         List<PromisePersonal> promisePersonals = promisePersonalRepository.findAllByPromiseId(promiseId);

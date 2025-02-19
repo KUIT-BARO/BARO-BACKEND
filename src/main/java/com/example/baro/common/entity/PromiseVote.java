@@ -50,9 +50,4 @@ public class PromiseVote {
             this.status = Status.SUSPENDED;
         }
     }
-
-    public void confirm(){
-        this.status = Status.INACTIVE;
-
-    }
 }

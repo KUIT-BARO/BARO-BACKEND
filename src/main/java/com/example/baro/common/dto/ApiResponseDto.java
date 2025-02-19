@@ -41,7 +41,19 @@ public record ApiResponseDto<T>(
 				.build();
 	}
 
-	// 실패 응답
+
+	// 성공 응답 (데이터 포함)
+	public static <T> ApiResponseDto<T> fail(final ErrorCode errorCode, @Nullable final T data) {
+		return ApiResponseDto.<T>builder()
+				.httpStatus(errorCode.getHttpStatus())
+				.status(errorCode.getHttpStatus().value())
+				.code(errorCode.getCode())
+				.message(errorCode.getMessage())
+				.data(data)
+				.build();
+	}
+
+	// 실패 응답 (데이터 없음)
 	public static <T> ApiResponseDto<T> fail(final ErrorCode errorCode) {
 		return ApiResponseDto.<T>builder()
 				.httpStatus(errorCode.getHttpStatus())
