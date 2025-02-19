@@ -47,11 +47,8 @@ public class PromiseVote {
     @PrePersist
     protected void onCreate() {
         if (this.status == null) {
-            this.status = Status.ACTIVE;
+            this.status = Status.SUSPENDED;
         }
     }
 
-    public void confirm(){
-        this.status = Status.SUSPENDED;
-    }
 }

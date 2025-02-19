@@ -17,6 +17,7 @@ import com.example.baro.domain.promise.repository.PromiseRepository;
 import com.example.baro.domain.promise.repository.PromiseVoteRepository;
 import com.example.baro.domain.promise.util.DateParser;
 import com.example.baro.domain.user.repository.PromisePersonalRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -163,11 +164,6 @@ public class PromiseService {
 
             PromisePersonalTime mostVotedTime = getMostVotedTime(promiseId);
             PromisePersonalPlace mostVotedPlace = getMostVotedPlace(promiseId);
-
-            for (PromiseVote vote : promiseVotes) {
-                vote.confirm();
-            }
-
             promise.confirm(mostVotedTime.getDate(), mostVotedTime.getTimeStart(), mostVotedTime.getTimeEnd(),mostVotedPlace.getPlace());
         }
 
