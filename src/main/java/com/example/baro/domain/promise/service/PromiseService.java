@@ -76,8 +76,10 @@ public class PromiseService {
                 .leaderName(user.getNickname())
                 .place(place)
                 .build();
+        PromisePersonal promisePersonal = new PromisePersonal(null, promise, user, place);
 
         promiseRepository.save(promise);
+        promisePersonalRepository.save(promisePersonal);
 
       return PromiseSuggestResponseDto.builder()
                 .promiseId(promise.getId())
