@@ -68,7 +68,7 @@ public class UserService {
 				.date(upCommingPromise.getDate())
 				.timeStart(upCommingPromise.getTimeStart())
 				.timeEnd(upCommingPromise.getTimeEnd())
-				.place(upCommingPromise.getRegion().getName()).build();
+				.place(upCommingPromise.getPlace().getName()).build();
 
 		List<HomeResponseDto.UpcomingPromiseDto> upcomingPromiseDtos = new ArrayList<>();
 		for (Promise promise : promises) {

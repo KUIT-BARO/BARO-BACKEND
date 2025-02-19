@@ -37,7 +37,7 @@ public class PromiseController {
     public ApiResponseDto<PromiseSuggestResponseDto> registerPromise(
             @RequestBody PromiseSuggestRequestDto request, @LoginUser User user) {
 
-        PromiseSuggestResponseDto response = promiseService.registerPromise(request, user.getNickname());
+        PromiseSuggestResponseDto response = promiseService.registerPromise(request, user);
         return  ApiResponseDto.success(SuccessCode.PROMISE_GET_SUCCESS, response);
     }
 

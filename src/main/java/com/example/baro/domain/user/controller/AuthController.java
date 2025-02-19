@@ -8,6 +8,7 @@ import com.example.baro.common.exception.exceptionClass.DuplicateUserException;
 import com.example.baro.common.exception.exceptionClass.InvalidRequestException;
 import com.example.baro.domain.user.dto.request.LoginRequestDto;
 import com.example.baro.domain.user.dto.request.SignUpRequestDto;
+import com.example.baro.domain.user.dto.response.LoginResponseDto;
 import com.example.baro.domain.user.service.AuthService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -37,14 +38,14 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public ApiResponseDto login(@RequestBody LoginRequestDto requestDto, HttpSession session) {
+	public ApiResponseDto<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto, HttpSession session) {
 		try {
 			// 로그인 처리 (예: 아이디와 비밀번호 검증)
 			User user = authService.login(requestDto);
 			// 세션에 사용자 정보 저장
 			session.setAttribute("user", user);
 
-			return ApiResponseDto.success(SuccessCode.USER_LOGIN_SUCCESS);
+			return ApiResponseDto.success(SuccessCode.USER_LOGIN_SUCCESS, LoginResponseDto.builder().name(user.getNickname()).build());
 		} catch (IllegalArgumentException e) {
 			return ApiResponseDto.fail(ErrorCode.SECURITY_UNAUTHORIZED);
 		} catch (Exception e) {
