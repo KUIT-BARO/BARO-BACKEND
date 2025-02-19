@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Transactional
 @RequiredArgsConstructor
-@RequestMapping("/schedule")
+@RequestMapping("/users/schedule")
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
@@ -61,7 +61,7 @@ public class ScheduleController {
             description = "나의 시간표 조회에 성공하였습니다."
     )
 
-    @GetMapping
+    @GetMapping("/my-schedule")
     public ApiResponseDto<ScheduleListResponseDto> getMYSchedule(@LoginUser User user) {
         ScheduleListResponseDto response = scheduleService.getMySchedule(user.getId());
         return ApiResponseDto.success(SuccessCode.MY_SCHEDULE_GET_SUCCESS, response);
@@ -75,9 +75,9 @@ public class ScheduleController {
             responseCode = "20402",
             description = "시간표 삭제에 성공하였습니다."
     )
-    @DeleteMapping("/{promiseId}")
-    public ApiResponseDto<Void> deleteSchedule(@PathVariable Long promiseId) {
-        scheduleService.deleteSchedule(promiseId);
+    @DeleteMapping("/{scheduleId}")
+    public ApiResponseDto<Void> deleteSchedule(@PathVariable Long scheduleId) {
+        scheduleService.deleteSchedule(scheduleId);
         return ApiResponseDto.success(SuccessCode.SCHEDULE_DELETE_SUCCESS);
     }
 
@@ -87,12 +87,12 @@ public class ScheduleController {
     )
     @ApiResponse(
             responseCode = "20006",
-            description = "시간표 에 성공하였습니다."
+            description = "시간표 수정에 성공하였습니다."
     )
-    @PutMapping("/{promiseId}")
-    public ApiResponseDto<ScheduleResponseDto> updateSchedule(@PathVariable Long promiseId,
+    @PutMapping("/{scheduleId}")
+    public ApiResponseDto<ScheduleResponseDto> updateSchedule(@PathVariable Long scheduleId,
                                                               @RequestBody ScheduleRequestDto request) {
-        ScheduleResponseDto response = scheduleService.updateSchedule(promiseId, request);
+        ScheduleResponseDto response = scheduleService.updateSchedule(scheduleId, request);
         return ApiResponseDto.success(SuccessCode.SCHEDULE_UPDATE_SUCCESS, response);
     }
 

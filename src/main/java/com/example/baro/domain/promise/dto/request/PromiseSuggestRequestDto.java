@@ -9,5 +9,5 @@ public class PromiseSuggestRequestDto {
     private String dateEnd;
     private int peopleNumber;
     private String purpose;
-    private String address;
+    private Long placeId;
 }

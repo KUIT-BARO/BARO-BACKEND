@@ -7,16 +7,15 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "promise_personal")
-public class PromisePersonal {
+@Table(name = "promise_vote")
+public class PromiseVote {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,31 +25,23 @@ public class PromisePersonal {
     @Convert(converter = StatusConverter.class)
     private Status status;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "promise_id", nullable = false)
     private Promise promise;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "promis_personal_time_id", nullable = false)
+    private PromisePersonalTime promisePersonalTime;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "place_id", nullable = false)
-    private Place place;
+    @JoinColumn(name = "promise_personal_place_id", nullable = false)
+    private PromisePersonalPlace promisePersonalPlace;
 
     @Builder
-    public PromisePersonal(String status, Promise promise, User user, Place place) {
+    public PromiseVote(Status status, Promise promise, PromisePersonalTime promisePersonalTime, PromisePersonalPlace promisePersonalPlace) {
         this.promise = promise;
-        this.user = user;
-        this.place = place;
+        this.promisePersonalTime = promisePersonalTime;
+        this.promisePersonalPlace = promisePersonalPlace;
     }
 
     @PrePersist
@@ -58,5 +49,9 @@ public class PromisePersonal {
         if (this.status == null) {
             this.status = Status.ACTIVE;
         }
+    }
+
+    public void confirm(){
+        this.status = Status.SUSPENDED;
     }
 }
