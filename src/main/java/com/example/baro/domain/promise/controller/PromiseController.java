@@ -93,8 +93,8 @@ public class PromiseController {
     @PostMapping("/vote/{promiseId}")
     public ApiResponseDto<PromiseVoteResponseDto> votePromise(@RequestBody PromiseVoteRequestDto request,
                                             @PathVariable Long promiseId) {
-        promiseService.votePromise(request, promiseId);
-        return ApiResponseDto.success(SuccessCode.PROMISE_VOTE_POST_SUCCESS);
+        PromiseVoteResponseDto response = promiseService.votePromise(request, promiseId);
+        return ApiResponseDto.success(SuccessCode.PROMISE_VOTE_POST_SUCCESS, response);
     }
 
     @Operation(
