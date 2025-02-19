@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.PersistenceContext;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,7 +32,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class PromiseService {
 
-    private final EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
     private final PromiseRepository promiseRepository;
     private final PlaceRepository placeRepository;
     private final SearchRepository searchRepository;
