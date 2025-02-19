@@ -151,6 +151,7 @@ public class PromiseService {
                 .promisePersonalTime(promisePersonalTime)
                 .build();
         promiseVoteRepository.save(promisevote);
+        promiseVoteRepository.flush();
 
         List<PromiseVote> promiseVotes = promiseVoteRepository.findByPromiseId(promiseId);
 
