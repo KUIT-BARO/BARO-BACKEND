@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class PromiseService {
 
+    private final EntityManager entityManager;
     private final PromiseRepository promiseRepository;
     private final PlaceRepository placeRepository;
     private final SearchRepository searchRepository;
@@ -152,6 +153,7 @@ public class PromiseService {
                 .build();
         promiseVoteRepository.save(promisevote);
         promiseVoteRepository.flush();
+        entityManager.clear();
 
         List<PromiseVote> promiseVotes = promiseVoteRepository.findByPromiseId(promiseId);
 
