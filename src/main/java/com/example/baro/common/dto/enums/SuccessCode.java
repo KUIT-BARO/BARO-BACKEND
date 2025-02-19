@@ -38,9 +38,8 @@ public enum SuccessCode {
 	PROMISE_SUGGEST_SUCCESS(20105, HttpStatus.CREATED, "약속 제안서 등록에 서공하였습니다."),
 
 	//204 NO CONTENT
+	USER_DELETE_SUCCESS(20402, HttpStatus.NO_CONTENT, "회원 삭제 성공"),
 	SCHEDULE_DELETE_SUCCESS(20402, HttpStatus.NO_CONTENT, "시간표 삭제 성공");
-
-
 
 
 	private final int code;

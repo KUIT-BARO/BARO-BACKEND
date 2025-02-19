@@ -87,7 +87,7 @@ public class ScheduleController {
     )
     @ApiResponse(
             responseCode = "20006",
-            description = "시간표 에 성공하였습니다."
+            description = "시간표 수정에 성공하였습니다."
     )
     @PutMapping("/{scheduleId}")
     public ApiResponseDto<ScheduleResponseDto> updateSchedule(@PathVariable Long scheduleId,

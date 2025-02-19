@@ -17,15 +17,13 @@ public record VotingPageResponseDto (
             Long promisePersonalTimeId,
             LocalDate date,
             LocalTime timeStart,
-            LocalTime timeEnd,
-            Status status
+            LocalTime timeEnd
     ){}
 
     @Builder
     public record PlaceDto(
-            Long placeId,
-            String placeName,
-            Status status
+            Long promisePersonalPlaceId,
+            String placeName
     ){}
 
 }

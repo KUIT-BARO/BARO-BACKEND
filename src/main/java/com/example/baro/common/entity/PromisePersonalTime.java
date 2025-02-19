@@ -37,28 +37,19 @@ public class PromisePersonalTime {
     @JoinColumn(name = "promise_personal_id", nullable = false)
     private PromisePersonal promisePersonal;
 
-    @Column(nullable = false)
-    private int voteCount;
-
     @Builder
-    public PromisePersonalTime(Status status, LocalDate date, LocalTime timeStart, LocalTime timeEnd, PromisePersonal promisePersonal, int voteCount) {
+    public PromisePersonalTime(Status status, LocalDate date, LocalTime timeStart, LocalTime timeEnd, PromisePersonal promisePersonal) {
         this.date = date;
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
         this.promisePersonal = promisePersonal;
-        this.voteCount = voteCount;
     }
 
     @PrePersist
     protected void onCreate() {
         if (this.status == null) {
-            this.status = Status.INACTIVE;
+            this.status = Status.ACTIVE;
         }
-        this.voteCount = 0;
     }
 
-    public void vote(){
-        this.status = Status.SUSPENDED;
-        this.voteCount++;
-    }
 }
