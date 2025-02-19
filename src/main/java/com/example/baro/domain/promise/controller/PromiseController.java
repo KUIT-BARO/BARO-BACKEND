@@ -91,7 +91,7 @@ public class PromiseController {
             description = "약속 선정 투표에 성공하였습니다."
     )
     @PostMapping("/vote/{promiseId}")
-    public ApiResponseDto<Void> votePromise(@RequestBody PromiseVoteRequestDto request,
+    public ApiResponseDto<PromiseVoteResponseDto> votePromise(@RequestBody PromiseVoteRequestDto request,
                                             @PathVariable Long promiseId) {
         promiseService.votePromise(request, promiseId);
         return ApiResponseDto.success(SuccessCode.PROMISE_VOTE_POST_SUCCESS);

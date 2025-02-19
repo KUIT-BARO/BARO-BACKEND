@@ -51,8 +51,4 @@ public class PromiseVote {
         }
     }
 
-    public void confirm(){
-        this.status = Status.INACTIVE;
-
-    }
 }
