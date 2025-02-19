@@ -1,6 +1,7 @@
 package com.example.baro.common.entity;
 
 import com.example.baro.common.Enum.promisePurpose.PromisePurpose;
+import com.example.baro.common.Enum.promisePurpose.PromisePurposeConverter;
 import com.example.baro.common.Enum.status.Status;
 import com.example.baro.common.Enum.status.StatusConverter;
 import jakarta.persistence.*;
@@ -51,17 +52,17 @@ public class Promise {
     @Column(nullable = false)
     private LocalDate dateEnd;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalTime timeStart;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalTime timeEnd;
 
     @Column(nullable = false, columnDefinition = "TINYINT UNSIGNED")
     private Integer peopleNumber;
 
     @Column(nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    @Convert(converter = StatusConverter.class)
+    @Convert(converter = PromisePurposeConverter.class)
     private PromisePurpose purpose;
 
 

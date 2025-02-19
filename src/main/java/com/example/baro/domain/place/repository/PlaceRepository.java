@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PlaceRepository extends JpaRepository<Place, Long> {
-    @Query(value = "SELECT p FROM Place p ORDER BY FUNCTION('RAND')", nativeQuery = true)
+    @Query(value = "SELECT * FROM place ORDER BY RAND()", nativeQuery = true)
     List<Place> findRandomPlaces(Pageable pageable);
 
     Optional<Place> findByAddress(String address);

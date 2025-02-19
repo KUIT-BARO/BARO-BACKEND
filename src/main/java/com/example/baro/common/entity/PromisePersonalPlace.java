@@ -32,27 +32,17 @@ public class PromisePersonalPlace {
     private Place place;
 
 
-    @Column(nullable = false)
-    private int voteCount;
-
     @Builder
-    public PromisePersonalPlace(PromisePersonal promisePersonal, Place place) {
+    public PromisePersonalPlace(Status status, PromisePersonal promisePersonal, Place place) {
         this.promisePersonal = promisePersonal;
         this.place = place;
-        this.place = place;
-        this.voteCount = voteCount;
+
     }
 
     @PrePersist
     protected void onCreate() {
         if (this.status == null) {
-            this.status = Status.INACTIVE;
+            this.status = Status.ACTIVE;
         }
-        this.voteCount = 0;
-    }
-
-    public void vote(){
-        this.status = Status.SUSPENDED;
-        this.voteCount++;
     }
 }

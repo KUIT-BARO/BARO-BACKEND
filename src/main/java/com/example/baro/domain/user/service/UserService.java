@@ -20,6 +20,7 @@ import com.example.baro.domain.user.repository.UserRepository;
 import com.example.baro.domain.user.repository.PromisePersonalRepository;
 import com.example.baro.domain.user.repository.UserPromiseRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -67,7 +68,7 @@ public class UserService {
 				.date(upCommingPromise.getDate())
 				.timeStart(upCommingPromise.getTimeStart())
 				.timeEnd(upCommingPromise.getTimeEnd())
-				.place(upCommingPromise.getRegion().getName()).build();
+				.place(upCommingPromise.getPlace().getName()).build();
 
 		List<HomeResponseDto.UpcomingPromiseDto> upcomingPromiseDtos = new ArrayList<>();
 		for (Promise promise : promises) {
@@ -258,5 +259,13 @@ public class UserService {
 		UserProfile userProfile = UserProfile.fromString(profileImageChangeRequestDto.getProfileImage());
 		user.setProfileImage(userProfile);
 		userRepository.save(user);
+	}
+
+	public void deleteUser(User user) {
+		try {
+			userRepository.delete(user);
+		} catch (Exception e) {
+			throw new EntityNotFoundException();
+		}
 	}
 }

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Promise", description = "약속 제안서 관련 API. 토큰이 필요합니다.")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/promise")
+@RequestMapping("/promise")
 public class PromiseController {
 
     private final PromiseService promiseService;
@@ -37,7 +37,7 @@ public class PromiseController {
     public ApiResponseDto<PromiseSuggestResponseDto> registerPromise(
             @RequestBody PromiseSuggestRequestDto request, @LoginUser User user) {
 
-        PromiseSuggestResponseDto response = promiseService.registerPromise(request, user.getNickname());
+        PromiseSuggestResponseDto response = promiseService.registerPromise(request, user);
         return  ApiResponseDto.success(SuccessCode.PROMISE_GET_SUCCESS, response);
     }
 

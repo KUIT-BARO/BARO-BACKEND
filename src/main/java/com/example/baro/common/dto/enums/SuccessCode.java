@@ -40,6 +40,7 @@ public enum SuccessCode {
 	NOTE_CREATE_SUCCESS(20106,HttpStatus.CREATED,"리뷰 등록에 성공하였습니다."),
 
 	//204 NO CONTENT
+	USER_DELETE_SUCCESS(20402, HttpStatus.NO_CONTENT, "회원 삭제 성공"),
 	SCHEDULE_DELETE_SUCCESS(20402, HttpStatus.NO_CONTENT, "시간표 삭제 성공");
 
 
