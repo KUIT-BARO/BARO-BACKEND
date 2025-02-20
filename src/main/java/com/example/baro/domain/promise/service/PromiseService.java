@@ -8,6 +8,7 @@ import com.example.baro.common.exception.exceptionClass.CustomException;
 import com.example.baro.domain.place.repository.PlaceRepository;
 import com.example.baro.domain.place.repository.SearchRepository;
 import com.example.baro.domain.promise.dto.request.PromiseSuggestRequestDto;
+import com.example.baro.domain.promise.dto.request.PromiseUserRequestDto;
 import com.example.baro.domain.promise.dto.request.PromiseVoteRequestDto;
 import com.example.baro.domain.promise.dto.response.*;
 import com.example.baro.domain.promise.exception.PromiseException;
@@ -17,6 +18,7 @@ import com.example.baro.domain.promise.repository.PromiseRepository;
 import com.example.baro.domain.promise.repository.PromiseVoteRepository;
 import com.example.baro.domain.promise.util.DateParser;
 import com.example.baro.domain.user.repository.PromisePersonalRepository;
+import com.example.baro.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class PromiseService {
 
+    private final UserRepository userRepository;
     private final PromiseRepository promiseRepository;
     private final PlaceRepository placeRepository;
     private final SearchRepository searchRepository;
@@ -42,7 +45,7 @@ public class PromiseService {
     private final PromiseVoteRepository promiseVoteRepository;
 
     @Transactional
-    public UserPlaceListResponseDto getUserPlace(Long userId){
+    public UserPlaceListResponseDto getUserPlace(Long userId) {
         List<Place> places = searchRepository.findPlacesByUserId(userId, PageRequest.of(0, 6));
 
         if (places == null || places.isEmpty()) {
@@ -76,12 +79,10 @@ public class PromiseService {
                 .leaderName(user.getNickname())
                 .place(place)
                 .build();
-        PromisePersonal promisePersonal = new PromisePersonal(null, promise, user, place);
 
         promiseRepository.save(promise);
-        promisePersonalRepository.save(promisePersonal);
 
-      return PromiseSuggestResponseDto.builder()
+        return PromiseSuggestResponseDto.builder()
                 .promiseId(promise.getId())
                 .name(promise.getName())
                 .purpose(promise.getPurpose())
@@ -91,7 +92,28 @@ public class PromiseService {
                 .address(promise.getPlace().getAddress())
                 .peopleNumber(promise.getPeopleNumber())
                 .leaderName(promise.getLeaderName())
-              .build();
+                .build();
+    }
+
+    @Transactional
+    public void sharePromise(PromiseUserRequestDto request, Long promiseId) {
+
+        // codeList에 있는 유저 조회
+        List<User> users = userRepository.findByUserIdIn(request.getCodeList());
+
+        Promise promise = promiseRepository.findById(promiseId)
+                .orElseThrow(() -> new PromiseException(ErrorCode.PROMISE_NOT_FOUND));
+
+        // 조회된 유저 리스트를 바탕으로 PromisePersonal 객체 생성 및 저장
+        List<PromisePersonal> promisePersonals = users.stream()
+                .map(participant -> PromisePersonal.builder()
+                        .promise(promise)
+                        .user(participant)
+                        .place(promise.getPlace())  // 필요하면 실제 Place 객체를 할당해야 함
+                        .build())
+                .collect(Collectors.toList());
+
+        promisePersonalRepository.saveAll(promisePersonals);
     }
 
     @Transactional
@@ -144,15 +166,14 @@ public class PromiseService {
                 .build();
     }
 
-    public PromiseVoteResponseDto votePromise(PromiseVoteRequestDto request, Long promiseId){
+    public PromiseVoteResponseDto votePromise(PromiseVoteRequestDto request, Long promiseId) {
         Promise promise = promiseRepository.findById(promiseId)
                 .orElseThrow(() -> new PromiseException(ErrorCode.PROMISE_NOT_FOUND));
 
         PromisePersonalTime promisePersonalTime = promisePersonalTimeRepository.findById(request.getPromisePersonalTimeId())
                 .orElseThrow(() -> new PromiseException(ErrorCode.TIME_NOT_FOUND));
 
-        PromisePersonalPlace promisePersonalPlace =  promisePersonalPlaceRepository.findById(request.getPromisePersonalPlaceId())
-                .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
+        PromisePersonalPlace promisePersonalPlace = promisePersonalPlaceRepository.findByPlaceId(request.getPromisePersonalPlaceId());
 
         PromiseVote promisevote = PromiseVote.builder()
                 .promise(promise)
@@ -164,11 +185,11 @@ public class PromiseService {
 
         List<PromiseVote> promiseVotes = promiseVoteRepository.findByPromiseId(promiseId);
 
-        if(isReadyToConfirm(promiseVotes, promise.getPeopleNumber())){
+        if (isReadyToConfirm(promiseVotes, promise.getPeopleNumber())) {
 
             PromisePersonalTime mostVotedTime = getMostVotedTime(promiseId);
             PromisePersonalPlace mostVotedPlace = getMostVotedPlace(promiseId);
-            promise.confirm(mostVotedTime.getDate(), mostVotedTime.getTimeStart(), mostVotedTime.getTimeEnd(),mostVotedPlace.getPlace());
+            promise.confirm(mostVotedTime.getDate(), mostVotedTime.getTimeStart(), mostVotedTime.getTimeEnd(), mostVotedPlace.getPlace());
         }
 
         PromiseVoteResponseDto.PromiseVoteDto promiseVoteDto = PromiseVoteResponseDto.PromiseVoteDto.builder()
@@ -273,7 +294,7 @@ public class PromiseService {
         }
 
         List<Long> activePersonalPromiseIds = promisePersonalRepository.findActivePersonalPromiseIdsByPromiseId(promiseId, Status.ACTIVE);
-        List<PromisePersonalPlace> personalPlaces = promisePersonalPlaceRepository.findByPromisePersonalIdIn(activePersonalPromiseIds);
+        List<PromisePersonalPlace> personalPlaces = promisePersonalPlaceRepository.findByPromisePersonal_IdIn(activePersonalPromiseIds);
 
         return findOverlappingPersonalPlaces(personalPlaces);
     }
@@ -337,5 +358,6 @@ public class PromiseService {
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .orElse(null);
+
     }
 }
