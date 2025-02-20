@@ -9,10 +9,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PromisePersonalRepository extends JpaRepository<PromisePersonal, Long> {
 	List<PromisePersonal> findAllByUser(User user);
+
+	Optional<PromisePersonal> findByIdAndUser(Long aLong, User user);
 
 	List<PromisePersonal> findAllByUserAndStatus(User user, Status status);
 
