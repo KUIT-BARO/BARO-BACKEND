@@ -31,6 +31,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -93,16 +94,18 @@ public class UserService {
 		List<UserPromise> userPromises = userPromiseRepository.findAllByUserAndDisplayTrue(user);
 		List<PromisePersonal> promisePersonals = promisePersonalRepository.findAllByUserAndStatus(user, Status.INACTIVE);
 
-		promisePersonals.sort(Comparator.comparing(up -> up.getPromise().getDate()));
+		// Null 체크 및 정렬
 		List<Promise> pendingPromises = promisePersonals.stream()
 				.map(PromisePersonal::getPromise)
-				.sorted(Comparator.comparing(Promise::getDate)).toList();
+				.filter(Objects::nonNull) // ✅ Null 필터링
+				.sorted(Comparator.comparing(Promise::getDate))
+				.toList();
 
-		userPromises.sort(Comparator.comparing(up -> up.getPromise().getDate()));
 		List<Promise> promises = userPromises.stream()
 				.map(UserPromise::getPromise)
-				.sorted(Comparator.comparing(Promise::getDate)).toList();
-
+				.filter(Objects::nonNull) // ✅ Null 필터링
+				.sorted(Comparator.comparing(Promise::getDate))
+				.toList();
 
 		List<UserPromiseListResponseDto.PendingPromisesDto> pendingPromiseDtos = new ArrayList<>();
 		if (!pendingPromises.isEmpty()) {
