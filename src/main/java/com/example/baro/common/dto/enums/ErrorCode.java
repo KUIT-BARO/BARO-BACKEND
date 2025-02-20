@@ -37,6 +37,7 @@ public enum ErrorCode {
     DUPLICATE_ENTITY_CONFLICT(40902, CONFLICT, "이미 존재하는 사용자입니다."),
     PROMISE_NOT_YET_VOTE_CONFLICT(40903, CONFLICT, "모든 사용자가 투표하지 않았습니다. "),
     PROMISE_NOT_YET_AGREE_CONFLICT(40904, CONFLICT, "모든 사용자가 제안을 수락하지 않았습니다. "),
+    INVALID_PARTICIPANT_COUNT(40905, CONFLICT, "약속 인원수를 초과하였습니다."),
 
     // 500
     SERVER_ERROR(50001, INTERNAL_SERVER_ERROR, "예상치 못한 서버 에러가 발생하였습니다.");

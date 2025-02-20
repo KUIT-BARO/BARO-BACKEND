@@ -104,6 +104,10 @@ public class PromiseService {
         Promise promise = promiseRepository.findById(promiseId)
                 .orElseThrow(() -> new PromiseException(ErrorCode.PROMISE_NOT_FOUND));
 
+        if (users.size() < promise.getPeopleNumber()) {
+            throw new PromiseException(ErrorCode.INVALID_PARTICIPANT_COUNT);
+        }
+
         PromisePersonal myPromisePersonal = PromisePersonal.builder()
                 .promise(promise)
                 .user(me)
