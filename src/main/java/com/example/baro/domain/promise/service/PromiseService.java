@@ -96,13 +96,20 @@ public class PromiseService {
     }
 
     @Transactional
-    public void sharePromise(PromiseUserRequestDto request, Long promiseId) {
+    public void sharePromise(PromiseUserRequestDto request, Long promiseId, User me) {
 
         // codeList에 있는 유저 조회
         List<User> users = userRepository.findByUserIdIn(request.getCodeList());
 
         Promise promise = promiseRepository.findById(promiseId)
                 .orElseThrow(() -> new PromiseException(ErrorCode.PROMISE_NOT_FOUND));
+
+        PromisePersonal myPromisePersonal = PromisePersonal.builder()
+                .promise(promise)
+                .user(me)
+                .place(promise.getPlace())
+                .build();
+        promisePersonalRepository.save(myPromisePersonal);
 
         // 조회된 유저 리스트를 바탕으로 PromisePersonal 객체 생성 및 저장
         List<PromisePersonal> promisePersonals = users.stream()
@@ -214,16 +221,13 @@ public class PromiseService {
             throw new PromiseException(ErrorCode.PROMISE_NOT_YET_VOTE_CONFLICT);
         }
 
-        Place place = placeRepository.findById(promise.getPlace().getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
-
-        PromiseConfirmResponseDto.PromiseConfirmDto promiseConfirmDto = PromiseConfirmResponseDto.PromiseConfirmDto.builder()
+      PromiseConfirmResponseDto.PromiseConfirmDto promiseConfirmDto = PromiseConfirmResponseDto.PromiseConfirmDto.builder()
                 .promiseId(promiseId)
                 .name(promise.getName())
                 .date(promise.getDate())
                 .peopleNum(promise.getPeopleNumber())
                 .purpose(promise.getPurpose())
-                .placeName(place.getName())
+                .placeName(promise.getPlace().getName())
                 .leaderName(promise.getLeaderName())
                 .build();
 

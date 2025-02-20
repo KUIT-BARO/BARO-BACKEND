@@ -53,8 +53,9 @@ public class PromiseController {
     @PostMapping("/share/{promiseId}")
     public ApiResponseDto<Void> sharePromise(
             @RequestBody PromiseUserRequestDto request,
-            @PathVariable Long promiseId) {
-        promiseService.sharePromise(request, promiseId);
+            @PathVariable Long promiseId,
+            @LoginUser User user){
+        promiseService.sharePromise(request, promiseId, user);
         return ApiResponseDto.success(SuccessCode.PROMISE_SHARE_SUCCESS);
     }
 
