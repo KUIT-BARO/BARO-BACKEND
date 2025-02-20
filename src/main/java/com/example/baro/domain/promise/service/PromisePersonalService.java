@@ -97,7 +97,7 @@ public class PromisePersonalService {
 
     private PromisePersonal getPromisePersonal(User user, Long promiseId) {
         PromisePersonal promisePersonal = promisePersonalRepository
-                .findByIdAndUser(promiseId, user)
+                .findByPromiseIdAndUser(promiseId, user)
                 .orElseThrow(() -> new InvalidRequestException("잘못된 promiseId입니다. :  " + promiseId));
         return promisePersonal;
     }
