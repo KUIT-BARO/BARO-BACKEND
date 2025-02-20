@@ -16,6 +16,7 @@ public record ScheduleResponseDto(
         String name,
         DayOfWeek dayOfWeek,
         LocalTime timeStart,
-        LocalTime timeEnd
+        LocalTime timeEnd,
+        String location
     ){}
 }

@@ -38,7 +38,7 @@ public class PromisePersonalController{
         return ApiResponseDto.success(SuccessCode.NOTE_CREATE_SUCCESS);
     }
 
-    @PostMapping("/{promiseId}/reject")
+    @PatchMapping("/{promiseId}/reject")
     public ApiResponseDto rejectPersonal(@LoginUser User user, @PathVariable Long promiseId) {
         promisePersonalService.rejectPersonal(user, promiseId);
         return ApiResponseDto.success(SuccessCode.NOTE_CREATE_SUCCESS);

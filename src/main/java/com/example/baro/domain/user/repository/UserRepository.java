@@ -24,4 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     WHERE u.userId LIKE CONCAT(:code, '%')
 """)
 	List<Object[]> searchUsersWithFriendStatus(@Param("userId") Long userId, @Param("code") String code);
+
+	List<User> findByUserIdIn(List<String> userIds);
 }

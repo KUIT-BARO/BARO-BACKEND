@@ -30,18 +30,18 @@ public class PromiseVote {
     private Promise promise;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "promis_personal_time_id", nullable = false)
+    @JoinColumn(name = "promise_personal_time_id", nullable = false)
     private PromisePersonalTime promisePersonalTime;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "promise_personal_place_id", nullable = false)
-    private PromisePersonalPlace promisePersonalPlace;
+    @JoinColumn(name = "place_id", nullable = false)
+    private Place place;
 
     @Builder
-    public PromiseVote(Status status, Promise promise, PromisePersonalTime promisePersonalTime, PromisePersonalPlace promisePersonalPlace) {
+    public PromiseVote(Status status, Promise promise, PromisePersonalTime promisePersonalTime, Place place) {
         this.promise = promise;
         this.promisePersonalTime = promisePersonalTime;
-        this.promisePersonalPlace = promisePersonalPlace;
+        this.place = place;
     }
 
     @PrePersist

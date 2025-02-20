@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface PromisePersonalRepository extends JpaRepository<PromisePersonal, Long> {
 	List<PromisePersonal> findAllByUser(User user);
 
-	Optional<PromisePersonal> findByIdAAndUser(Long aLong, User user);
+	Optional<PromisePersonal> findByIdAndUser(Long aLong, User user);
 
 	List<PromisePersonal> findAllByUserAndStatus(User user, Status status);
 
@@ -23,4 +23,6 @@ public interface PromisePersonalRepository extends JpaRepository<PromisePersonal
 
 	@Query("SELECT p.id FROM PromisePersonal p WHERE p.promise.id = :promiseId AND p.status = :status")
 	List<Long> findActivePersonalPromiseIdsByPromiseId(@Param("promiseId") Long promiseId, @Param("status") Status status);
+
+
 }

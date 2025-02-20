@@ -214,7 +214,7 @@ public class UserService {
 					.dayOfWeek(schedule.getDayOfWeek().toJavaDayOfWeek())
 					.timeStart(schedule.getTimeStart())
 					.timeEnd(schedule.getTimeEnd())
-					.place(schedule.getPlace().getName())
+					.place(schedule.getLocation())
 					.build();
 			scheduleDtos.add(scheduleDto);
 		}
