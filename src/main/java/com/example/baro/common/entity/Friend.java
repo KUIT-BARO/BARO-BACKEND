@@ -35,7 +35,6 @@ public class Friend {
     @JoinColumn(name = "to_user_id", nullable = false)
     private User toUser;
 
-    @Builder
     public Friend(User fromUser, User toUser) {
         this.fromUser = fromUser;
         this.toUser = toUser;

@@ -41,18 +41,25 @@ public class FriendService {
 		return FriendListResponseDto.builder().friends(friendDtos).build();
 	}
 
+
 	@Transactional
 	public void requestFriend(User user, FriendRequestDto requestDto) {
+		// 영속성 컨텍스트에서 friend 조회
 		User friend = userRepository.findByUserId(requestDto.getCode())
 				.orElseThrow(EntityNotFoundException::new);
 
-		boolean alreadyFriend = friendRepository.existsByFromUserAndToUser(user, friend);
+		// ✅ Detached 상태의 user를 다시 영속성 컨텍스트에 포함
+		User managedUser = userRepository.findById(user.getId())
+				.orElseThrow(() -> new EntityNotFoundException("User not found"));
 
+		// 이미 친구인지 확인
+		boolean alreadyFriend = friendRepository.existsByFromUserAndToUser(managedUser, friend);
 		if (alreadyFriend) {
 			throw new IllegalStateException("이미 친구입니다.");
 		}
 
-		friendRepository.sendFriendRequest(user, friend);
+		// 친구 요청 저장
+		friendRepository.sendFriendRequest(managedUser, friend);
 	}
 
 	public void deleteFriend(User user, FriendDeleteRequestDto requestDto) {
