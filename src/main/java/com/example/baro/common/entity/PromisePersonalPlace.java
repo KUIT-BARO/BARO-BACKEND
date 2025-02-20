@@ -14,7 +14,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "promise_personal_place")
 public class PromisePersonalPlace {
 
-    @EmbeddedId
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private PromisePersonalPlaceId id;
 
     @Column(nullable = false)
