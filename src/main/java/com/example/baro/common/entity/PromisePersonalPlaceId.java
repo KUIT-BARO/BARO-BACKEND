@@ -16,7 +16,7 @@ public class PromisePersonalPlaceId implements Serializable {
     @Column(name = "promise_personal_id", nullable = false)
     private Long promisePersonalId;
 
-    @JoinColumn(name = "place_id", nullable = false)
+    @Column(name = "place_id", nullable = false)
     private Long placeId;
 
     @Builder
