@@ -192,12 +192,16 @@ public class UserService {
 
 		List<MyPageResponseDto.ScheduleDto> scheduleDtos = new ArrayList<>();
 		for (Promise promise : promises) {
+			String placeName = null;
+			if (promise.getPlace() != null){
+				placeName = promise.getPlace().getName();
+			}
 			MyPageResponseDto.ScheduleDto scheduleDto = MyPageResponseDto.ScheduleDto.builder()
 					.name(promise.getName())
 					.dayOfWeek(promise.getDate().getDayOfWeek())
 					.timeStart(promise.getTimeStart())
 					.timeEnd(promise.getTimeEnd())
-					.place(promise.getPlace().getName())
+					.place(placeName)
 					.build();
 			scheduleDtos.add(scheduleDto);
 		}
