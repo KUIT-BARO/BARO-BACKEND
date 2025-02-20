@@ -27,6 +27,7 @@ public class PromisePersonalKeyword {
 
     @Builder
     public PromisePersonalKeyword( PromisePersonal promisePersonal, Keyword keyword) {
+        this.id = new PromisePersonalKeywordId(promisePersonal.getId(), keyword.getId());
         this.promisePersonal = promisePersonal;
         this.keyword = keyword;
     }
