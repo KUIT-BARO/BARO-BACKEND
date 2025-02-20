@@ -40,15 +40,10 @@ public class PromisePersonal {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "place_id", nullable = false)
-    private Place place;
-
     @Builder
-    public PromisePersonal(String status, Promise promise, User user, Place place) {
+    public PromisePersonal(String status, Promise promise, User user) {
         this.promise = promise;
         this.user = user;
-        this.place = place;
     }
 
     @PrePersist
