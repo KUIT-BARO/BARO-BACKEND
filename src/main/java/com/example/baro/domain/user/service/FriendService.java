@@ -8,6 +8,7 @@ import com.example.baro.domain.user.dto.request.FriendDeleteRequestDto;
 import com.example.baro.domain.user.dto.request.FriendRequestDto;
 import com.example.baro.domain.user.dto.response.FriendListResponseDto;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,7 @@ public class FriendService {
 		return FriendListResponseDto.builder().friends(friendDtos).build();
 	}
 
+	@Transactional
 	public void requestFriend(User user, FriendRequestDto requestDto) {
 		User friend = userRepository.findByUserId(requestDto.getCode()).orElseThrow(EntityNotFoundException::new);
 		friendRepository.sendFriendRequest(user, friend);
