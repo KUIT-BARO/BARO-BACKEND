@@ -42,6 +42,7 @@ public class AuthService {
 		User user20 = userRepository.getReferenceById(20L);
 		User user21 = userRepository.getReferenceById(21L);
 
+		// 친구 맺기
 		friendRepository.sendFriendRequest(user, user15);
 		friendRepository.sendFriendRequest(user, user16);
 		friendRepository.sendFriendRequest(user, user17);
