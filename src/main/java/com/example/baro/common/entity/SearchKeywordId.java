@@ -12,7 +12,7 @@ public class SearchKeywordId implements Serializable {
     @Column(name = "search_id", nullable = false)
     private Long searchId;
 
-    @JoinColumn(name = "keyword_id", nullable = false)
+    @Column(name = "keyword_id", nullable = false)
     private Long keywordId;
 
     @Builder
