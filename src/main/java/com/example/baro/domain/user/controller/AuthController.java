@@ -48,6 +48,8 @@ public class AuthController {
 			return ApiResponseDto.success(SuccessCode.USER_LOGIN_SUCCESS, LoginResponseDto.builder().name(user.getNickname()).build());
 		} catch (IllegalArgumentException e) {
 			return ApiResponseDto.fail(ErrorCode.SECURITY_UNAUTHORIZED);
+		} catch (DuplicateUserException e) {
+			return ApiResponseDto.fail(ErrorCode.DUPLICATE_ENTITY_CONFLICT);
 		} catch (Exception e) {
 			return ApiResponseDto.fail(ErrorCode.SERVER_ERROR);
 		}

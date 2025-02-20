@@ -24,11 +24,6 @@ public class AuthService {
 			throw new DuplicateUserException("same userId exists");
 		}
 
-		// 유효성 검사 (예: 비밀번호 길이 체크)
-		if (requestDto.getPassword().length() < 8) {
-			throw new InvalidRequestException("Password must be at least 8 characters long");
-		}
-
 		// 새로운 사용자 저장
 		User user = User.builder()
 				.userId(requestDto.getId())
