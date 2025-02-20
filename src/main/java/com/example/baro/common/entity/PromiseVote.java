@@ -30,11 +30,14 @@ public class PromiseVote {
     private Promise promise;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "promis_personal_time_id", nullable = false)
+    @JoinColumn(name = "promise_personal_time_id", nullable = false)
     private PromisePersonalTime promisePersonalTime;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "promise_personal_place_id", nullable = false)
+    @JoinColumns({
+            @JoinColumn(name = "promise_personal_id", referencedColumnName = "promise_personal_id"),
+            @JoinColumn(name = "place_id", referencedColumnName = "place_id")
+    })
     private PromisePersonalPlace promisePersonalPlace;
 
     @Builder
