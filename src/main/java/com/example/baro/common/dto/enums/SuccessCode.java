@@ -29,6 +29,7 @@ public enum SuccessCode {
 	PROMISE_VOTE_POST_SUCCESS(20014, HttpStatus.OK, "약속 선정 투표에 성공"),
 	USER_PLACE_GET_SUCCESS(20015, HttpStatus.OK, "사용자의 리뷰된 장소 조회에 성공"),
     UPCOMING_PROMISE_DELETE_SUCCESS(20016, HttpStatus.OK, "약속이 정상적으로 삭제되었습니다."),
+	PROMISE_SHARE_SUCCESS(20017, HttpStatus.OK, "약속 제안서 공유에 성공했씁니다."),
 
 	//201 CREATED
 	USER_SIGNUP_SUCCESS(20101, HttpStatus.CREATED, "회원가입에 성공하였습니다."),

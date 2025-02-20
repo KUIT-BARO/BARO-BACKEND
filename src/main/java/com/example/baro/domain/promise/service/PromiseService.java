@@ -8,6 +8,7 @@ import com.example.baro.common.exception.exceptionClass.CustomException;
 import com.example.baro.domain.place.repository.PlaceRepository;
 import com.example.baro.domain.place.repository.SearchRepository;
 import com.example.baro.domain.promise.dto.request.PromiseSuggestRequestDto;
+import com.example.baro.domain.promise.dto.request.PromiseUserRequestDto;
 import com.example.baro.domain.promise.dto.request.PromiseVoteRequestDto;
 import com.example.baro.domain.promise.dto.response.*;
 import com.example.baro.domain.promise.exception.PromiseException;
@@ -17,6 +18,7 @@ import com.example.baro.domain.promise.repository.PromiseRepository;
 import com.example.baro.domain.promise.repository.PromiseVoteRepository;
 import com.example.baro.domain.promise.util.DateParser;
 import com.example.baro.domain.user.repository.PromisePersonalRepository;
+import com.example.baro.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class PromiseService {
 
+    private final UserRepository userRepository;
     private final PromiseRepository promiseRepository;
     private final PlaceRepository placeRepository;
     private final SearchRepository searchRepository;
@@ -92,6 +95,27 @@ public class PromiseService {
                 .peopleNumber(promise.getPeopleNumber())
                 .leaderName(promise.getLeaderName())
               .build();
+    }
+
+    @Transactional
+    public void sharePromise(PromiseUserRequestDto request, Long promiseId) {
+
+        // codeList에 있는 유저 조회
+        List<User> users = userRepository.findByUserIdIn(request.getCodeList());
+
+        Promise promise = promiseRepository.findById(promiseId)
+                .orElseThrow(() -> new PromiseException(ErrorCode.PROMISE_NOT_FOUND));
+
+        // 조회된 유저 리스트를 바탕으로 PromisePersonal 객체 생성 및 저장
+        List<PromisePersonal> promisePersonals = users.stream()
+                .map(participant -> PromisePersonal.builder()
+                        .promise(promise)
+                        .user(participant)
+                        .place(promise.getPlace())  // 필요하면 실제 Place 객체를 할당해야 함
+                        .build())
+                .collect(Collectors.toList());
+
+        promisePersonalRepository.saveAll(promisePersonals);
     }
 
     @Transactional
