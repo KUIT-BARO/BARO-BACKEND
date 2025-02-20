@@ -43,7 +43,15 @@ public class FriendService {
 
 	@Transactional
 	public void requestFriend(User user, FriendRequestDto requestDto) {
-		User friend = userRepository.findByUserId(requestDto.getCode()).orElseThrow(EntityNotFoundException::new);
+		User friend = userRepository.findByUserId(requestDto.getCode())
+				.orElseThrow(EntityNotFoundException::new);
+
+		boolean alreadyFriend = friendRepository.existsByFromUserAndToUser(user, friend);
+
+		if (alreadyFriend) {
+			throw new IllegalStateException("이미 친구입니다.");
+		}
+
 		friendRepository.sendFriendRequest(user, friend);
 	}
 

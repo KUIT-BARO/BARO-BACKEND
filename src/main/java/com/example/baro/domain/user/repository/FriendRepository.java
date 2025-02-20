@@ -20,11 +20,12 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 	@Modifying
 	@Query("DELETE FROM Friend f WHERE (f.fromUser.id = :userId1 AND f.toUser.id = :userId2) OR (f.fromUser.id = :userId2 AND f.toUser.id = :userId1)")
 	void deleteFriend(@Param("userId1") Long userId1, @Param("userId2") Long userId2);
-
-	@Modifying
+	
 	@Transactional
 	default void sendFriendRequest(User fromUser, User toUser) {
 		save(new Friend(fromUser, toUser));
 		save(new Friend(toUser, fromUser));
 	}
+
+	boolean existsByFromUserAndToUser(User user, User friend);
 }
