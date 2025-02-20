@@ -29,7 +29,8 @@ public enum SuccessCode {
 	PROMISE_VOTE_POST_SUCCESS(20014, HttpStatus.OK, "약속 선정 투표에 성공"),
 	USER_PLACE_GET_SUCCESS(20015, HttpStatus.OK, "사용자의 리뷰된 장소 조회에 성공"),
     UPCOMING_PROMISE_DELETE_SUCCESS(20016, HttpStatus.OK, "약속이 정상적으로 삭제되었습니다."),
-	PROMISE_SHARE_SUCCESS(20017, HttpStatus.OK, "약속 제안서 공유에 성공했씁니다."),
+    PLACE_SEARCH_SUCCESS(20017, HttpStatus.OK, "장소를 조회했습니다."),
+	PROMISE_SHARE_SUCCESS(20018, HttpStatus.OK, "약속 제안서 공유에 성공했씁니다."),
 
 	//201 CREATED
 	USER_SIGNUP_SUCCESS(20101, HttpStatus.CREATED, "회원가입에 성공하였습니다."),
@@ -37,6 +38,7 @@ public enum SuccessCode {
 	LINK_CREATE_SUCCESS(20103, HttpStatus.CREATED, "링크 생성 성공"),
 	SCHEDULE_REGISTER_SUCCESS(20104, HttpStatus.CREATED, "시간표 등록에 성공하였습니다."),
 	PROMISE_SUGGEST_SUCCESS(20105, HttpStatus.CREATED, "약속 제안서 등록에 서공하였습니다."),
+	NOTE_CREATE_SUCCESS(20106,HttpStatus.CREATED,"리뷰 등록에 성공하였습니다."),
 
 	//204 NO CONTENT
 	USER_DELETE_SUCCESS(20402, HttpStatus.NO_CONTENT, "회원 삭제 성공"),

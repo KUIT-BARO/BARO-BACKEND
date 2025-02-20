@@ -154,6 +154,7 @@ public class PromiseService {
                         .build())
                 .toList();
 
+
         List<VotingPageResponseDto.PlaceDto> placeDtoList = personalPlaces.stream()
                 .map(personalPlace -> VotingPageResponseDto.PlaceDto.builder()
                         .promisePersonalPlaceId(personalPlace.getId())

@@ -33,8 +33,6 @@ public class Search {
     @Column(columnDefinition = "TINYINT UNSIGNED")
     private Integer score; // TINYINT UNSIGNED는 Java에서 Integer로 사용
 
-    @Column(columnDefinition = "TEXT")
-    private String image;
 
     @Builder
     public Search(User user, Place place, Keyword keyword, String note, Integer score, String image) {
@@ -42,6 +40,5 @@ public class Search {
         this.place = place;
         this.note = note;
         this.score = score;
-        this.image = image;
     }
 }
