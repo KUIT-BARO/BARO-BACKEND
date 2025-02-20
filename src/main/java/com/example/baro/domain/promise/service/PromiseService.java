@@ -79,10 +79,8 @@ public class PromiseService {
                 .leaderName(user.getNickname())
                 .place(place)
                 .build();
-        PromisePersonal promisePersonal = new PromisePersonal(null, promise, user, place);
 
         promiseRepository.save(promise);
-        promisePersonalRepository.save(promisePersonal);
 
       return PromiseSuggestResponseDto.builder()
                 .promiseId(promise.getId())
@@ -157,7 +155,7 @@ public class PromiseService {
 
         List<VotingPageResponseDto.PlaceDto> placeDtoList = personalPlaces.stream()
                 .map(personalPlace -> VotingPageResponseDto.PlaceDto.builder()
-                        .promisePersonalPlaceId(personalPlace.getId())
+                        .promisePersonalPlaceId(personalPlace.getPlace().getId())
                         .placeName(personalPlace.getPlace().getName())
                         .build())
                 .toList();
@@ -174,6 +172,7 @@ public class PromiseService {
 
         PromisePersonalTime promisePersonalTime = promisePersonalTimeRepository.findById(request.getPromisePersonalTimeId())
                 .orElseThrow(() -> new PromiseException(ErrorCode.TIME_NOT_FOUND));
+
 
         PromisePersonalPlace promisePersonalPlace =  promisePersonalPlaceRepository.findById(request.getPromisePersonalPlaceId())
                 .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
@@ -297,7 +296,7 @@ public class PromiseService {
         }
 
         List<Long> activePersonalPromiseIds = promisePersonalRepository.findActivePersonalPromiseIdsByPromiseId(promiseId, Status.ACTIVE);
-        List<PromisePersonalPlace> personalPlaces = promisePersonalPlaceRepository.findByPromisePersonalIdIn(activePersonalPromiseIds);
+        List<PromisePersonalPlace> personalPlaces = promisePersonalPlaceRepository.findByPromisePersonal_IdIn(activePersonalPromiseIds);
 
         return findOverlappingPersonalPlaces(personalPlaces);
     }
