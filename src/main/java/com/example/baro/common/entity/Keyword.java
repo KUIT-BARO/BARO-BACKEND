@@ -36,14 +36,10 @@ public class Keyword {
     @Column(nullable = false, length = 10)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "tag_id", nullable = false)
-    private KeywordTag keywordTag;
 
     @Builder
-    public Keyword(int status, String name, KeywordTag keywordTag) {
+    public Keyword(int status, String name) {
         this.name = name;
-        this.keywordTag = keywordTag;
     }
 
     @PrePersist
