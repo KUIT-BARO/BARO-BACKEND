@@ -173,30 +173,30 @@ public class PromiseService {
         PromisePersonalTime promisePersonalTime = promisePersonalTimeRepository.findById(request.getPromisePersonalTimeId())
                 .orElseThrow(() -> new PromiseException(ErrorCode.TIME_NOT_FOUND));
 
-        PromisePersonalPlace promisePersonalPlace = promisePersonalPlaceRepository.findByPlaceId(request.getPromisePersonalPlaceId());
+        Place place = placeRepository.findById(request.getPromisePersonalPlaceId())
+                .orElseThrow(() -> new CustomException(ErrorCode.PLACE_NOT_FOUND));
 
         PromiseVote promisevote = PromiseVote.builder()
                 .promise(promise)
-                .promisePersonalPlace(promisePersonalPlace)
+                .place(place)
                 .promisePersonalTime(promisePersonalTime)
                 .build();
         promiseVoteRepository.save(promisevote);
-
 
         List<PromiseVote> promiseVotes = promiseVoteRepository.findByPromiseId(promiseId);
 
         if (isReadyToConfirm(promiseVotes, promise.getPeopleNumber())) {
 
             PromisePersonalTime mostVotedTime = getMostVotedTime(promiseId);
-            PromisePersonalPlace mostVotedPlace = getMostVotedPlace(promiseId);
-            promise.confirm(mostVotedTime.getDate(), mostVotedTime.getTimeStart(), mostVotedTime.getTimeEnd(), mostVotedPlace.getPlace());
+            Place mostVotedPlace = getMostVotedPlace(promiseId);
+            promise.confirm(mostVotedTime.getDate(), mostVotedTime.getTimeStart(), mostVotedTime.getTimeEnd(), mostVotedPlace);
         }
 
         PromiseVoteResponseDto.PromiseVoteDto promiseVoteDto = PromiseVoteResponseDto.PromiseVoteDto.builder()
                 .date(promisevote.getPromisePersonalTime().getDate())
                 .timeStart(promisevote.getPromisePersonalTime().getTimeStart())
                 .timeEnd(promisevote.getPromisePersonalTime().getTimeEnd())
-                .placeName(promisevote.getPromisePersonalPlace().getPlace().getName())
+                .placeName(promisevote.getPlace().getName())
                 .status(promisevote.getStatus())
                 .build();
 
@@ -351,9 +351,9 @@ public class PromiseService {
                 .orElse(null);
     }
 
-    private PromisePersonalPlace getMostVotedPlace(Long promiseId) {
+    private Place getMostVotedPlace(Long promiseId) {
         return promiseVoteRepository.findByPromiseId(promiseId).stream()
-                .collect(Collectors.groupingBy(PromiseVote::getPromisePersonalPlace, Collectors.counting()))
+                .collect(Collectors.groupingBy(PromiseVote::getPlace, Collectors.counting()))
                 .entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
