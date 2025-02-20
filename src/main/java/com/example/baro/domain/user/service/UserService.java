@@ -94,19 +94,19 @@ public class UserService {
 		List<UserPromise> userPromises = userPromiseRepository.findAllByUserAndDisplayTrue(user);
 		List<PromisePersonal> promisePersonals = promisePersonalRepository.findAllByUserAndStatus(user, Status.INACTIVE);
 
-		// Null 체크 및 정렬
+		promisePersonals.sort(Comparator.comparing(up -> up.getPromise().getDate()));
 		List<Promise> pendingPromises = promisePersonals.stream()
 				.map(PromisePersonal::getPromise)
 				.filter(Objects::nonNull) // ✅ Null 필터링
 				.sorted(Comparator.comparing(Promise::getDate))
 				.toList();
 
+		userPromises.sort(Comparator.comparing(up -> up.getPromise().getDate()));
 		List<Promise> promises = userPromises.stream()
 				.map(UserPromise::getPromise)
 				.filter(Objects::nonNull) // ✅ Null 필터링
 				.sorted(Comparator.comparing(Promise::getDate))
 				.toList();
-
 
 		List<UserPromiseListResponseDto.PendingPromisesDto> pendingPromiseDtos = new ArrayList<>();
 		if (!pendingPromises.isEmpty()) {
