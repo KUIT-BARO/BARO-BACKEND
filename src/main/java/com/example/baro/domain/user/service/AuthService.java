@@ -3,16 +3,19 @@ package com.example.baro.domain.user.service;
 import com.example.baro.common.entity.User;
 import com.example.baro.common.exception.exceptionClass.DuplicateUserException;
 import com.example.baro.common.exception.exceptionClass.InvalidRequestException;
+import com.example.baro.domain.user.repository.FriendRepository;
 import com.example.baro.domain.user.repository.UserRepository;
 import com.example.baro.domain.user.dto.request.LoginRequestDto;
 import com.example.baro.domain.user.dto.request.SignUpRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 	private final UserRepository userRepository;
+	private final FriendRepository friendRepository;
 
 	public void signup(SignUpRequestDto requestDto) {
 		validateSignupRequest(requestDto);
@@ -34,6 +37,23 @@ public class AuthService {
 				.build();
 
 		userRepository.save(user);
+
+		// 사용자 객체 가져오기
+		User user15 = userRepository.getReferenceById(15L);
+		User user16 = userRepository.getReferenceById(16L);
+		User user17 = userRepository.getReferenceById(17L);
+		User user18 = userRepository.getReferenceById(18L);
+		User user19 = userRepository.getReferenceById(19L);
+		User user20 = userRepository.getReferenceById(20L);
+		User user21 = userRepository.getReferenceById(21L);
+
+		friendRepository.sendFriendRequest(user, user15);
+		friendRepository.sendFriendRequest(user, user16);
+		friendRepository.sendFriendRequest(user, user17);
+		friendRepository.sendFriendRequest(user, user18);
+		friendRepository.sendFriendRequest(user, user19);
+		friendRepository.sendFriendRequest(user, user20);
+		friendRepository.sendFriendRequest(user, user21);
 	}
 
 	public User login(LoginRequestDto requestDto) {
