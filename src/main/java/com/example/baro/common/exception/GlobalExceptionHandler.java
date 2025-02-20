@@ -1,6 +1,7 @@
 package com.example.baro.common.exception;
 
 
+import com.example.baro.common.dto.ApiResponseDto;
 import com.example.baro.common.exception.dto.ErrorResponseDto;
 import com.example.baro.common.exception.dto.ValidationErrorResponseDto;
 import com.example.baro.common.exception.exceptionClass.CustomException;
@@ -36,7 +37,7 @@ public class GlobalExceptionHandler {
             BindException.class,
             MethodArgumentNotValidException.class
     })
-    protected ResponseEntity<List<ValidationErrorResponseDto>> validationException(BindException e,
+    protected ApiResponseDto<List<ValidationErrorResponseDto>> validationException(BindException e,
                                                                                    HttpServletRequest request) {
         BindingResult bindingResult = e.getBindingResult();
         List<ValidationErrorResponseDto> errors = new ArrayList<>();
@@ -48,7 +49,8 @@ public class GlobalExceptionHandler {
             );
             errors.add(error);
         }
-        return ResponseEntity.badRequest().body(errors);
+        return ApiResponseDto.fail(ErrorCode.INVAILD_REQUEST_BODY, errors);
+
     }
 
     // 이외에 기타 에러(500)를 보여주는 함수
