@@ -27,7 +27,7 @@ public class FriendService {
 
 		for (Friend friend : friends) {
 			User friendUser = friend.getFromUser();
-			if (friend.getToUser().equals(user)) {
+			if (friend.getFromUser().equals(user)) {
 				friendUser = friend.getToUser();
 			}
 			FriendListResponseDto.FriendDto friendDto = FriendListResponseDto.FriendDto.builder()

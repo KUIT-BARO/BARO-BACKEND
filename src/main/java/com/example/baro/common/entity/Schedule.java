@@ -54,17 +54,17 @@ public class Schedule {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_id", nullable = true)
-    private Place place;
+    @Column(nullable = false)
+    private String location;
 
     @Builder
-    public Schedule(String status, String name, DayOfWeek dayOfWeek, LocalTime timeStart, LocalTime timeEnd, User user) {
+    public Schedule(String status, String name, DayOfWeek dayOfWeek, LocalTime timeStart, LocalTime timeEnd, User user, String location) {
         this.name = name;
         this.dayOfWeek = dayOfWeek;
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
         this.user = user;
+        this.location = location;
     }
 
     @PrePersist
@@ -74,10 +74,11 @@ public class Schedule {
         }
     }
 
-    public void update(String name, DayOfWeek dayOfWeek, LocalTime timeStart, LocalTime timeEnd) {
+    public void update(String name, DayOfWeek dayOfWeek, LocalTime timeStart, LocalTime timeEnd, String location) {
         this.name = name;
         this.dayOfWeek = dayOfWeek;
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
+        this.location = location;
     }
 }

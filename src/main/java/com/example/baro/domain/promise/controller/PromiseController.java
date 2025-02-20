@@ -6,6 +6,7 @@ import com.example.baro.common.dto.enums.SuccessCode;
 import com.example.baro.common.entity.User;
 import com.example.baro.common.resolver.LoginUser;
 import com.example.baro.domain.promise.dto.request.PromiseSuggestRequestDto;
+import com.example.baro.domain.promise.dto.request.PromiseUserRequestDto;
 import com.example.baro.domain.promise.dto.request.PromiseVoteRequestDto;
 import com.example.baro.domain.promise.dto.response.*;
 import com.example.baro.domain.promise.service.PromiseService;
@@ -42,6 +43,23 @@ public class PromiseController {
     }
 
     @Operation(
+            summary = "약속 제안서 공유",
+            description = "약속 제안서를 공유합니다. "
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "약속 제안서 공유에 성공하였습니다."
+    )
+    @PostMapping("/share/{promiseId}")
+    public ApiResponseDto<Void> sharePromise(
+            @RequestBody PromiseUserRequestDto request,
+            @PathVariable Long promiseId,
+            @LoginUser User user){
+        promiseService.sharePromise(request, promiseId, user);
+        return ApiResponseDto.success(SuccessCode.PROMISE_SHARE_SUCCESS);
+    }
+
+    @Operation(
             summary = "약속 제안서 삭제",
             description = "약속 제안서를 삭제합니다. "
     )
@@ -50,7 +68,7 @@ public class PromiseController {
             description = "약속 제안서 삭제에 성공하였습니다."
     )
     @DeleteMapping("/suggest/{promiseId}")
-    public ApiResponseDto deletePromise(@PathVariable Long promiseId) {
+    public ApiResponseDto<Void> deletePromise(@PathVariable Long promiseId) {
         promiseService.deletePromise(promiseId);
         return ApiResponseDto.success(SuccessCode.UPCOMING_PROMISE_DELETE_SUCCESS);
     }
@@ -93,8 +111,8 @@ public class PromiseController {
     @PostMapping("/vote/{promiseId}")
     public ApiResponseDto<PromiseVoteResponseDto> votePromise(@RequestBody PromiseVoteRequestDto request,
                                             @PathVariable Long promiseId) {
-        promiseService.votePromise(request, promiseId);
-        return ApiResponseDto.success(SuccessCode.PROMISE_VOTE_POST_SUCCESS);
+        PromiseVoteResponseDto response = promiseService.votePromise(request, promiseId);
+        return ApiResponseDto.success(SuccessCode.PROMISE_VOTE_POST_SUCCESS, response);
     }
 
     @Operation(

@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ShareController {
 
-	private final String clientScheduleBaseUrl = "http://localhost:5173/schedule"; // 임시 클라 주소 (테스트용)
-	private final String clientPromiseBaseUrl = "http://localhost:5173/suggest";  // 임시 클라 주소 (테스트용)
-	private final String clientConfirmBaseUrl = "http://localhost:5173/confirm";
+	private final String clientScheduleBaseUrl = "https://barobaro.netlify.app/schedule"; // 임시 클라 주소 (테스트용)
+	private final String clientPromiseBaseUrl = "https://barobaro.netlify.app/suggest";  // 임시 클라 주소 (테스트용)
+	private final String clientConfirmBaseUrl = "https://barobaro.netlify.app/confirm";
 
 	@GetMapping("/schedule")
 	public ApiResponseDto<ShareLinkResponseDto> getScheduleShareLink(@LoginUser User user) {

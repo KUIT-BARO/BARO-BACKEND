@@ -31,6 +31,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,13 +97,16 @@ public class UserService {
 		promisePersonals.sort(Comparator.comparing(up -> up.getPromise().getDate()));
 		List<Promise> pendingPromises = promisePersonals.stream()
 				.map(PromisePersonal::getPromise)
-				.sorted(Comparator.comparing(Promise::getDate)).toList();
+				.filter(Objects::nonNull) // ✅ Null 필터링
+				.sorted(Comparator.comparing(Promise::getDate))
+				.toList();
 
 		userPromises.sort(Comparator.comparing(up -> up.getPromise().getDate()));
 		List<Promise> promises = userPromises.stream()
 				.map(UserPromise::getPromise)
-				.sorted(Comparator.comparing(Promise::getDate)).toList();
-
+				.filter(Objects::nonNull) // ✅ Null 필터링
+				.sorted(Comparator.comparing(Promise::getDate))
+				.toList();
 
 		List<UserPromiseListResponseDto.PendingPromisesDto> pendingPromiseDtos = new ArrayList<>();
 		if (!pendingPromises.isEmpty()) {
@@ -192,12 +196,16 @@ public class UserService {
 
 		List<MyPageResponseDto.ScheduleDto> scheduleDtos = new ArrayList<>();
 		for (Promise promise : promises) {
+			String placeName = null;
+			if (promise.getPlace() != null){
+				placeName = promise.getPlace().getName();
+			}
 			MyPageResponseDto.ScheduleDto scheduleDto = MyPageResponseDto.ScheduleDto.builder()
 					.name(promise.getName())
 					.dayOfWeek(promise.getDate().getDayOfWeek())
 					.timeStart(promise.getTimeStart())
 					.timeEnd(promise.getTimeEnd())
-					.place(promise.getPlace().getName())
+					.place(placeName)
 					.build();
 			scheduleDtos.add(scheduleDto);
 		}
@@ -207,7 +215,7 @@ public class UserService {
 					.dayOfWeek(schedule.getDayOfWeek().toJavaDayOfWeek())
 					.timeStart(schedule.getTimeStart())
 					.timeEnd(schedule.getTimeEnd())
-					.place(schedule.getPlace().getName())
+					.place(schedule.getLocation())
 					.build();
 			scheduleDtos.add(scheduleDto);
 		}

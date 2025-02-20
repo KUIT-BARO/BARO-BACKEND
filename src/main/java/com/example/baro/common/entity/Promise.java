@@ -96,12 +96,11 @@ public class Promise {
     @PrePersist
     protected void onCreate() {
         if (this.status == null) {
-            this.status = Status.INACTIVE;
+            this.status = Status.ACTIVE;
         }
     }
 
     public void confirm(LocalDate date, LocalTime timeStart, LocalTime timeEnd, Place place) {
-        this.status = Status.ACTIVE;
         this.date = date;
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
