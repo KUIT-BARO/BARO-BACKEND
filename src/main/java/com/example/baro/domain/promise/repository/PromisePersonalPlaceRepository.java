@@ -9,4 +9,6 @@ public interface PromisePersonalPlaceRepository extends JpaRepository<PromisePer
     PromisePersonalPlace findByPromisePersonalId(Long promisePersonalId);
 
     List<PromisePersonalPlace> findByPromisePersonal_IdIn(List<Long> personalPromiseIds);
+
+    PromisePersonalPlace findByPlaceId(Long placeId);
 }
