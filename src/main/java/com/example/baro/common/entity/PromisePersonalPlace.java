@@ -34,6 +34,7 @@ public class PromisePersonalPlace {
 
     @Builder
     public PromisePersonalPlace(Status status, PromisePersonal promisePersonal, Place place) {
+        this.id = new PromisePersonalPlaceId(promisePersonal.getId(), place.getId());
         this.promisePersonal = promisePersonal;
         this.place = place;
 
