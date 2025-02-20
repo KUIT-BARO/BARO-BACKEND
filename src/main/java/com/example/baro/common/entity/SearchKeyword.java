@@ -27,6 +27,7 @@ public class SearchKeyword {
 
     @Builder
     public SearchKeyword(Search search, Keyword keyword) {
+        this.id = new SearchKeywordId(search.getId(), keyword.getId());
         this.search = search;
         this.keyword = keyword;
     }
