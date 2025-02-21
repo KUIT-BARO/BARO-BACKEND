@@ -113,7 +113,6 @@ public class ScheduleService {
                 request.getTimeStart(),
                 request.getTimeEnd(),
                 request.getLocation());
-        scheduleRepository.save(schedule);
 
         ScheduleResponseDto.ScheduleDto scheduleDto = ScheduleResponseDto.ScheduleDto.builder()
                 .id(schedule.getId())
@@ -136,6 +135,11 @@ public class ScheduleService {
 
     public Schedule returnScheduleExist(Long scheduleId) {
         return scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ScheduleException(ErrorCode.SCHEDULE_NOT_FOUND));
+    }
+
+    public void isScheduleExist(Long scheduleId) {
+        scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleException(ErrorCode.SCHEDULE_NOT_FOUND));
     }
 }
