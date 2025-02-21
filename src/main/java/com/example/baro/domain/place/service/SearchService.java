@@ -32,13 +32,11 @@ public class SearchService {
                 .findById(placeId)
                 .orElseThrow(() -> new InvalidRequestException("존재 하지 않는 place입니다."));
 
-
-        SearchKeyword searchKeyword = SearchKeyword.builder().build();
-
         Search search = Search.builder()
                 .user(user)
                 .place(place)
                 .note(requestDto.note())
+                .score(requestDto.score())
                 .build();
         searchRepository.save(search);
 

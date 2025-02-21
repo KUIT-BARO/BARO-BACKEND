@@ -113,7 +113,6 @@ public class ScheduleService {
                 request.getTimeStart(),
                 request.getTimeEnd(),
                 request.getLocation());
-        scheduleRepository.save(schedule);
 
         ScheduleResponseDto.ScheduleDto scheduleDto = ScheduleResponseDto.ScheduleDto.builder()
                 .id(schedule.getId())

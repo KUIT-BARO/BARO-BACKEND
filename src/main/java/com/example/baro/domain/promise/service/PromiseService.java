@@ -111,7 +111,6 @@ public class PromiseService {
         PromisePersonal myPromisePersonal = PromisePersonal.builder()
                 .promise(promise)
                 .user(me)
-                .place(promise.getPlace())
                 .build();
         promisePersonalRepository.save(myPromisePersonal);
 
@@ -119,8 +118,7 @@ public class PromiseService {
         List<PromisePersonal> promisePersonals = users.stream()
                 .map(participant -> PromisePersonal.builder()
                         .promise(promise)
-                        .user(participant)
-                        .place(promise.getPlace())  // 필요하면 실제 Place 객체를 할당해야 함
+                        .user(participant)// 필요하면 실제 Place 객체를 할당해야 함
                         .build())
                 .collect(Collectors.toList());
 
