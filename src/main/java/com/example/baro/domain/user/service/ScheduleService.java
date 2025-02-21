@@ -137,10 +137,5 @@ public class ScheduleService {
         return scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleException(ErrorCode.SCHEDULE_NOT_FOUND));
     }
-
-    public void isScheduleExist(Long scheduleId) {
-        scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new ScheduleException(ErrorCode.SCHEDULE_NOT_FOUND));
-    }
 }
 
