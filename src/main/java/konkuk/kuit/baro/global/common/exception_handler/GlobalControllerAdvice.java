@@ -39,7 +39,7 @@ public class GlobalControllerAdvice {
     // 커스텀 에러가 발생한 경우
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<BaseErrorResponse> handleCustomExceptions(CustomException e) {
-        log.error("[handle_CustomException", e);
+        log.error("[handle_CustomException]", e);
         return new ResponseEntity<>(new BaseErrorResponse(e.getErrorCode()), e.getErrorCode().getHttpStatus());
     }
 }
