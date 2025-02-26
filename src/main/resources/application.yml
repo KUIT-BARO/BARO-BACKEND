@@ -70,6 +70,9 @@ spring:
   config:
     activate:
       on-profile: common
+  web:
+    resources:
+      add-mappings: false
 ---
 # ??? ??
 spring:
