@@ -28,6 +28,15 @@ public class GlobalControllerAdvice {
         return new BaseErrorResponse(NOT_FOUND);
     }
 
+    // 잘못된 인자를 넘긴 경우
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public BaseErrorResponse handle_IllegalArgumentException(Exception e) {
+        log.error("[handle_IllegalArgumentException", e);
+        return new BaseErrorResponse(ILLEGAL_ARGUMENT);
+    }
+
+
     // 런타임 오류가 발생한 경우
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)

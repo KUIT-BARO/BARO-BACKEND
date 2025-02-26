@@ -2,6 +2,8 @@ package konkuk.kuit.baro.global.common.model;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 public enum BaseStatus {
 
@@ -15,5 +17,12 @@ public enum BaseStatus {
 
     BaseStatus(int code) {
         this.code = code;
+    }
+
+    public static BaseStatus ofCode(Integer code) {
+        return Arrays.stream(values())
+                .filter(v -> v.getCode() == code)
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new);
     }
 }

@@ -3,7 +3,10 @@ package konkuk.kuit.baro.global.common.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import konkuk.kuit.baro.global.common.response.status.ResponseStatus;
+import konkuk.kuit.baro.global.common.response.status.SuccessCode;
 import lombok.Getter;
+
+import static konkuk.kuit.baro.global.common.response.status.SuccessCode.*;
 
 @Getter
 @JsonPropertyOrder({"success", "code", "message", "data"})
@@ -16,8 +19,8 @@ public class BaseResponse<T> implements ResponseStatus {
 
     public BaseResponse(T data) {
         this.success = true;
-        this.code = 20000;                  // 의논 사항
-        this.message = "요청에 성공했습니다.";   // 의논 사항
+        this.code = SUCCESS.getCode();         // 의논 사항
+        this.message = SUCCESS.getMessage();   // 의논 사항
         this.data = data;
     }
 
