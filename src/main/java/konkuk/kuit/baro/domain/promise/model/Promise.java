@@ -15,7 +15,6 @@ import java.util.List;
 @Entity
 @Table(name = "promise")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @SQLRestriction("status IN (1, 3, 4, 5)")
@@ -60,9 +59,16 @@ public class Promise extends BaseEntity {
     private PromiseVote promiseVote;
 
     // 약속에 참여한 유저를 확인하기 위한 양방향 연관 관계
-    @Builder.Default
     @OneToMany(mappedBy = "promise", orphanRemoval = true)
     private List<PromiseMember> promiseMembers = new ArrayList<>();
+
+    @Builder
+    public Promise(String promiseName, String suggestedPlace, LocalDate suggestedStartDate, LocalDate suggestedEndDate) {
+        this.promiseName = promiseName;
+        this.suggestedPlace = suggestedPlace;
+        this.suggestedStartDate = suggestedStartDate;
+        this.suggestedEndDate = suggestedEndDate;
+    }
 
     // 연관 관계 편의 메서드
     public void addPromiseMember(PromiseMember promiseMember) { this.promiseMembers.add(promiseMember); }

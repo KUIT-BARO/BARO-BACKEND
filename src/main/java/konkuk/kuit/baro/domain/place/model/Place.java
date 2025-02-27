@@ -15,7 +15,6 @@ import java.util.List;
 @Entity
 @Table(name = "place")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @SQLRestriction("status IN (1, 3, 4, 5)")
@@ -38,19 +37,24 @@ public class Place extends BaseEntity {
     private String placeAddress;
 
     // 핀을 확인하기 위한 양방향 연관관계
-    @Builder.Default
     @OneToMany(mappedBy = "place", orphanRemoval = true)
     private List<Pin> pins = new ArrayList<>();
 
     // 장소 카테고리를 확인하기 위한 양방향 연관관계
-    @Builder.Default
     @OneToMany(mappedBy = "place", orphanRemoval = true)
     private List<PlaceCategory> placeCategories = new ArrayList<>();
 
     // 장소 삭제시 제안된 약속 장소도 '삭제'하기 위한 양방향 연관 관계
-    @Builder.Default
     @OneToMany(mappedBy = "place", orphanRemoval = true)
     private List<PromiseSuggestedPlace> promiseSuggestedPlaces = new ArrayList<>();
+
+    @Builder
+    public Place(String placeName, BigDecimal latitude, BigDecimal longitude, String placeAddress) {
+        this.placeName = placeName;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.placeAddress = placeAddress;
+    }
 
     // 연관 관계 편의 메서드
     public void addPin(Pin pin) { this.pins.add(pin); }

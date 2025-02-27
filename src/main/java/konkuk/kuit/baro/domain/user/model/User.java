@@ -15,7 +15,6 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE users SET status = 2 WHERE user_id = ?")
@@ -43,19 +42,25 @@ public class User extends BaseEntity {
     private String color;
 
     // 일정을 확인하기 위한 양방향 연관 관계
-    @Builder.Default
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private List<Schedule> schedules = new ArrayList<>();
 
     // 핀을 확인하기 위한 양방향 연관 관계
-    @Builder.Default
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private List<Pin> pins = new ArrayList<>();
 
     // 참가한 약속을 확인하기 위한 양방향 연관 관계
-    @Builder.Default
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private List<PromiseMember> promiseMembers = new ArrayList<>();
+
+    @Builder
+    public User(String email, String password, String name, String profileImage, String color) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.profileImage = profileImage;
+        this.color = color;
+    }
 
     // 연관 관계 편의 메서드
     public void addSchedule(Schedule schedule) { this.schedules.add(schedule); }

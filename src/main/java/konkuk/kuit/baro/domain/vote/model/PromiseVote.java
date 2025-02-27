@@ -12,7 +12,6 @@ import java.util.List;
 @Entity
 @Table(name = "promise_vote")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @SQLRestriction("status IN (1, 3, 4, 5)")
@@ -26,14 +25,17 @@ public class PromiseVote extends BaseEntity {
     private LocalDateTime voteEndTime;
 
     // 투표된 시간들을 확인하기 위한 양방향 연관 관계
-    @Builder.Default
     @OneToMany(mappedBy = "promiseVote", orphanRemoval = true)
     private List<PromiseTimeVoteHistory> promiseTimeVoteHistories = new ArrayList<>();
 
     // 투표된 장소들을 확인하기 위한 양방향 연관 관계
-    @Builder.Default
     @OneToMany(mappedBy = "promiseVote", orphanRemoval = true)
     private List<PromisePlaceVoteHistory> promisePlaceVoteHistories = new ArrayList<>();
+
+    @Builder
+    public PromiseVote(LocalDateTime voteEndTime) {
+        this.voteEndTime = voteEndTime;
+    }
 
     // 연관 관계 편의 메서드
     public void addPromiseTimeVoteHistory(PromiseTimeVoteHistory promiseTimeVoteHistory) {
