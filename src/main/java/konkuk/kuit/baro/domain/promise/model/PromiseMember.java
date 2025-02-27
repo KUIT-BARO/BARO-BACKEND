@@ -25,7 +25,7 @@ public class PromiseMember extends BaseEntity {
     @Column(name = "promise_member_id", nullable = false)
     private Long id;
 
-    @Column(name = "is_host", nullable = false, columnDefinition = "TINYINT(1)")
+    @Column(name = "is_host", nullable = false, columnDefinition = "TINYINT")
     private Boolean isHost;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -21,7 +21,7 @@ import java.time.LocalTime;
 public class PromiseAvailableTime extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "promise_available_time", nullable = false)
+    @Column(name = "promise_available_time_id", nullable = false)
     private Long id;
 
     @Column(name = "available_date", nullable = false, columnDefinition = "DATE")

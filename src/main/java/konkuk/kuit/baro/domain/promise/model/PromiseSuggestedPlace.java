@@ -18,7 +18,7 @@ import org.hibernate.annotations.SQLRestriction;
 public class PromiseSuggestedPlace extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "promise_suggested_place", nullable = false)
+    @Column(name = "promise_suggested_place_id", nullable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
