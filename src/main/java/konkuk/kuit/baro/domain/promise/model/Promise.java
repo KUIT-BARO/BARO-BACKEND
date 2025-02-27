@@ -37,19 +37,24 @@ public class Promise extends BaseEntity {
     @Column(name = "suggested_end_date", nullable = false, columnDefinition = "DATE")
     private LocalDate suggestedEndDate;
 
+    @Setter
     @Column(name = "fixed_date", columnDefinition = "DATE")
     private LocalDate fixedDate;
 
+    @Setter
     @Column(name = "fixed_start_time")
     private LocalTime fixedStartTime;
 
+    @Setter
     @Column(name = "fixed_end_time")
     private LocalTime fixedEndTime;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id")
     private Place place;  // 확정된 장소
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "promise_vote_id")
     private PromiseVote promiseVote;
