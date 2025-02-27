@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.vote.model.PromiseVote;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
+import konkuk.kuit.baro.global.common.response.status.BaseStatus;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -68,6 +69,7 @@ public class Promise extends BaseEntity {
         this.suggestedPlace = suggestedPlace;
         this.suggestedStartDate = suggestedStartDate;
         this.suggestedEndDate = suggestedEndDate;
+        this.setStatus(BaseStatus.BEFORE_VOTE);
     }
 
     // 연관 관계 편의 메서드
