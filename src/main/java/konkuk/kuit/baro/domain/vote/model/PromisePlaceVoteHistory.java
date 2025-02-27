@@ -34,13 +34,18 @@ public class PromisePlaceVoteHistory extends BaseEntity {
     // 생성 메서드
     public static PromisePlaceVoteHistory createPromisePlaceVoteHistory(PromiseSuggestedPlace promiseSuggestedPlace, PromiseVote promiseVote) {
         PromisePlaceVoteHistory promisePlaceVoteHistory = new PromisePlaceVoteHistory();
-        promisePlaceVoteHistory.promiseSuggestedPlace = promiseSuggestedPlace;
+        promisePlaceVoteHistory.setPromiseSuggestedPlace(promiseSuggestedPlace);
         promisePlaceVoteHistory.setPromiseVote(promiseVote);
 
         return promisePlaceVoteHistory;
     }
 
     // 연관 관계 편의 메서드
+    private void setPromiseSuggestedPlace(PromiseSuggestedPlace promiseSuggestedPlace) {
+        this.promiseSuggestedPlace = promiseSuggestedPlace;
+        promiseSuggestedPlace.addPromisePlaceVoteHistory(this);
+    }
+
     private void setPromiseVote(PromiseVote promiseVote) {
         this.promiseVote = promiseVote;
         promiseVote.addPromisePlaceVoteHistory(this);
