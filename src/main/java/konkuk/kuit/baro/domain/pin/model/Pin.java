@@ -42,7 +42,7 @@ public class Pin extends BaseEntity {
     private Place place;
 
     // 핀 카테고리를 확인하기 위한 양방향 연관 관계
-    @OneToMany(mappedBy = "pin", orphanRemoval = true)
+    @OneToMany(mappedBy = "pin", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PinCategory> pinCategories = new ArrayList<>();
 
     // 생성 메서드
