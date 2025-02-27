@@ -1,4 +1,4 @@
-package konkuk.kuit.baro.global.common.model;
+package konkuk.kuit.baro.global.common.response.status;
 
 import lombok.Getter;
 

@@ -2,6 +2,7 @@ package konkuk.kuit.baro.global.common.model;
 
 import jakarta.persistence.*;
 import konkuk.kuit.baro.global.common.converter.BaseStatusConverter;
+import konkuk.kuit.baro.global.common.response.status.BaseStatus;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

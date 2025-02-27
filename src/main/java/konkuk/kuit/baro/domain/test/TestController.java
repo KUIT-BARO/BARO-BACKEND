@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
-    @GetMapping("health-check")
+    @GetMapping("/health-check")
     public BaseResponse<Void> test() {
         return new BaseResponse<>(SuccessCode.SUCCESS, null);
     }
 
-    @GetMapping("error-test")
+    @GetMapping("/error-test")
     public BaseResponse<Void> errorTest() {
-        throw new CustomException(ErrorCode.NOT_FOUND);
+        throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
     }
 }

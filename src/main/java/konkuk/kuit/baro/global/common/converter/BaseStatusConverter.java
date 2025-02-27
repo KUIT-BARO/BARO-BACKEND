@@ -2,7 +2,7 @@ package konkuk.kuit.baro.global.common.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import konkuk.kuit.baro.global.common.model.BaseStatus;
+import konkuk.kuit.baro.global.common.response.status.BaseStatus;
 
 @Converter
 public class BaseStatusConverter implements AttributeConverter<BaseStatus, Integer> {
