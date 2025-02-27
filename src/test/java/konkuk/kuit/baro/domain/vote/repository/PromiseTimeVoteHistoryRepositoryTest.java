@@ -1,0 +1,170 @@
+package konkuk.kuit.baro.domain.vote.repository;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import konkuk.kuit.baro.domain.place.model.Place;
+import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
+import konkuk.kuit.baro.domain.promise.model.Promise;
+import konkuk.kuit.baro.domain.promise.model.PromiseAvailableTime;
+import konkuk.kuit.baro.domain.promise.model.PromiseMember;
+import konkuk.kuit.baro.domain.promise.repository.PromiseAvailableTimeRepository;
+import konkuk.kuit.baro.domain.promise.repository.PromiseMemberRepository;
+import konkuk.kuit.baro.domain.promise.repository.PromiseRepository;
+import konkuk.kuit.baro.domain.user.model.User;
+import konkuk.kuit.baro.domain.user.repository.UserRepository;
+import konkuk.kuit.baro.domain.vote.model.PromiseTimeVoteHistory;
+import konkuk.kuit.baro.domain.vote.model.PromiseVote;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Description;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+import static org.assertj.core.api.Assertions.*;
+
+@SpringBootTest
+@Transactional
+class PromiseTimeVoteHistoryRepositoryTest {
+
+    @Autowired
+    private PromiseTimeVoteHistoryRepository promiseTimeVoteHistoryRepository;
+    @Autowired private PromiseRepository promiseRepository;
+    @Autowired private PromiseMemberRepository promiseMemberRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private PromiseAvailableTimeRepository promiseAvailableTimeRepository;
+    @Autowired private PlaceRepository placeRepository;
+    @Autowired private PromiseVoteRepository promiseVoteRepository;
+
+    @PersistenceContext
+    private EntityManager em;
+
+    @BeforeEach
+    void init() {
+        User user = User.builder()
+                .email("hong@konkuk.ac.kr")
+                .name("홍길동")
+                .password("qwer1234!")
+                .profileImage("image.png")
+                .color("0XFFFF")
+                .build();
+
+        userRepository.save(user);
+
+        Promise promise = Promise.builder()
+                .promiseName("컴퓨터 공학부 개강파티")
+                .suggestedPlace("지그재그")
+                .suggestedStartDate(LocalDate.now().minusDays(1))
+                .suggestedEndDate(LocalDate.now().plusDays(1))
+                .build();
+
+        promiseRepository.save(promise);
+
+        PromiseMember promiseMember = PromiseMember.createPromiseMember(true, user, promise);
+
+        promiseMemberRepository.save(promiseMember);
+
+        Place place = Place.builder()
+                .placeName("스타벅스 건대점")
+                .longitude(new BigDecimal("37.7749295"))
+                .latitude(new BigDecimal("-122.4194155"))
+                .placeAddress("광진구 화양동")
+                .build();
+
+        placeRepository.save(place);
+
+        PromiseAvailableTime promiseAvailableTime = PromiseAvailableTime.createPromiseAvailableTime(LocalDate.now(), LocalTime.now(), LocalTime.now().plusHours(1), promiseMember);
+
+        promiseAvailableTimeRepository.save(promiseAvailableTime);
+
+        PromiseVote promiseVote = PromiseVote.builder()
+                .voteEndTime(LocalDateTime.now())
+                .build();
+
+        promiseVoteRepository.save(promiseVote);
+
+        em.flush();
+        em.clear();
+    }
+
+
+    @Test
+    @DisplayName("약속 시간 투표 내역 저장 테스트")
+    void save() {
+        // given
+        PromiseAvailableTime promiseAvailableTime = promiseAvailableTimeRepository.findById(1L).get();
+        PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
+
+        // when
+        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseAvailableTime, promiseVote);
+
+        promiseTimeVoteHistoryRepository.save(promiseTimeVoteHistory);
+
+        em.flush();
+        em.clear();
+
+        // then
+        assertThat(promiseTimeVoteHistoryRepository.findById(1L).isPresent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("약속 시간 투표 내역 삭제 테스트")
+    void delete() {
+        // given
+        PromiseAvailableTime promiseAvailableTime = promiseAvailableTimeRepository.findById(1L).get();
+        PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
+
+        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseAvailableTime, promiseVote);
+
+        promiseTimeVoteHistoryRepository.save(promiseTimeVoteHistory);
+
+        em.flush();
+        em.clear();
+
+        // when
+        PromiseTimeVoteHistory findPromiseTimeVoteHistory = promiseTimeVoteHistoryRepository.findById(1L).get();
+        promiseTimeVoteHistoryRepository.delete(findPromiseTimeVoteHistory);
+
+        em.flush();
+        em.clear();
+
+        // then
+        assertThat(promiseTimeVoteHistoryRepository.findById(1L).isEmpty()).isTrue();
+    }
+
+    @Test
+    @DisplayName("약속 시간 투표 내역 삭제 테스트")
+    @Description("약속을 삭제했을 때, 약속 시간 투표 내역도 삭제되는 지 테스트. 약속 삭제 -> 약속 투표 삭제 -> 약속 시간 투표 내역 삭제")
+    void delete_promise() {
+        // given
+        PromiseAvailableTime promiseAvailableTime = promiseAvailableTimeRepository.findById(1L).get();
+        PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
+        Promise promise = promiseRepository.findById(1L).get();
+
+        promise.setPromiseVote(promiseVote);
+
+        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseAvailableTime, promiseVote);
+
+        promiseTimeVoteHistoryRepository.save(promiseTimeVoteHistory);
+
+        em.flush();
+        em.clear();
+
+        // when
+        Promise findPromise = promiseRepository.findById(1L).get();
+        promiseRepository.delete(findPromise);
+
+        em.flush();
+        em.clear();
+
+        // then
+        assertThat(promiseTimeVoteHistoryRepository.findById(1L).isEmpty()).isTrue();
+    }
+
+}
