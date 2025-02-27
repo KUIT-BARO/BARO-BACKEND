@@ -8,7 +8,7 @@ spring:
       prod: prod-db, prod-port, common
     active: local
 ---
-# ???? ???? DB
+# 로컬용 DB
 spring:
   config:
     activate:
@@ -17,7 +17,7 @@ spring:
     url: ${LOCAL_DATASOURCE_URL}
     username: ${LOCAL_DATASOURCE_USERNAME}
     password: ${LOCAL_DATASOURCE_PASSWORD}
-    driver-class-name: org.h2.Driver # local ??? ??? DB ??
+    driver-class-name: org.h2.Driver
   jpa:
     hibernate:
       ddl-auto: create
@@ -27,7 +27,7 @@ spring:
         show_sql: true
         highlight_sql: true
 ---
-# ??? DB
+# 개발용 DB
 spring:
   config:
     activate:
@@ -46,7 +46,7 @@ spring:
         show_sql: true
         highlight_sql: true
 ---
-# ??? DB
+# 배포용 DB
 spring:
   config:
     activate:
@@ -65,7 +65,7 @@ spring:
         show_sql: true
         highlight_sql: true
 ---
-# ?? ?? -> ??? ?? ???? ??? ??
+# 공통 속성
 spring:
   config:
     activate:
@@ -74,18 +74,18 @@ spring:
     resources:
       add-mappings: false
 ---
-# ??? ??
+# 개발용 포트
 spring:
   config:
     activate:
       on-profile: dev-port
 server:
-  port: 8080
+  port: 8000
 ---
-# ??? ??
+# 배포용 포트
 spring:
   config:
     activate:
       on-profile: prod-port
 server:
-  port: 8081
+  port: 8001
