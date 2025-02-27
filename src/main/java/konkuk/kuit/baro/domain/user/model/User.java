@@ -1,17 +1,23 @@
 package konkuk.kuit.baro.domain.user.model;
 
 import jakarta.persistence.*;
+import konkuk.kuit.baro.domain.pin.model.Pin;
+import konkuk.kuit.baro.domain.promise.model.PromiseMember;
+import konkuk.kuit.baro.domain.schedule.model.Schedule;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 @SQLDelete(sql = "UPDATE users SET status = 2 WHERE user_id = ?")
 @SQLRestriction("status IN (1, 3, 4, 5)")
 public class User extends BaseEntity {
@@ -36,4 +42,25 @@ public class User extends BaseEntity {
     @Column(name = "color", length = 20, nullable = false)
     private String color;
 
+    // 일정을 확인하기 위한 양방향 연관 관계
+    @Builder.Default
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<Schedule> schedules = new ArrayList<>();
+
+    // 핀을 확인하기 위한 양방향 연관 관계
+    @Builder.Default
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<Pin> pins = new ArrayList<>();
+
+    // 참가한 약속을 확인하기 위한 양방향 연관 관계
+    @Builder.Default
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<PromiseMember> promiseMembers = new ArrayList<>();
+
+    // 연관 관계 편의 메서드
+    public void addSchedule(Schedule schedule) { this.schedules.add(schedule); }
+
+    public void addPin(Pin pin) { this.pins.add(pin); }
+
+    public void addPromiseMember(PromiseMember promiseMember) { this.promiseMembers.add(promiseMember); }
 }
