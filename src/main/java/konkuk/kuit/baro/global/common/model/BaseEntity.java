@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import konkuk.kuit.baro.global.common.converter.BaseStatusConverter;
 import konkuk.kuit.baro.global.common.response.status.BaseStatus;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
 
+    @Setter
     @Convert(converter = BaseStatusConverter.class)
     @Column(nullable = false)
     private BaseStatus status = BaseStatus.ACTIVE;
