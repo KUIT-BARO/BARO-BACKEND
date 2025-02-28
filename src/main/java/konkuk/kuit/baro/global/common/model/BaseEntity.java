@@ -1,7 +1,6 @@
 package konkuk.kuit.baro.global.common.model;
 
 import jakarta.persistence.*;
-import konkuk.kuit.baro.global.common.converter.BaseStatusConverter;
 import konkuk.kuit.baro.global.common.response.status.BaseStatus;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +16,6 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
     @Setter
-    @Convert(converter = BaseStatusConverter.class)
     @Column(nullable = false)
     private BaseStatus status = BaseStatus.ACTIVE;
 
