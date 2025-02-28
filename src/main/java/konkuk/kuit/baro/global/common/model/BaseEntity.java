@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
     @Setter
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BaseStatus status = BaseStatus.ACTIVE;
 

@@ -1,7 +1,6 @@
 package konkuk.kuit.baro.domain.vote.model;
 
 import jakarta.persistence.*;
-import konkuk.kuit.baro.domain.promise.model.PromiseAvailableTime;
 import konkuk.kuit.baro.domain.promise.model.PromiseSuggestedPlace;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
 import lombok.AccessLevel;
@@ -15,7 +14,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@SQLRestriction("status IN (1, 3, 4, 5)")
+@SQLRestriction("status IN ('ACTIVE', 'BEFORE_VOTE', 'DURING_VOTE', 'AFTER_VOTE')")
 public class PromisePlaceVoteHistory extends BaseEntity {
 
     @Id

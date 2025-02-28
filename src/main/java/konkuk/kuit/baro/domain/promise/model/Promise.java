@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "promise")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLRestriction("status IN (1, 3, 4, 5)")
+@SQLRestriction("status IN ('ACTIVE', 'BEFORE_VOTE', 'DURING_VOTE', 'AFTER_VOTE')")
 public class Promise extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

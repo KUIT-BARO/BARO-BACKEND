@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @Table(name = "category")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLRestriction("status IN (1, 3, 4, 5)")
+@SQLRestriction("status IN ('ACTIVE', 'BEFORE_VOTE', 'DURING_VOTE', 'AFTER_VOTE')")
 public class Category extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
