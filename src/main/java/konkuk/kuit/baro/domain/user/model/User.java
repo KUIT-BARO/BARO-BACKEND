@@ -16,7 +16,6 @@ import java.util.List;
 @Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @SQLDelete(sql = "UPDATE users SET status = 2 WHERE user_id = ?")
 @SQLRestriction("status IN (1, 3, 4, 5)")
 public class User extends BaseEntity {

@@ -17,7 +17,6 @@ import java.util.List;
 @Table(name = "promise")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @SQLRestriction("status IN (1, 3, 4, 5)")
 public class Promise extends BaseEntity {
 
@@ -28,8 +27,8 @@ public class Promise extends BaseEntity {
     @Column(name = "promise_name", length = 30, nullable = false)
     private String promiseName;
 
-    @Column(name = "suggested_place", length = 50, nullable = false)
-    private String suggestedPlace;
+    @Column(name = "suggested_region", length = 50, nullable = false)
+    private String suggestedRegion;
 
     @Column(name = "suggested_start_date", nullable = false, columnDefinition = "DATE")
     private LocalDate suggestedStartDate;
@@ -64,9 +63,9 @@ public class Promise extends BaseEntity {
     private List<PromiseMember> promiseMembers = new ArrayList<>();
 
     @Builder
-    public Promise(String promiseName, String suggestedPlace, LocalDate suggestedStartDate, LocalDate suggestedEndDate) {
+    public Promise(String promiseName, String suggestedRegion, LocalDate suggestedStartDate, LocalDate suggestedEndDate) {
         this.promiseName = promiseName;
-        this.suggestedPlace = suggestedPlace;
+        this.suggestedRegion = suggestedRegion;
         this.suggestedStartDate = suggestedStartDate;
         this.suggestedEndDate = suggestedEndDate;
         this.setStatus(BaseStatus.BEFORE_VOTE);

@@ -41,7 +41,7 @@ public class PromiseAvailableTime extends BaseEntity {
     @JoinColumn(name = "promise_member_id", nullable = false)
     private PromiseMember promiseMember;
 
-    // 제안된 약속 장소 삭제시, 약속 시간 투표 내역도 사라지도록 하기 위한 양방향 연관 관계
+    // 제안된 약속 시간 삭제시, 약속 시간 투표 내역도 사라지도록 하기 위한 양방향 연관 관계
     @OneToMany(mappedBy = "promiseAvailableTime", orphanRemoval = true)
     private List<PromiseTimeVoteHistory> promiseTimeVoteHistories= new ArrayList<>();
 

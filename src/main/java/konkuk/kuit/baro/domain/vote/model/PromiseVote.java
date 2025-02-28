@@ -13,7 +13,6 @@ import java.util.List;
 @Table(name = "promise_vote")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @SQLRestriction("status IN (1, 3, 4, 5)")
 public class PromiseVote extends BaseEntity {
 

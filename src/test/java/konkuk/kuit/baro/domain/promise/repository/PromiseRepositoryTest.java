@@ -27,7 +27,7 @@ class PromiseRepositoryTest {
         // given
         Promise promise = Promise.builder()
                 .promiseName("컴퓨터 공학부 개강파티")
-                .suggestedPlace("지그재그")
+                .suggestedRegion("지그재그")
                 .suggestedStartDate(LocalDate.now().minusDays(1))
                 .suggestedEndDate(LocalDate.now().plusDays(1))
                 .build();
@@ -48,7 +48,7 @@ class PromiseRepositoryTest {
         // given
         Promise promise = Promise.builder()
                 .promiseName("컴퓨터 공학부 개강파티")
-                .suggestedPlace("지그재그")
+                .suggestedRegion("지그재그")
                 .suggestedStartDate(LocalDate.now().minusDays(1))
                 .suggestedEndDate(LocalDate.now().plusDays(1))
                 .build();

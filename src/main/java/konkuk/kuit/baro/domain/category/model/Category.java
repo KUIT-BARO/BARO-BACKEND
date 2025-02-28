@@ -13,7 +13,6 @@ import java.util.ArrayList;
 @Table(name = "category")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @SQLRestriction("status IN (1, 3, 4, 5)")
 public class Category extends BaseEntity {
 

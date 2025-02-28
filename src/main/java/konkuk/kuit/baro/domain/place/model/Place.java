@@ -16,7 +16,6 @@ import java.util.List;
 @Table(name = "place")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @SQLRestriction("status IN (1, 3, 4, 5)")
 public class Place extends BaseEntity {
 
