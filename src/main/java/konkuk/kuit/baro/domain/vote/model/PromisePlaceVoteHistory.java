@@ -1,0 +1,52 @@
+package konkuk.kuit.baro.domain.vote.model;
+
+import jakarta.persistence.*;
+import konkuk.kuit.baro.domain.promise.model.PromiseSuggestedPlace;
+import konkuk.kuit.baro.global.common.model.BaseEntity;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
+
+@Entity
+@Table(name = "promise_place_vote_history")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@SQLRestriction("status IN ('ACTIVE', 'BEFORE_VOTE', 'DURING_VOTE', 'AFTER_VOTE')")
+public class PromisePlaceVoteHistory extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "promise_place_vote_history", nullable = false)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "promise_suggested_place_id", nullable = false)
+    private PromiseSuggestedPlace promiseSuggestedPlace;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "promise_vote_id", nullable = false)
+    private PromiseVote promiseVote;
+
+    // 생성 메서드
+    public static PromisePlaceVoteHistory createPromisePlaceVoteHistory(PromiseSuggestedPlace promiseSuggestedPlace, PromiseVote promiseVote) {
+        PromisePlaceVoteHistory promisePlaceVoteHistory = new PromisePlaceVoteHistory();
+        promisePlaceVoteHistory.setPromiseSuggestedPlace(promiseSuggestedPlace);
+        promisePlaceVoteHistory.setPromiseVote(promiseVote);
+
+        return promisePlaceVoteHistory;
+    }
+
+    // 연관 관계 편의 메서드
+    private void setPromiseSuggestedPlace(PromiseSuggestedPlace promiseSuggestedPlace) {
+        this.promiseSuggestedPlace = promiseSuggestedPlace;
+        promiseSuggestedPlace.addPromisePlaceVoteHistory(this);
+    }
+
+    private void setPromiseVote(PromiseVote promiseVote) {
+        this.promiseVote = promiseVote;
+        promiseVote.addPromisePlaceVoteHistory(this);
+    }
+}
