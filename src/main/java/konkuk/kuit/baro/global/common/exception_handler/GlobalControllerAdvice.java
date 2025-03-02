@@ -23,7 +23,7 @@ public class GlobalControllerAdvice {
     // 요청한 api가 없을 경우
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoHandlerFoundException.class)
-    public BaseErrorResponse handle_NoHandlerFoundException(Exception e){
+    public BaseErrorResponse handle_NoHandlerFoundException(NoHandlerFoundException e){
         log.error("[handle_NoHandlerFoundException]", e);
         return new BaseErrorResponse(NOT_FOUND);
     }
@@ -31,7 +31,7 @@ public class GlobalControllerAdvice {
     // 잘못된 인자를 넘긴 경우
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public BaseErrorResponse handle_IllegalArgumentException(Exception e) {
+    public BaseErrorResponse handle_IllegalArgumentException(IllegalArgumentException e) {
         log.error("[handle_IllegalArgumentException", e);
         return new BaseErrorResponse(ILLEGAL_ARGUMENT);
     }
@@ -40,7 +40,7 @@ public class GlobalControllerAdvice {
     // 런타임 오류가 발생한 경우
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
-    public BaseErrorResponse handle_RuntimeException(Exception e) {
+    public BaseErrorResponse handle_RuntimeException(RuntimeException e) {
         log.error("[handle_RuntimeException]", e);
         return new BaseErrorResponse(SERVER_ERROR);
     }
