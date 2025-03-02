@@ -68,9 +68,14 @@ jobs:
             --parameters 'commands=[
               "cd /home/ubuntu/${{ github.event.repository.name }}",
               "sudo git pull",
-              "sudo docker-compose -f docker-compose-prod.yml pull",
-              "sudo docker-compose -f docker-compose-prod.yml down || true",
-              "sudo docker-compose -f docker-compose-prod.yml up -d",
+              "echo \"DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}\" > .env",
+              "echo \"DOCKER_IMAGE=${{ secrets.DOCKER_IMAGE }}\" >> .env",
+              "echo \"PROD_DATASOURCE_URL=${{ secrets.PROD_DATASOURCE_URL }}\" >> .env",
+              "echo \"PROD_DATASOURCE_USERNAME=${{ secrets.PROD_DATASOURCE_USERNAME }}\" >> .env",
+              "echo \"PROD_DATASOURCE_PASSWORD=${{ secrets.PROD_DATASOURCE_PASSWORD }}\" >> .env",
+              "sudo docker-compose -f docker-compose-prod.yml --env-file .env pull",
+              "sudo docker-compose -f docker-compose-prod.yml --env-file .env down || true",
+              "sudo docker-compose -f docker-compose-prod.yml --env-file .env up -d",
               "sudo docker image prune -f"
             ]' \
             --output text
