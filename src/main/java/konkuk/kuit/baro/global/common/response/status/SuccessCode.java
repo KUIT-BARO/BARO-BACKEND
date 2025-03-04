@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum SuccessCode implements ResponseStatus{
 
-    SUCCESS(20000, HttpStatus.OK, "요청에 성공하였습니다.");
+    SUCCESS(20000, HttpStatus.OK, "요청에 성공하였습니다."),
+    PROMISE_SUGGEST_SUCCESS(20001, HttpStatus.OK, "약속 제안에 성공하였습니다.");
 
     private final int code;
     @Getter
