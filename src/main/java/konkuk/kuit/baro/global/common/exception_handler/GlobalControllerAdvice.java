@@ -2,16 +2,20 @@ package konkuk.kuit.baro.global.common.exception_handler;
 
 import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.response.BaseErrorResponse;
-import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+
+import java.util.Objects;
 
 import static konkuk.kuit.baro.global.common.response.status.ErrorCode.*;
 
@@ -28,11 +32,16 @@ public class GlobalControllerAdvice {
         return new BaseErrorResponse(NOT_FOUND);
     }
 
-    // 잘못된 인자를 넘긴 경우
+    // 잘못된 인자를 넘긴 경우 & DTO 검증에 실패한 경우
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalArgumentException.class)
-    public BaseErrorResponse handle_IllegalArgumentException(IllegalArgumentException e) {
-        log.error("[handle_IllegalArgumentException", e);
+    @ExceptionHandler({IllegalArgumentException.class, MethodArgumentNotValidException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
+    public BaseErrorResponse handle_IllegalArgumentException(Exception e) {
+        log.error("[handle_BadRequest]", e);
+
+        if(e instanceof MethodArgumentNotValidException) {
+            return new BaseErrorResponse(ILLEGAL_ARGUMENT, (Objects.requireNonNull(((MethodArgumentNotValidException) e).getBindingResult().getFieldError()).getDefaultMessage()));
+        }
+
         return new BaseErrorResponse(ILLEGAL_ARGUMENT);
     }
 

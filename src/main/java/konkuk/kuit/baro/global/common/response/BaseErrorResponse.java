@@ -21,6 +21,13 @@ public class BaseErrorResponse implements ResponseStatus {
         this.timestamp = LocalDateTime.now();
     }
 
+    public BaseErrorResponse(ResponseStatus status, String customMessage) {
+        this.success = false;
+        this.code = status.getCode();
+        this.message = customMessage;
+        this.timestamp = LocalDateTime.now();
+    }
+
     @Override
     public int getCode() {
         return this.code;
