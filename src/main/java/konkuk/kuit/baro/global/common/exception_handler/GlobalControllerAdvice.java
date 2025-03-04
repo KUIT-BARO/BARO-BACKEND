@@ -6,13 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.Objects;
@@ -45,6 +48,13 @@ public class GlobalControllerAdvice {
         return new BaseErrorResponse(ILLEGAL_ARGUMENT);
     }
 
+    // Http 메서드가 유효하지 않은 경우
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public BaseErrorResponse handle_HttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        log.error("[handle_HttpRequestMethodNotSupportedException]", e);
+        return new BaseErrorResponse(METHOD_NOT_ALLOWED);
+    }
 
     // 런타임 오류가 발생한 경우
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -58,6 +68,6 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<BaseErrorResponse> handleCustomExceptions(CustomException e) {
         log.error("[handle_CustomException]", e);
-        return new ResponseEntity<>(new BaseErrorResponse(e.getErrorCode()), e.getErrorCode().getHttpStatus());
+        return new ResponseEntity<>(new BaseErrorResponse(e.getErrorCode()), HttpStatusCode.valueOf(e.getErrorCode().getHttpStatus()));
     }
 }

@@ -2,8 +2,6 @@ package konkuk.kuit.baro.global.common.response.status;
 
 import lombok.Getter;
 
-import java.util.Arrays;
-
 @Getter
 public enum BaseStatus {
 
