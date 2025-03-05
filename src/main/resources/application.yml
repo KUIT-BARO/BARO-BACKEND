@@ -3,9 +3,9 @@ spring:
     name: baro
   profiles:
     group:
-      local : local-db, dev-port, common
+      local : local-db, dev-port, local-redis, common
       dev: dev-db, dev-port, common
-      prod: prod-db, prod-port, common
+      prod: prod-db, prod-port, prod-redis, common
     active: local
 ---
 # 로컬용 DB
@@ -78,7 +78,6 @@ spring:
   web:
     resources:
       add-mappings: false
-
 jwt:
   secret: ${jwt.secret}
   access-token-expiration: ${jwt.access-token-expiration}
@@ -99,3 +98,23 @@ spring:
       on-profile: prod-port
 server:
   port: 8001
+---
+# 로컬용 Redis
+spring:
+  config:
+    activate:
+      on-profile: local-redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
+---
+# 배포용 Redis
+spring:
+  config:
+    activate:
+      on-profile: prod-redis
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
