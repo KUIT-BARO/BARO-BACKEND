@@ -20,10 +20,6 @@ public class PromiseTimeVoteHistory extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "promise_available_time_id", nullable = false)
-    private PromiseAvailableTime promiseAvailableTime;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "promise_vote_id", nullable = false)
     private PromiseVote promiseVote;
 
