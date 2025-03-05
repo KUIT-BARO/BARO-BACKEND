@@ -19,7 +19,7 @@ public class PromisePlaceVoteHistory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "promise_place_vote_history", nullable = false)
+    @Column(name = "promise_place_vote_history_id", nullable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,6 +1,7 @@
 package konkuk.kuit.baro.domain.vote.model;
 
 import jakarta.persistence.*;
+import konkuk.kuit.baro.domain.promise.model.PromiseCandidateTime;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -24,12 +25,16 @@ public class PromiseVote extends BaseEntity {
     private LocalDateTime voteEndTime;
 
     // 투표된 시간들을 확인하기 위한 양방향 연관 관계
-    @OneToMany(mappedBy = "promiseVote", orphanRemoval = true)
+    @OneToMany(mappedBy = "promiseVote")
     private List<PromiseTimeVoteHistory> promiseTimeVoteHistories = new ArrayList<>();
 
     // 투표된 장소들을 확인하기 위한 양방향 연관 관계
     @OneToMany(mappedBy = "promiseVote", orphanRemoval = true)
     private List<PromisePlaceVoteHistory> promisePlaceVoteHistories = new ArrayList<>();
+
+    // 약속 후보 시간들을 확인하기 위한 양방향 연관 관계
+    @OneToMany(mappedBy = "promiseVote", orphanRemoval = true)
+    private List<PromiseCandidateTime> promiseCandidateTimes = new ArrayList<>();
 
     @Builder
     public PromiseVote(LocalDateTime voteEndTime) {
@@ -43,5 +48,9 @@ public class PromiseVote extends BaseEntity {
 
     public void addPromisePlaceVoteHistory(PromisePlaceVoteHistory promisePlaceVoteHistory) {
         this.promisePlaceVoteHistories.add(promisePlaceVoteHistory);
+    }
+
+    public void addPromiseCandidateTime(PromiseCandidateTime promiseCandidateTime) {
+        this.promiseCandidateTimes.add(promiseCandidateTime);
     }
 }
