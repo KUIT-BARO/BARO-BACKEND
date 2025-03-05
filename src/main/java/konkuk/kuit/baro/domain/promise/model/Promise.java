@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "promise")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLRestriction("status IN ('ACTIVE', 'BEFORE_VOTE', 'DURING_VOTE', 'AFTER_VOTE')")
+@SQLRestriction("status IN ('ACTIVE', 'PENDING', 'VOTING', 'CONFIRMED')")
 public class Promise extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,7 +68,7 @@ public class Promise extends BaseEntity {
         this.suggestedRegion = suggestedRegion;
         this.suggestedStartDate = suggestedStartDate;
         this.suggestedEndDate = suggestedEndDate;
-        this.setStatus(BaseStatus.BEFORE_VOTE);
+        this.setStatus(BaseStatus.PENDING);
     }
 
     // 연관 관계 편의 메서드

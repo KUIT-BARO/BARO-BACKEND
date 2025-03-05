@@ -1,8 +1,6 @@
 package konkuk.kuit.baro.domain.promise.model;
 
 import jakarta.persistence.*;
-import konkuk.kuit.baro.domain.place.model.Place;
-import konkuk.kuit.baro.domain.vote.model.PromisePlaceVoteHistory;
 import konkuk.kuit.baro.domain.vote.model.PromiseTimeVoteHistory;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
 import lombok.AccessLevel;
@@ -21,7 +19,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@SQLRestriction("status IN ('ACTIVE', 'BEFORE_VOTE', 'DURING_VOTE', 'AFTER_VOTE')")
+@SQLRestriction("status IN ('ACTIVE', 'PENDING', 'VOTING', 'CONFIRMED')")
 public class PromiseAvailableTime extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
