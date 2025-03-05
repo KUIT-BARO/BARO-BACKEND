@@ -11,24 +11,5 @@ services:
       PROD_DATASOURCE_URL: "${PROD_DATASOURCE_URL}"
       PROD_DATASOURCE_USERNAME: "${PROD_DATASOURCE_USERNAME}"
       PROD_DATASOURCE_PASSWORD: "${PROD_DATASOURCE_PASSWORD}"
-    networks:
-      - baro-network
-    depends_on:
-      redis:
-        condition: service_healthy
-
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - "6379:6379"
-    networks:
-      - baro-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-
-networks:
-  baro-network:
+      REDIS_HOST: "${REDIS_HOST}"
+      REDIS_PORT: "${REDIS_PORT:-6379}"
