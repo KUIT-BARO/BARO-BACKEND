@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    image: "${DOCKER_USERNAME}/${DOCKER_IMAGE}"
+    container_name: BARO_CONTAINER
+    ports:
+      - "8001:8001"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      PROD_DATASOURCE_URL: "${PROD_DATASOURCE_URL}"
+      PROD_DATASOURCE_USERNAME: "${PROD_DATASOURCE_USERNAME}"
+      PROD_DATASOURCE_PASSWORD: "${PROD_DATASOURCE_PASSWORD}"
+      REDIS_HOST: "${REDIS_HOST}"
+      REDIS_PORT: "${REDIS_PORT}"
