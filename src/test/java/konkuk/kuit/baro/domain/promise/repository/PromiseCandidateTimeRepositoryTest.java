@@ -15,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Description;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -115,7 +116,8 @@ class PromiseCandidateTimeRepositoryTest {
     }
 
     @Test
-    @DisplayName("약속을 삭제했을 때, 약속 후보 시간도 삭제되는지 테스트. 약속 삭제 -> 약속 투표 삭제 -> 약속 후보 시간 삭제")
+    @DisplayName("약속 후보 시간 삭제 테스트")
+    @Description("약속을 삭제했을 때, 약속 후보 시간도 삭제되는지 테스트. 약속 삭제 -> 약속 투표 삭제 -> 약속 후보 시간 삭제")
     void delete_promise() {
         // given
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
