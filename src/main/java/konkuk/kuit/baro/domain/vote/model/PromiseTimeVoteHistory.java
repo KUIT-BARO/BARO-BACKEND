@@ -27,20 +27,14 @@ public class PromiseTimeVoteHistory extends BaseEntity {
     private PromiseVote promiseVote;
 
     // 생성 메서드
-    public static PromiseTimeVoteHistory createPromiseTimeVoteHistory(PromiseAvailableTime promiseAvailableTime, PromiseVote promiseVote) {
+    public static PromiseTimeVoteHistory createPromiseTimeVoteHistory(PromiseVote promiseVote) {
         PromiseTimeVoteHistory promiseTimeVoteHistory = new PromiseTimeVoteHistory();
-        promiseTimeVoteHistory.setPromiseAvailableTime(promiseAvailableTime);
         promiseTimeVoteHistory.setPromiseVote(promiseVote);
 
         return promiseTimeVoteHistory;
     }
 
     // 연관 관계 편의 메서드
-    private void setPromiseAvailableTime(PromiseAvailableTime promiseAvailableTime) {
-        this.promiseAvailableTime = promiseAvailableTime;
-        promiseAvailableTime.addPromiseTimeVoteHistory(this);
-    }
-
     private void setPromiseVote(PromiseVote promiseVote) {
         this.promiseVote = promiseVote;
         promiseVote.addPromiseTimeVoteHistory(this);

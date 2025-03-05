@@ -39,10 +39,6 @@ public class PromiseAvailableTime extends BaseEntity {
     @JoinColumn(name = "promise_member_id", nullable = false)
     private PromiseMember promiseMember;
 
-    // 제안된 약속 시간 삭제시, 약속 시간 투표 내역도 사라지도록 하기 위한 양방향 연관 관계
-    @OneToMany(mappedBy = "promiseAvailableTime", orphanRemoval = true)
-    private List<PromiseTimeVoteHistory> promiseTimeVoteHistories= new ArrayList<>();
-
 
     // 생성 메서드
     public static PromiseAvailableTime createPromiseAvailableTime(LocalDate availableDate, LocalTime availableStartTime, LocalTime availableEndTime, PromiseMember promiseMember) {
@@ -59,10 +55,6 @@ public class PromiseAvailableTime extends BaseEntity {
     private void setPromiseMember(PromiseMember promiseMember) {
         this.promiseMember = promiseMember;
         promiseMember.addPromiseAvailableTime(this);
-    }
-
-    public void addPromiseTimeVoteHistory(PromiseTimeVoteHistory promiseTimeVoteHistory) {
-        this.promiseTimeVoteHistories.add(promiseTimeVoteHistory);
     }
 
 }
