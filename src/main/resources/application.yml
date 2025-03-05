@@ -70,9 +70,15 @@ spring:
   config:
     activate:
       on-profile: common
+    import: application-secret.yml
   web:
     resources:
       add-mappings: false
+
+jwt:
+  secret: ${jwt.secret}
+  access-token-expiration: ${jwt.access-token-expiration}
+  refresh-token-expiration: ${jwt.refresh-token-expiration}
 ---
 # 개발용 포트
 spring:
