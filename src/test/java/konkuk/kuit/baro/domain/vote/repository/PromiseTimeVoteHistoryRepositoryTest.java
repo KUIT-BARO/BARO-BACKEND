@@ -6,8 +6,10 @@ import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
 import konkuk.kuit.baro.domain.promise.model.Promise;
 import konkuk.kuit.baro.domain.promise.model.PromiseAvailableTime;
+import konkuk.kuit.baro.domain.promise.model.PromiseCandidateTime;
 import konkuk.kuit.baro.domain.promise.model.PromiseMember;
 import konkuk.kuit.baro.domain.promise.repository.PromiseAvailableTimeRepository;
+import konkuk.kuit.baro.domain.promise.repository.PromiseCandidateTimeRepository;
 import konkuk.kuit.baro.domain.promise.repository.PromiseMemberRepository;
 import konkuk.kuit.baro.domain.promise.repository.PromiseRepository;
 import konkuk.kuit.baro.domain.user.model.User;
@@ -33,13 +35,11 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 class PromiseTimeVoteHistoryRepositoryTest {
 
-    @Autowired
-    private PromiseTimeVoteHistoryRepository promiseTimeVoteHistoryRepository;
+    @Autowired private PromiseTimeVoteHistoryRepository promiseTimeVoteHistoryRepository;
     @Autowired private PromiseRepository promiseRepository;
     @Autowired private PromiseMemberRepository promiseMemberRepository;
     @Autowired private UserRepository userRepository;
-    @Autowired private PromiseAvailableTimeRepository promiseAvailableTimeRepository;
-    @Autowired private PlaceRepository placeRepository;
+    @Autowired private PromiseCandidateTimeRepository promiseCandidateTimeRepository;
     @Autowired private PromiseVoteRepository promiseVoteRepository;
 
     @PersistenceContext
@@ -70,24 +70,15 @@ class PromiseTimeVoteHistoryRepositoryTest {
 
         promiseMemberRepository.save(promiseMember);
 
-        Place place = Place.builder()
-                .placeName("스타벅스 건대점")
-                .longitude(new BigDecimal("37.7749295"))
-                .latitude(new BigDecimal("-122.4194155"))
-                .placeAddress("광진구 화양동")
-                .build();
-
-        placeRepository.save(place);
-
-        PromiseAvailableTime promiseAvailableTime = PromiseAvailableTime.createPromiseAvailableTime(LocalDate.now(), LocalTime.now(), LocalTime.now().plusHours(1), promiseMember);
-
-        promiseAvailableTimeRepository.save(promiseAvailableTime);
-
         PromiseVote promiseVote = PromiseVote.builder()
                 .voteEndTime(LocalDateTime.now())
                 .build();
 
-        promiseVoteRepository.save(promiseVote);
+        PromiseVote savedPromiseVote = promiseVoteRepository.save(promiseVote);
+
+        PromiseCandidateTime promiseCandidateTime = PromiseCandidateTime.createPromiseCandidateTime(LocalDate.now(), LocalTime.now(), LocalTime.now().plusHours(1), savedPromiseVote);
+
+        promiseCandidateTimeRepository.save(promiseCandidateTime);
 
         em.flush();
         em.clear();
@@ -98,11 +89,11 @@ class PromiseTimeVoteHistoryRepositoryTest {
     @DisplayName("약속 시간 투표 내역 저장 테스트")
     void save() {
         // given
-        PromiseAvailableTime promiseAvailableTime = promiseAvailableTimeRepository.findById(1L).get();
+        PromiseCandidateTime promiseCandidateTime = promiseCandidateTimeRepository.findById(1L).get();
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
 
         // when
-        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseAvailableTime, promiseVote);
+        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseVote, promiseCandidateTime);
 
         promiseTimeVoteHistoryRepository.save(promiseTimeVoteHistory);
 
@@ -117,10 +108,10 @@ class PromiseTimeVoteHistoryRepositoryTest {
     @DisplayName("약속 시간 투표 내역 삭제 테스트")
     void delete() {
         // given
-        PromiseAvailableTime promiseAvailableTime = promiseAvailableTimeRepository.findById(1L).get();
+        PromiseCandidateTime promiseCandidateTime = promiseCandidateTimeRepository.findById(1L).get();
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
 
-        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseAvailableTime, promiseVote);
+        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseVote, promiseCandidateTime);
 
         promiseTimeVoteHistoryRepository.save(promiseTimeVoteHistory);
 
@@ -140,16 +131,16 @@ class PromiseTimeVoteHistoryRepositoryTest {
 
     @Test
     @DisplayName("약속 시간 투표 내역 삭제 테스트")
-    @Description("약속을 삭제했을 때, 약속 시간 투표 내역도 삭제되는 지 테스트. 약속 삭제 -> 약속 투표 삭제 -> 약속 시간 투표 내역 삭제")
+    @Description("약속을 삭제했을 때, 약속 시간 투표 내역도 삭제되는 지 테스트. 약속 삭제 -> 약속 투표 삭제 -> 약속 후보 시간 삭제 -> 약속 시간 투표 내역 삭제")
     void delete_promise() {
         // given
-        PromiseAvailableTime promiseAvailableTime = promiseAvailableTimeRepository.findById(1L).get();
+        PromiseCandidateTime promiseCandidateTime = promiseCandidateTimeRepository.findById(1L).get();
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
         Promise promise = promiseRepository.findById(1L).get();
 
         promise.setPromiseVote(promiseVote);
 
-        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseAvailableTime, promiseVote);
+        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseVote, promiseCandidateTime);
 
         promiseTimeVoteHistoryRepository.save(promiseTimeVoteHistory);
 
