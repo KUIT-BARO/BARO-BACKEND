@@ -3,9 +3,9 @@ spring:
     name: baro
   profiles:
     group:
-      local : local-db, dev-port, local-redis, common
+      local : local-db, dev-port, common
       dev: dev-db, dev-port, common
-      prod: prod-db, prod-port, prod-redis, common
+      prod: prod-db, prod-port,, common
     active: local
 ---
 # 로컬용 DB
@@ -30,6 +30,10 @@ spring:
         format_sql: true
         show_sql: true
         highlight_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
 ---
 # 개발용 DB
 spring:
@@ -68,6 +72,10 @@ spring:
         format_sql: true
         show_sql: true
         highlight_sql: true
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
 ---
 # 공통 속성
 spring:
@@ -98,23 +106,3 @@ spring:
       on-profile: prod-port
 server:
   port: 8001
----
-# 로컬용 Redis
-spring:
-  config:
-    activate:
-      on-profile: local-redis
-  data:
-    redis:
-      host: localhost
-      port: 6379
----
-# 배포용 Redis
-spring:
-  config:
-    activate:
-      on-profile: prod-redis
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
