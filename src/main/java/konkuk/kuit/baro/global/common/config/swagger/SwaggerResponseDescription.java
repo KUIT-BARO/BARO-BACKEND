@@ -11,7 +11,11 @@ import static konkuk.kuit.baro.global.common.response.status.ErrorCode.*;
 @Getter
 public enum SwaggerResponseDescription {
     USER_PROFILE_UPDATE(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND,
             USER_NAME_LENGTH
+    ))),
+    USER_PROFILE(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND
     )));
     private Set<ErrorCode> errorCodeList;
     SwaggerResponseDescription(Set<ErrorCode> errorCodeList) {
@@ -25,9 +29,6 @@ public enum SwaggerResponseDescription {
                 FORBIDDEN
         )));
 
-        if (this.name().contains("USER_")) {
-            errorCodeList.add(USER_NOT_FOUND);
-        }
 
         this.errorCodeList = errorCodeList;
     }
