@@ -10,7 +10,9 @@ import static konkuk.kuit.baro.global.common.response.status.ErrorCode.*;
 
 @Getter
 public enum SwaggerResponseDescription {
-    ;
+    USER_PROFILE_UPDATE(new LinkedHashSet<>(Set.of(
+            USER_NAME_LENGTH
+    )));
     private Set<ErrorCode> errorCodeList;
     SwaggerResponseDescription(Set<ErrorCode> errorCodeList) {
         // 공통 에러

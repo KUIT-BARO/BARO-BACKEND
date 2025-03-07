@@ -45,6 +45,6 @@ public class BaseResponse<T> {
     }
 
     public static <T> BaseResponse<T> ok(T data) {
-        return of(1, "성공하였습니다.", data);
+        return of(200, "성공하였습니다.", data);
     }
 }

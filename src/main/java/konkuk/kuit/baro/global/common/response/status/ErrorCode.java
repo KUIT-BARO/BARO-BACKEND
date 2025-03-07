@@ -17,8 +17,8 @@ public enum ErrorCode implements ResponseStatus {
     UNAUTHORIZED(104,HttpStatus.UNAUTHORIZED.value(),"인증 자격이 없습니다."),
     FORBIDDEN(105,HttpStatus.FORBIDDEN.value(), "권한이 없습니다."),
     // 유저
-    USER_NOT_FOUND(201, HttpStatus.NOT_FOUND.value(), "존재하지 않는 유저입니다.");
-
+    USER_NOT_FOUND(201, HttpStatus.NOT_FOUND.value(), "존재하지 않는 유저입니다."),
+    USER_NAME_LENGTH(202, BAD_REQUEST.value(), "이름은 12자 이하입니다.");
     @Getter
     private final int code;
     private final int httpStatus;
