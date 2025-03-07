@@ -32,4 +32,19 @@ public class BaseResponse<T> {
         this.message = status.getMessage();
         this.data = data;
     }
+
+    public BaseResponse(int code, String message, T data) {
+        this.success = true;
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
+
+    public static <T> BaseResponse<T> of(int code, String message, T data) {
+        return new BaseResponse<>(code, message, data);
+    }
+
+    public static <T> BaseResponse<T> ok(T data) {
+        return of(1, "성공하였습니다.", data);
+    }
 }
