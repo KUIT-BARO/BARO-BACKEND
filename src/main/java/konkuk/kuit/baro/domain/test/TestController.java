@@ -13,7 +13,7 @@ public class TestController {
 
     @GetMapping("/health-check")
     public BaseResponse<Void> test() {
-        return new BaseResponse<>(SuccessCode.SUCCESS, null);
+        return BaseResponse.ok(null);
     }
 
     @GetMapping("/error-test")

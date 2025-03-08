@@ -25,6 +25,6 @@ public class PromiseController {
         // 아직 토큰 로직이 부재하기에 userId 1번을 집어넣음
         promiseService.promiseSuggest(request, 1L);
 
-        return new BaseResponse<>(SuccessCode.PROMISE_SUGGEST_SUCCESS, null);
+        return BaseResponse.ok(null);
     }
 }
