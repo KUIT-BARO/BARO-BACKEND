@@ -62,4 +62,12 @@ public class UserController {
         return BaseResponse.ok(null);
     }
 
+    @Tag(name = "My Page", description = "유저 마이페이지 관련 API")
+    @Operation(summary = "회원 탈퇴", description = "사용자가 회원 탈퇴를 합니다.")
+    @DeleteMapping()
+    @CustomExceptionDescription(USER_DELETE)
+    public BaseResponse<Void> delete(Long userId){
+        userService.deleteUser(userId);
+        return BaseResponse.ok(null);
+    }
 }
