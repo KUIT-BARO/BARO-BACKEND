@@ -18,7 +18,10 @@ public enum ErrorCode implements ResponseStatus {
     FORBIDDEN(105,HttpStatus.FORBIDDEN.value(), "권한이 없습니다."),
     // 유저
     USER_NOT_FOUND(201, HttpStatus.NOT_FOUND.value(), "존재하지 않는 유저입니다."),
-    USER_NAME_LENGTH(202, BAD_REQUEST.value(), "이름은 12자 이하입니다.");
+    USER_NAME_LENGTH(202, BAD_REQUEST.value(), "이름은 12자 이하입니다."),
+    USER_CURRENT_PASSWORD_WRONG(203, BAD_REQUEST.value(), "입력하신 비밀번호가 현재 비밀번호와 일치하지 않습니다."),
+    USER_NEW_PASSWORD_NOT_MATCH(204, BAD_REQUEST.value(), "입력하신 새 비밀번호와 일치하지 않습니다."),
+    USER_NEW_PASSWORD_SAME(205, BAD_REQUEST.value(), "입력하신 새 비밀번호가 현재 비밀번호와 일치합니다.");
     @Getter
     private final int code;
     private final int httpStatus;

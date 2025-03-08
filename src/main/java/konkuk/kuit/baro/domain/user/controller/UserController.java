@@ -3,6 +3,7 @@ package konkuk.kuit.baro.domain.user.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import konkuk.kuit.baro.domain.user.dto.request.UserUpdatePasswordRequestDTO;
 import konkuk.kuit.baro.domain.user.dto.request.UserUpdateProfileRequestDTO;
 import konkuk.kuit.baro.domain.user.dto.response.UserProfileResponseDTO;
 import konkuk.kuit.baro.domain.user.dto.response.UserProfileSettingResponseDTO;
@@ -51,4 +52,14 @@ public class UserController {
     public BaseResponse<UserProfileSettingResponseDTO> getProfileSetting(Long userId){
         return BaseResponse.ok(userService.getProfileSetting(userId));
     }
+
+    @Tag(name = "My Page", description = "유저 마이페이지 관련 API")
+    @Operation(summary = "비밀번호 변경", description = "사용자의 비밀번호를 변경합니다.")
+    @PostMapping("password")
+    @CustomExceptionDescription(USER_PASSWORD_UPDATE)
+    public BaseResponse<Void> updatePassword(@RequestBody @Validated UserUpdatePasswordRequestDTO req){
+        userService.updatePassword(req);
+        return BaseResponse.ok(null);
+    }
+
 }
