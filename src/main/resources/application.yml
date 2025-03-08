@@ -5,7 +5,7 @@ spring:
     group:
       local : local-db, dev-port, common
       dev: dev-db, dev-port, common
-      prod: prod-db, prod-port, common
+      prod: prod-db, prod-port,, common
     active: local
 ---
 # 로컬용 DB
@@ -13,6 +13,10 @@ spring:
   config:
     activate:
       on-profile: local-db
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
   datasource:
     url: ${LOCAL_DATASOURCE_URL}
     username: ${LOCAL_DATASOURCE_USERNAME}
@@ -26,6 +30,10 @@ spring:
         format_sql: true
         show_sql: true
         highlight_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
 ---
 # 개발용 DB
 spring:
@@ -64,15 +72,24 @@ spring:
         format_sql: true
         show_sql: true
         highlight_sql: true
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
 ---
 # 공통 속성
 spring:
   config:
     activate:
       on-profile: common
+    import: application-secret.yml
   web:
     resources:
       add-mappings: false
+jwt:
+  secret: ${jwt.secret}
+  access-token-expiration: ${jwt.access-token-expiration}
+  refresh-token-expiration: ${jwt.refresh-token-expiration}
 ---
 # 개발용 포트
 spring:
