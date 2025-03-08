@@ -1,12 +1,8 @@
 package konkuk.kuit.baro.global.common.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import konkuk.kuit.baro.global.common.response.status.ResponseStatus;
-import konkuk.kuit.baro.global.common.response.status.SuccessCode;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 import static konkuk.kuit.baro.global.common.response.status.SuccessCode.*;
 
