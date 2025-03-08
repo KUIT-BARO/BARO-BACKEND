@@ -75,5 +75,12 @@ public class UserService {
 
     }
 
+    public void deleteUser(Long userId){
+        User loginUser = userRepository.findById(1L).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        userRepository.delete(loginUser);
+        log.info("User deleted: {}", loginUser.getName());
+        userRepository.flush();
+    }
+
 
 }
