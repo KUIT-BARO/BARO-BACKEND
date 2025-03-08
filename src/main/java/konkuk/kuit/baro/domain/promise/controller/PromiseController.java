@@ -3,6 +3,8 @@ package konkuk.kuit.baro.domain.promise.controller;
 import jakarta.validation.Valid;
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
 import konkuk.kuit.baro.domain.promise.service.PromiseService;
+import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
+import konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
 import konkuk.kuit.baro.global.common.response.status.SuccessCode;
 import lombok.RequiredArgsConstructor;

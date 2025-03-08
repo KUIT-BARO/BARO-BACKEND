@@ -19,17 +19,22 @@ public class BaseResponse<T> {
     private final String message;
     private final T data;
 
-    public BaseResponse(T data) {
-        this.success = true;
-        this.code = SUCCESS.getHttpStatus();   // 의논 사항
-        this.message = SUCCESS.getMessage();   // 의논 사항
-        this.data = data;
-    }
 
     public BaseResponse(ResponseStatus status, T data) {
         this.success = true;
         this.code = status.getHttpStatus();
         this.message = status.getMessage();
         this.data = data;
+    }
+
+    private BaseResponse(T data) {
+        this.success = true;
+        this.code = 200;
+        this.message = "요청에 성공하였습니다.";
+        this.data = data;
+    }
+
+    public static <T> BaseResponse<T> ok(T data) {
+        return new BaseResponse<>(data);
     }
 }
