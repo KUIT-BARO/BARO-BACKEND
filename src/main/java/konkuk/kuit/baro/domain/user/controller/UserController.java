@@ -35,7 +35,7 @@ public class UserController {
 
     @Tag(name = "My Page", description = "유저 마이페이지 관련 API")
     @Operation(summary = "유저 프로필 수정 화면", description = "프로필 수정 기능 호출 시 프로필을 조회하는 기능입니다.")
-    @GetMapping("profile/")
+    @GetMapping("profile")
     @CustomExceptionDescription(USER_PROFILE)
     public BaseResponse<UserProfileResponseDTO> getProfile(Long userId){
         return BaseResponse.ok(userService.getProfile(userId));

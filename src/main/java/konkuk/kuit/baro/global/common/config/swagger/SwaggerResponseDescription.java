@@ -17,7 +17,7 @@ public enum SwaggerResponseDescription {
     USER_PROFILE(new LinkedHashSet<>(Set.of(
             USER_NOT_FOUND
     )));
-    private Set<ErrorCode> errorCodeList;
+    private final Set<ErrorCode> errorCodeList;
     SwaggerResponseDescription(Set<ErrorCode> errorCodeList) {
         // 공통 에러
         errorCodeList.addAll(new LinkedHashSet<>(Set.of(

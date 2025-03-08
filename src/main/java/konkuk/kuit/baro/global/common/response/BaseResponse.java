@@ -19,12 +19,6 @@ public class BaseResponse<T> {
     private final String message;
     private final T data;
 
-    public BaseResponse(T data) {
-        this.success = true;
-        this.code = SUCCESS.getHttpStatus();   // 의논 사항
-        this.message = SUCCESS.getMessage();   // 의논 사항
-        this.data = data;
-    }
 
     public BaseResponse(ResponseStatus status, T data) {
         this.success = true;
@@ -33,18 +27,14 @@ public class BaseResponse<T> {
         this.data = data;
     }
 
-    public BaseResponse(int code, String message, T data) {
+    private BaseResponse(T data) {
         this.success = true;
-        this.code = code;
-        this.message = message;
+        this.code = 200;
+        this.message = "요청에 성공하였습니다.";
         this.data = data;
     }
 
-    public static <T> BaseResponse<T> of(int code, String message, T data) {
-        return new BaseResponse<>(code, message, data);
-    }
-
     public static <T> BaseResponse<T> ok(T data) {
-        return of(200, "성공하였습니다.", data);
+        return new BaseResponse<>(data);
     }
 }

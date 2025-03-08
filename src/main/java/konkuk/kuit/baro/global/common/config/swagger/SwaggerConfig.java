@@ -69,7 +69,7 @@ public class SwaggerConfig {
                                                 return ExampleHolder.builder()
                                                         .holder(
                                                                 getSwaggerExample(errorCode))
-                                                        .code(errorCode.getCode())
+                                                        .code(errorCode.getHttpStatus())
                                                         .name(errorCode.toString())
                                                         .build();
                                         }
