@@ -60,17 +60,22 @@ public class UserService {
     }
 
     private void validateNewPassword(UserUpdatePasswordRequestDTO req) {
+        if(req.getNewPassword().length() < 8){
+            throw new CustomException(USER_PASSWORD_LENGTH);
+        }
+
         if(!req.getNewPassword().equals(req.getConfirmPassword())){
             throw new CustomException(USER_NEW_PASSWORD_NOT_MATCH);
         }
     }
 
     private void validateCurrentPassword(UserUpdatePasswordRequestDTO req, User loginUser) {
-        if(loginUser.getPassword().equals(req.getNewPassword())){
-            throw new CustomException(USER_NEW_PASSWORD_SAME);
-        }
         if(!loginUser.getPassword().equals(req.getCurrentPassword())){
             throw new CustomException(USER_CURRENT_PASSWORD_WRONG);
+        }
+        
+        if(loginUser.getPassword().equals(req.getNewPassword())){
+            throw new CustomException(USER_NEW_PASSWORD_SAME);
         }
 
     }
