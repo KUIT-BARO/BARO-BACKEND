@@ -38,3 +38,6 @@ out/
 
 # application-secret.yml 파일 무시
 application-secret.yml
+
+# DS_Store 파일 무시
+.DS_Store
