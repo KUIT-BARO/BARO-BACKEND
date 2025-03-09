@@ -14,9 +14,15 @@ public enum SwaggerResponseDescription {
             USER_NOT_FOUND,
             USER_NAME_LENGTH
     ))),
+
     USER_PROFILE(new LinkedHashSet<>(Set.of(
             USER_NOT_FOUND
+    ))),
+
+    PROMISE_SUGGEST(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND
     )));
+
     private final Set<ErrorCode> errorCodeList;
     SwaggerResponseDescription(Set<ErrorCode> errorCodeList) {
         // 공통 에러
