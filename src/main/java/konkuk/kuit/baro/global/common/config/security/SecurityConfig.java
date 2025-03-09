@@ -1,6 +1,7 @@
 package konkuk.kuit.baro.global.common.config.security;
 
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
+import konkuk.kuit.baro.global.auth.jwt.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,19 +43,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/h2-console/**", "/actuator/**").permitAll()
                         .requestMatchers("auth/login/**").permitAll()
-                        .requestMatchers("/api/v1/**").authenticated()
+                        .requestMatchers("/**").authenticated()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll())
                 .exceptionHandling(customizer -> customizer
                         .authenticationEntryPoint(customAuthenticationEntryPoint())
                         .accessDeniedHandler(customAccessDeniedHandler()))
-                .addFilterAfter(jwtAuthenticationProcessFilter(), LogoutFilter.class)
+                .addFilterAfter(jwtAuthenticationFilter(), LogoutFilter.class)
                 .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationFilter.class);
-        // 필터 순서: Logout filter -> jwtAuthenticationProcessFilter
+        // 필터 순서: Logout filter -> jwtAuthenticationFilter
         return http.build();
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationProcessFilter() {
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter(jwtService, redisService, userRepository);
     }
 
