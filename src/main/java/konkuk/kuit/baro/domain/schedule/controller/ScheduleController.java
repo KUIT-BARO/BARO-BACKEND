@@ -3,6 +3,7 @@ package konkuk.kuit.baro.domain.schedule.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import konkuk.kuit.baro.domain.schedule.dto.request.AddScheduleRequestDTO;
+import konkuk.kuit.baro.domain.schedule.dto.response.GetSchedulesResponseDTO;
 import konkuk.kuit.baro.domain.schedule.service.ScheduleService;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription;
@@ -39,5 +40,12 @@ public class ScheduleController {
         return BaseResponse.ok(null);
     }
 
+    @Tag(name = "My Page", description = "유저 마이페이지 관련 API")
+    @Operation(summary = "일정표 조회", description = "마이페이지에서 일정표를 조회합니다.")
+    @GetMapping("")
+    @CustomExceptionDescription(GET_SCHEDULES)
+    public BaseResponse<GetSchedulesResponseDTO> getSchedules(){
+        return BaseResponse.ok(scheduleService.getSchedules());
+    }
 
 }

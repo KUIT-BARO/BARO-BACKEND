@@ -46,6 +46,10 @@ public enum SwaggerResponseDescription {
             INVALID_SCHEDULE_NAME,
             SCHEDULE_CONFLICT,
             INVALID_SCHEDULE_TIME,
+            SCHEDULE_NOT_FOUND
+    ))),
+    GET_SCHEDULES(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND,
             SCHEDULE_NOT_EXISTS
     )));
 

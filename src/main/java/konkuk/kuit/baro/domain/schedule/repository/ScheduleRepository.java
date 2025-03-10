@@ -1,5 +1,7 @@
 package konkuk.kuit.baro.domain.schedule.repository;
 
+import konkuk.kuit.baro.domain.schedule.dto.response.GetSchedulesResponseDTO;
+import konkuk.kuit.baro.domain.schedule.dto.response.SchedulesDTO;
 import konkuk.kuit.baro.domain.schedule.model.DayOfWeek;
 import konkuk.kuit.baro.domain.schedule.model.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -45,5 +47,16 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             @Param("endTime") LocalTime endTime,
             @Param("scheduleId") Long scheduleId
     );
+
+    @Query("""
+   SELECT new konkuk.kuit.baro.domain.schedule.dto.response.SchedulesDTO(
+       s.id, s.scheduleName, s.dayOfWeek, s.startTime, s.endTime
+   )
+   FROM Schedule s
+   WHERE s.user.id = :userId
+   ORDER BY s.dayOfWeek ASC, s.startTime ASC
+    """)
+    List<SchedulesDTO> findAllByUserId(@Param("userId") Long userId);
+
 
 }
