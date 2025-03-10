@@ -1,6 +1,7 @@
 package konkuk.kuit.baro.global.common.config.security;
 
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
+import konkuk.kuit.baro.global.auth.entrypoint.CustomAuthenticationEntryPoint;
 import konkuk.kuit.baro.global.auth.jwt.filter.JwtAuthenticationFilter;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.common.redis.RedisService;
@@ -17,6 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import konkuk.kuit.baro.global.auth.handler.CustomAccessDeniedHandler;
+import konkuk.kuit.baro.global.auth.jwt.filter.ExceptionHandlerFilter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -25,7 +27,6 @@ public class SecurityConfig {
 
     private final JwtService jwtService;
     private final RedisService redisService;
-    private final UserRepository userRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -59,7 +60,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtService, redisService, userRepository);
+        return new JwtAuthenticationFilter(jwtService, redisService);
     }
 
     @Bean

@@ -4,27 +4,16 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import konkuk.kuit.baro.domain.user.model.User;
-import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.auth.exception.AuthException;
 import konkuk.kuit.baro.global.common.redis.RedisService;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
-import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 @RequiredArgsConstructor
-@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final RedisService redisService;
