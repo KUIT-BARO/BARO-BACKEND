@@ -49,9 +49,10 @@ public class AuthController {
     )
     @CustomExceptionDescription(LOGOUT)
     @PatchMapping("/logout")
-    public BaseResponse<LogoutResponseDTO> logout(HttpServletRequest request) {
+    public BaseResponse<Void> logout(HttpServletRequest request) {
         Optional<String> accessToken = jwtService.extractAccessToken(request);
         Optional<String> refreshToken = jwtService.extractRefreshToken(request);
-        return BaseResponse.ok(authService.logout(accessToken, refreshToken));
+        authService.logout(accessToken, refreshToken);
+        return BaseResponse.ok(null);
     }
 }
