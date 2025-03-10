@@ -73,18 +73,17 @@ public class UserService {
         if(!loginUser.getPassword().equals(req.getCurrentPassword())){
             throw new CustomException(USER_CURRENT_PASSWORD_WRONG);
         }
-        
+
         if(loginUser.getPassword().equals(req.getNewPassword())){
             throw new CustomException(USER_NEW_PASSWORD_SAME);
         }
 
     }
 
+    @Transactional
     public void deleteUser(Long userId){
         User loginUser = userRepository.findById(1L).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         userRepository.delete(loginUser);
-        log.info("User deleted: {}", loginUser.getName());
-        userRepository.flush();
     }
 
 
