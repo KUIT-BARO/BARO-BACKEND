@@ -30,7 +30,4 @@ public class AddScheduleRequestDTO {
     @Schema(description = "장소", example = "건국대학교")
     private String placeName;
 
-    public DayOfWeek getDayOfWeekEnum() {
-        return DayOfWeek.ofCode(this.dayOfWeek);
-    }
 }

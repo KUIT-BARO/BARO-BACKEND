@@ -27,4 +27,23 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             @Param("startTime") LocalTime startTime,
             @Param("endTime") LocalTime endTime
     );
+
+    // 일정 수정 시 사용
+    @Query("""
+    SELECT s FROM Schedule s
+    WHERE s.user.id = :userId
+    AND s.dayOfWeek = :dayOfWeek
+    AND s.id <> :scheduleId \s
+    AND (
+        (:startTime < s.endTime AND :endTime > s.startTime)
+    )
+   \s""")
+    List<Schedule> findOverlappingSchedulesExcludingId(
+            @Param("userId") Long userId,
+            @Param("dayOfWeek") DayOfWeek dayOfWeek,
+            @Param("startTime") LocalTime startTime,
+            @Param("endTime") LocalTime endTime,
+            @Param("scheduleId") Long scheduleId
+    );
+
 }

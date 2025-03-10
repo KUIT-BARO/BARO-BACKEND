@@ -40,6 +40,13 @@ public enum SwaggerResponseDescription {
             INVALID_SCHEDULE_NAME,
             SCHEDULE_CONFLICT,
             INVALID_SCHEDULE_TIME
+    ))),
+    SCHEDULE_UPDATE(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND,
+            INVALID_SCHEDULE_NAME,
+            SCHEDULE_CONFLICT,
+            INVALID_SCHEDULE_TIME,
+            SCHEDULE_NOT_EXISTS
     )));
 
     private final Set<ErrorCode> errorCodeList;

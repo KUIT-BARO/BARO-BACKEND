@@ -27,7 +27,8 @@ public enum ErrorCode implements ResponseStatus {
     // Schedule
     INVALID_SCHEDULE_NAME(300, BAD_REQUEST.value(), "일정명은 12자 이하로 입력해야 합니다."),
     SCHEDULE_CONFLICT(301,CONFLICT.value(),"겹치는 일정이 존재합니다."),
-    INVALID_SCHEDULE_TIME(302, BAD_REQUEST.value(), "시작 시간과 종료 시간이 동일할 수 없습니다.");
+    INVALID_SCHEDULE_TIME(302, BAD_REQUEST.value(), "시작 시간과 종료 시간이 동일할 수 없습니다."),
+    SCHEDULE_NOT_EXISTS(303, HttpStatus.NOT_FOUND.value(), "존재하지 않는 일정입니다.");
     @Getter
     private final int code;
     private final int httpStatus;

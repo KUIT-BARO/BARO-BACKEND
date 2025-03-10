@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.global.common.converter.DayOfWeekConverter;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalTime;
@@ -16,6 +13,7 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "schedule")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @SQLRestriction("status IN ('ACTIVE', 'PENDING', 'VOTING', 'CONFIRMED')")
@@ -62,6 +60,14 @@ public class Schedule extends BaseEntity {
     private void setUser(User user) {
         this.user = user;
         user.addSchedule(this);
+    }
+
+    public static void setSchedule(Schedule schedule, String scheduleName, DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, String placeName) {
+        schedule.setScheduleName(scheduleName);
+        schedule.setDayOfWeek(dayOfWeek);
+        schedule.setStartTime(startTime);
+        schedule.setEndTime(endTime);
+        schedule.setPlaceName(placeName);
     }
 
 

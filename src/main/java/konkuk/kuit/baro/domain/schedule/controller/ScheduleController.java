@@ -10,10 +10,7 @@ import konkuk.kuit.baro.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.*;
 
@@ -32,4 +29,15 @@ public class ScheduleController {
         scheduleService.addSchedule(req);
         return BaseResponse.ok(null);
     }
+
+    @Tag(name = "My Page", description = "유저 마이페이지 관련 API")
+    @Operation(summary = "일정 수정", description = "일정표의 일정을 수정합니다.")
+    @PatchMapping("/{scheduleId}")
+    @CustomExceptionDescription(SCHEDULE_UPDATE)
+    public BaseResponse<Void> updateSchedule(@PathVariable Long scheduleId, @RequestBody @Validated AddScheduleRequestDTO req){
+        scheduleService.updateSchedule(req, scheduleId);
+        return BaseResponse.ok(null);
+    }
+
+
 }
