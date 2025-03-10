@@ -39,7 +39,7 @@ public class AuthService {
         }
 
         User user = userOptional.get();
-        return LoginResponseDTO.of(user.getId(), accessToken, refreshToken, email, true);
+        return new LoginResponseDTO(accessToken, refreshToken, user.getId(), email, user.getName());
     }
 
     public void reissueTokens(HttpServletRequest request, HttpServletResponse response) {

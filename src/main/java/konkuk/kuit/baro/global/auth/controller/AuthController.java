@@ -25,10 +25,21 @@ public class AuthController {
     private final JwtService jwtService;
 
     @Operation(
+            summary = "회원가입",
+            description = "회원가입을 합니다. 토큰이 필요하지 않습니다."
+    )
+    // @CustomExceptionDescription(SIGNUP)
+    @PostMapping("/signup")
+    public BaseResponse<LoginResponseDTO> signup(@RequestBody SignUpRequestDto request) {
+        authService.signup(request);
+        return ApiResponseDto.success(SuccessCode.USER_SIGNUP_SUCCESS);
+    }
+
+    @Operation(
             summary = "로그인",
             description = "로그인합니다. 토큰이 필요하지 않습니다."
     )
-    @CustomExceptionDescription(LOGIN)
+    // @CustomExceptionDescription(LOGIN)
     @PostMapping("/login")
     public BaseResponse<LoginResponseDTO> login(@RequestBody LoginRequestDTO request) {
         return BaseResponse.ok(authService.login(request));
@@ -38,7 +49,7 @@ public class AuthController {
             summary = "토큰 재발급",
             description = "리프레시 토큰을 가지고 토큰을 재발급합니다. 리프레시 토큰이 필요합니다."
     )
-    @CustomExceptionDescription(REISSUE)
+    // @CustomExceptionDescription(REISSUE)
     @PostMapping("/reissue")
     public BaseResponse<Void> reissueTokens(HttpServletRequest request, HttpServletResponse response) {
         authService.reissueTokens(request, response);
@@ -49,7 +60,7 @@ public class AuthController {
             summary = "로그아웃",
             description = "로그아웃합니다. 액세스 토큰과 리프레시 토큰이 필요합니다."
     )
-    @CustomExceptionDescription(LOGOUT)
+    // @CustomExceptionDescription(LOGOUT)
     @PatchMapping("/logout")
     public BaseResponse<Void> logout(HttpServletRequest request) {
         Optional<String> accessToken = jwtService.extractAccessToken(request);
