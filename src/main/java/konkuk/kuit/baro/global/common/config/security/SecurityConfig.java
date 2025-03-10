@@ -2,6 +2,8 @@ package konkuk.kuit.baro.global.common.config.security;
 
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.global.auth.jwt.filter.JwtAuthenticationFilter;
+import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
+import konkuk.kuit.baro.global.common.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

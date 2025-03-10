@@ -1,22 +1,25 @@
 package konkuk.kuit.baro.global.auth.jwt.service;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import konkuk.kuit.baro.global.common.exception.CustomException;
+import konkuk.kuit.baro.global.common.redis.RedisService;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 
 import java.time.Duration;
 import java.util.Date;
 import java.util.Optional;
-
-import static org.springframework.security.config.Elements.JWT;
 
 
 @Service
@@ -42,6 +45,7 @@ public class JwtService {
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String SOCIAL_INFO_CLAIM = "socialInfo";
+    private static final String USER_ID_CLAIM = "userId";
     private static final String BEARER = "Bearer ";
     private static final String NOT_EXIST = "false";
 
@@ -50,21 +54,19 @@ public class JwtService {
 
     public String createAccessToken(String email) {
         Date now = new Date();
-        return Jwts.builder()
-                .setSubject(ACCESS_TOKEN_SUBJECT)
-                .setExpiration(new Date(now.getTime() + accessTokenExpirationPeriod))
-                .claim(SOCIAL_INFO_CLAIM, email)
-                .signWith(SignatureAlgorithm.HS512, secretKey)
-                .compact();
+        return JWT.create()
+                .withSubject(ACCESS_TOKEN_SUBJECT)
+                .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
+                .withClaim(SOCIAL_INFO_CLAIM, email)
+                .sign(Algorithm.HMAC512(secretKey));
     }
 
     public String createRefreshToken() {
         Date now = new Date();
-        return Jwts.builder()
-                .setSubject(REFRESH_TOKEN_SUBJECT)
-                .setExpiration(new Date(now.getTime() + refreshTokenExpirationPeriod))
-                .signWith(SignatureAlgorithm.HS512, secretKey)
-                .compact();
+        return JWT.create()
+                .withSubject(REFRESH_TOKEN_SUBJECT)
+                .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
+                .sign(Algorithm.HMAC512(secretKey));
     }
 
     public String reissueRefreshToken(String email) {
@@ -93,7 +95,7 @@ public class JwtService {
                     .getClaim(SOCIAL_INFO_CLAIM) //추출
                     .asString());
         } catch (JWTVerificationException e) {
-            throw new AuthException(ErrorCode.SECURITY_UNAUTHORIZED);
+            throw new CustomException(ErrorCode.SECURITY_UNAUTHORIZED);
         }
     }
 
@@ -105,19 +107,16 @@ public class JwtService {
 
     public boolean isTokenValid(String token) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token);
+            JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
             return true;
-        } catch (Exception e) {
+        } catch (JWTVerificationException e) {
             return false;
         }
     }
 
     public void deleteRefreshToken(String refreshToken) {
         if (refreshToken == null) {
-            throw new AuthException(ErrorCode.SECURITY_UNAUTHORIZED);
+            throw new CustomException(ErrorCode.SECURITY_UNAUTHORIZED);
         }
         redisService.delete(refreshToken);
     }
@@ -131,7 +130,7 @@ public class JwtService {
         String socialInfo = redisService.getValues(refreshToken);
 
         if (socialInfo.equals(NOT_EXIST)) {
-            throw new AuthException(ErrorCode.SECURITY_INVALID_REFRESH_TOKEN);
+            throw new CustomException(ErrorCode.SECURITY_INVALID_REFRESH_TOKEN);
         }
         return socialInfo;
     }

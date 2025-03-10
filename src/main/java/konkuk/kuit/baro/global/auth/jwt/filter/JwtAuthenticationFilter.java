@@ -7,6 +7,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
+import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
+import konkuk.kuit.baro.global.common.exception.CustomException;
+import konkuk.kuit.baro.global.common.redis.RedisService;
+import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,7 +39,7 @@ public class JwtAuthenticationFilter {
         jwtService.extractAccessToken(request)
                 .ifPresent(accessToken -> {
                     if (!jwtService.isTokenValid(accessToken)) { //accessToken 만료 시
-                        throw new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN);
+                        throw new CustomException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN);
                     }
                 });
         checkAccessTokenAndSaveAuthentication(request, response, filterChain);
@@ -45,7 +49,7 @@ public class JwtAuthenticationFilter {
         jwtService.extractAccessToken(request).ifPresent(accessToken -> {
             String value = redisService.getValues(accessToken);
             if (value.equals("logout")) {
-                throw new AuthException(ErrorCode.SECURITY_UNAUTHORIZED);
+                throw new CustomException(ErrorCode.SECURITY_UNAUTHORIZED);
             }
         });
     }
@@ -62,7 +66,7 @@ public class JwtAuthenticationFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (IOException | ServletException e) {
-            throw new AuthException(ErrorCode.SERVER_ERROR);
+            throw new CustomException(ErrorCode.SERVER_ERROR);
         }
     }
 
