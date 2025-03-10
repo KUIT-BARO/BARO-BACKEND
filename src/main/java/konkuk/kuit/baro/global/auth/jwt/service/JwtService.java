@@ -30,10 +30,10 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @Value("${jwt.access-token-expiration}")
+    @Value("${jwt.access.expiration}")
     private Long accessTokenExpirationPeriod;
 
-    @Value("${jwt.refresh-token-expiration}")
+    @Value("${jwt.refresh.expiration}")
     private Long refreshTokenExpirationPeriod;
 
     @Value("${jwt.access.header}")
@@ -44,7 +44,7 @@ public class JwtService {
 
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-    private static final String SOCIAL_INFO_CLAIM = "socialInfo";
+    private static final String USER_INFO_CLAIM = "userInfo";
     private static final String USER_ID_CLAIM = "userId";
     private static final String BEARER = "Bearer ";
     private static final String NOT_EXIST = "false";
@@ -57,7 +57,7 @@ public class JwtService {
         return JWT.create()
                 .withSubject(ACCESS_TOKEN_SUBJECT)
                 .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
-                .withClaim(SOCIAL_INFO_CLAIM, email)
+                .withClaim(USER_INFO_CLAIM, email)
                 .sign(Algorithm.HMAC512(secretKey));
     }
 
@@ -88,8 +88,8 @@ public class JwtService {
     }
 
     //RefreshToken redis 저장
-    public void updateRefreshToken(String refreshToken, String socialInfo) {
-        redisService.setValues(refreshToken, socialInfo,
+    public void updateRefreshToken(String refreshToken, String userInfo) {
+        redisService.setValues(refreshToken, userInfo,
                 Duration.ofMillis(refreshTokenExpirationPeriod));
     }
 
@@ -114,13 +114,13 @@ public class JwtService {
                 Duration.ofMillis(accessTokenExpirationPeriod));
     }
 
-    public String findRefreshTokenAndExtractSocialInfo(String refreshToken) {
-        String socialInfo = redisService.getValues(refreshToken);
+    public String findRefreshTokenAndExtractUserInfo(String refreshToken) {
+        String userInfo = redisService.getValues(refreshToken);
 
-        if (socialInfo.equals(NOT_EXIST)) {
+        if (userInfo.equals(NOT_EXIST)) {
             throw new CustomException(ErrorCode.SECURITY_INVALID_REFRESH_TOKEN);
         }
-        return socialInfo;
+        return userInfo;
     }
 
     private void sendTokens(HttpServletResponse response, String reissuedAccessToken,
@@ -130,9 +130,9 @@ public class JwtService {
     }
 
     public void reissueAndSendTokens(HttpServletResponse response, String refreshToken) {
-        String socialInfo = findRefreshTokenAndExtractSocialInfo(refreshToken);
-        String reissuedRefreshToken = reissueRefreshToken(socialInfo);
-        String reissuedAccessToken = createAccessToken(socialInfo);
+        String userInfo = findRefreshTokenAndExtractUserInfo(refreshToken);
+        String reissuedRefreshToken = reissueRefreshToken(userInfo);
+        String reissuedAccessToken = createAccessToken(userInfo);
 
         sendTokens(response, reissuedAccessToken, reissuedRefreshToken);
     }

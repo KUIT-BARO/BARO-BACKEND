@@ -28,16 +28,14 @@ public class AuthService {
 
     public LoginResponseDTO login(LoginRequestDTO request) {
         String email = request.getEmail();
-        String name = request.getName();
+        String password = request.getPassword();
 
-        String accessToken = jwtService.createAccessToken(socialInfo);
+        String accessToken = jwtService.createAccessToken(email);
         String refreshToken = jwtService.createRefreshToken();
-        jwtService.updateRefreshToken(refreshToken, socialInfo);
-        Optional<User> userOptional = userRepository.findBySocialTypeAndSocialId(socialType, socialId);
+        jwtService.updateRefreshToken(refreshToken, email);
+        Optional<User> userOptional = userRepository.findByEmailAndPassword(email, password);
         if (userOptional.isEmpty()) {
-            User newUser = userService.registerUser(name, email, socialId,
-                    socialType, Role.USER);
-            return LoginResponse.of(newUser.getId(), accessToken, refreshToken, email, false);
+            throw new AuthException(ErrorCode.USER_NOT_FOUND);
         }
 
         User user = userOptional.get();
