@@ -2,8 +2,11 @@ package konkuk.kuit.baro.global.auth.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.domain.user.service.UserService;
+import konkuk.kuit.baro.global.auth.dto.request.LoginRequestDTO;
+import konkuk.kuit.baro.global.auth.dto.response.LoginResponseDTO;
 import konkuk.kuit.baro.global.auth.exception.AuthException;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
@@ -23,7 +26,7 @@ public class AuthService {
     public final UserRepository userRepository;
     public final UserService userService;
 
-    public LoginResponse login(LoginRequest request) {
+    public LoginResponseDTO login(LoginRequestDTO request) {
         String email = request.getEmail();
         String name = request.getName();
 
@@ -38,7 +41,7 @@ public class AuthService {
         }
 
         User user = userOptional.get();
-        return LoginResponse.of(user.getId(), accessToken, refreshToken, email, true);
+        return LoginResponseDTO.of(user.getId(), accessToken, refreshToken, email, true);
     }
 
     public void reissueTokens(HttpServletRequest request, HttpServletResponse response) {
@@ -49,7 +52,7 @@ public class AuthService {
         jwtService.reissueAndSendTokens(response, refreshToken);
     }
 
-    public LogoutResponse logout(Optional<String> accessToken, Optional<String> refreshToken) {
+    public void logout(Optional<String> accessToken, Optional<String> refreshToken) {
         String access = accessToken
                 .orElseThrow(() -> new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
         String refresh = refreshToken
@@ -61,10 +64,6 @@ public class AuthService {
         jwtService.deleteRefreshToken(refresh);
         //access token blacklist 처리 -> 로그아웃한 사용자가 요청 시 access token이 redis에 존재하면 jwtAuthenticationProcessingFilter에서 인증처리 거부
         jwtService.invalidAccessToken(access);
-
-        return LogoutResponse.builder()
-                .socialType(socialType)
-                .build();
     }
 
 }

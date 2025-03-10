@@ -4,8 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import konkuk.kuit.baro.global.auth.dto.request.LoginRequestDTO;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.auth.service.AuthService;
+import konkuk.kuit.baro.global.auth.dto.response.LoginResponseDTO;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +30,7 @@ public class AuthController {
     )
     @CustomExceptionDescription(LOGIN)
     @PostMapping("/login")
-    public BaseResponse<LoginResponseDTO> login(@RequestBody LoginRequest request) {
+    public BaseResponse<LoginResponseDTO> login(@RequestBody LoginRequestDTO request) {
         return BaseResponse.ok(authService.login(request));
     }
 

@@ -28,7 +28,6 @@ import java.util.StringTokenizer;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final RedisService redisService;
-    private final UserRepository userRepository;
 
     // private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
