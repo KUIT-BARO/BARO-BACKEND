@@ -1,6 +1,5 @@
 package konkuk.kuit.baro.domain.schedule.repository;
 
-import konkuk.kuit.baro.domain.schedule.dto.response.GetSchedulesResponseDTO;
 import konkuk.kuit.baro.domain.schedule.dto.response.SchedulesDTO;
 import konkuk.kuit.baro.domain.schedule.model.DayOfWeek;
 import konkuk.kuit.baro.domain.schedule.model.Schedule;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {

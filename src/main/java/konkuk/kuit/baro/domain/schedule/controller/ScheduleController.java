@@ -6,7 +6,6 @@ import konkuk.kuit.baro.domain.schedule.dto.request.AddScheduleRequestDTO;
 import konkuk.kuit.baro.domain.schedule.dto.response.GetSchedulesResponseDTO;
 import konkuk.kuit.baro.domain.schedule.service.ScheduleService;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
-import konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
