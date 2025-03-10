@@ -3,8 +3,10 @@ package konkuk.kuit.baro.domain.user.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import konkuk.kuit.baro.domain.user.dto.request.UserUpdatePasswordRequestDTO;
 import konkuk.kuit.baro.domain.user.dto.request.UserUpdateProfileRequestDTO;
 import konkuk.kuit.baro.domain.user.dto.response.UserProfileResponseDTO;
+import konkuk.kuit.baro.domain.user.dto.response.UserProfileSettingResponseDTO;
 import konkuk.kuit.baro.domain.user.service.UserService;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription;
@@ -13,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.format.DecimalStyle;
 
 import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.*;
 
@@ -41,4 +45,29 @@ public class UserController {
         return BaseResponse.ok(userService.getProfile(userId));
     }
 
+    @Tag(name = "My Page", description = "유저 마이페이지 관련 API")
+    @Operation(summary = "마이페이지 설정 화면", description = "마이페이지에서 설정 기능 호출 시 프로필을 조회하는 기능입니다.")
+    @GetMapping("profile-setting")
+    @CustomExceptionDescription(USER_PROFILE)
+    public BaseResponse<UserProfileSettingResponseDTO> getProfileSetting(Long userId){
+        return BaseResponse.ok(userService.getProfileSetting(userId));
+    }
+
+    @Tag(name = "My Page", description = "유저 마이페이지 관련 API")
+    @Operation(summary = "비밀번호 변경", description = "사용자의 비밀번호를 변경합니다.")
+    @PostMapping("password")
+    @CustomExceptionDescription(USER_PASSWORD_UPDATE)
+    public BaseResponse<Void> updatePassword(@RequestBody @Validated UserUpdatePasswordRequestDTO req){
+        userService.updatePassword(req);
+        return BaseResponse.ok(null);
+    }
+
+    @Tag(name = "My Page", description = "유저 마이페이지 관련 API")
+    @Operation(summary = "회원 탈퇴", description = "사용자가 회원 탈퇴를 합니다.")
+    @DeleteMapping()
+    @CustomExceptionDescription(USER_DELETE)
+    public BaseResponse<Void> delete(Long userId){
+        userService.deleteUser(userId);
+        return BaseResponse.ok(null);
+    }
 }

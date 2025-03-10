@@ -14,8 +14,16 @@ public enum SwaggerResponseDescription {
             USER_NOT_FOUND,
             USER_NAME_LENGTH
     ))),
-
     USER_PROFILE(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND
+    ))),
+    USER_PASSWORD_UPDATE(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND,
+            USER_CURRENT_PASSWORD_WRONG,
+            USER_NEW_PASSWORD_NOT_MATCH,
+            USER_NEW_PASSWORD_SAME
+    ))),
+    USER_DELETE(new LinkedHashSet<>(Set.of(
             USER_NOT_FOUND
     ))),
 
