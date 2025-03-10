@@ -18,18 +18,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 @RequiredArgsConstructor
 @Slf4j
-public class JwtAuthenticationFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final RedisService redisService;
     private final UserRepository userRepository;
 
-    private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
+    // private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -42,7 +44,6 @@ public class JwtAuthenticationFilter {
                         throw new CustomException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN);
                     }
                 });
-        checkAccessTokenAndSaveAuthentication(request, response, filterChain);
     }
 
     private void checkLogout(HttpServletRequest request) {
@@ -52,28 +53,5 @@ public class JwtAuthenticationFilter {
                 throw new CustomException(ErrorCode.SECURITY_UNAUTHORIZED);
             }
         });
-    }
-
-    private void checkAccessTokenAndSaveAuthentication(HttpServletRequest request,
-                                                       HttpServletResponse response, FilterChain filterChain) {
-        jwtService.extractAccessToken(request)
-                .flatMap(jwtService::extractSocialInfo)
-                .flatMap(socialInfo -> {
-                    StringTokenizer st = new StringTokenizer(socialInfo, " ");
-                    return userRepository.findBySocialTypeAndSocialId(SocialType.getSocialTypeFromPrefix(st.nextToken()), st.nextToken());
-                }).ifPresent(this::saveAuthentication);
-
-        try {
-            filterChain.doFilter(request, response);
-        } catch (IOException | ServletException e) {
-            throw new CustomException(ErrorCode.SERVER_ERROR);
-        }
-    }
-
-    private void saveAuthentication(User myUser) {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(myUser, null,
-                authoritiesMapper.mapAuthorities(myUser.getAuthorities()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
