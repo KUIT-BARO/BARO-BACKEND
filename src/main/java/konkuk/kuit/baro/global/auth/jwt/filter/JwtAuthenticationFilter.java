@@ -1,6 +1,5 @@
 package konkuk.kuit.baro.global.auth.jwt.filter;
 
-import jakarta.security.auth.message.AuthException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,7 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
-import konkuk.kuit.baro.global.common.exception.CustomException;
+import konkuk.kuit.baro.global.auth.exception.AuthException;
 import konkuk.kuit.baro.global.common.redis.RedisService;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwtService.extractAccessToken(request)
                 .ifPresent(accessToken -> {
                     if (!jwtService.isTokenValid(accessToken)) { //accessToken 만료 시
-                        throw new CustomException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN);
+                        throw new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN);
                     }
                 });
     }
@@ -50,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwtService.extractAccessToken(request).ifPresent(accessToken -> {
             String value = redisService.getValues(accessToken);
             if (value.equals("logout")) {
-                throw new CustomException(ErrorCode.SECURITY_UNAUTHORIZED);
+                throw new AuthException(ErrorCode.SECURITY_UNAUTHORIZED);
             }
         });
     }

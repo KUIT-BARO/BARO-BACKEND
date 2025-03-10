@@ -87,18 +87,6 @@ public class JwtService {
                 .map(accessToken -> accessToken.replace(BEARER, ""));
     }
 
-    public Optional<String> extractSocialInfo(String accessToken) {
-        try {
-            return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
-                    .build()
-                    .verify(accessToken) //검증
-                    .getClaim(SOCIAL_INFO_CLAIM) //추출
-                    .asString());
-        } catch (JWTVerificationException e) {
-            throw new CustomException(ErrorCode.SECURITY_UNAUTHORIZED);
-        }
-    }
-
     //RefreshToken redis 저장
     public void updateRefreshToken(String refreshToken, String socialInfo) {
         redisService.setValues(refreshToken, socialInfo,
