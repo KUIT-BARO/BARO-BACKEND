@@ -10,6 +10,8 @@ import static konkuk.kuit.baro.global.common.response.status.ErrorCode.*;
 
 @Getter
 public enum SwaggerResponseDescription {
+
+    //User
     USER_PROFILE_UPDATE(new LinkedHashSet<>(Set.of(
             USER_NOT_FOUND,
             USER_NAME_LENGTH
@@ -27,8 +29,17 @@ public enum SwaggerResponseDescription {
             USER_NOT_FOUND
     ))),
 
+    //Promise
     PROMISE_SUGGEST(new LinkedHashSet<>(Set.of(
             USER_NOT_FOUND
+    ))),
+
+    //Schedule
+    SCHEDULE_ADD(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND,
+            INVALID_SCHEDULE_NAME,
+            SCHEDULE_CONFLICT,
+            INVALID_SCHEDULE_TIME
     )));
 
     private final Set<ErrorCode> errorCodeList;
