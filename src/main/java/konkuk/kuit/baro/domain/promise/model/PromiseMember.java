@@ -28,6 +28,9 @@ public class PromiseMember extends BaseEntity {
     @Column(name = "is_host", nullable = false, columnDefinition = "TINYINT")
     private Boolean isHost;
 
+    @Column(name = "color", length = 20, nullable = false)
+    private String color;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -45,9 +48,10 @@ public class PromiseMember extends BaseEntity {
     private List<PromiseAvailableTime> promiseAvailableTimes = new ArrayList<>();
 
     // 생성 메서드
-    public static PromiseMember createPromiseMember(Boolean isHost, User user, Promise promise) {
+    public static PromiseMember createPromiseMember(Boolean isHost, String color, User user, Promise promise) {
         PromiseMember promiseMember = new PromiseMember();
         promiseMember.isHost = isHost;
+        promiseMember.color = color;
         promiseMember.setUser(user);
         promiseMember.setPromise(promise);
 
