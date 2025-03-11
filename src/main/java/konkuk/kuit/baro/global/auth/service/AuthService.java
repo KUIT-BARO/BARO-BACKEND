@@ -6,11 +6,14 @@ import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.domain.user.service.UserService;
 import konkuk.kuit.baro.global.auth.dto.request.LoginRequestDTO;
+import konkuk.kuit.baro.global.auth.dto.request.SignUpRequestDTO;
 import konkuk.kuit.baro.global.auth.dto.response.LoginResponseDTO;
+import konkuk.kuit.baro.global.auth.dto.response.SignUpResponseDTO;
 import konkuk.kuit.baro.global.auth.exception.AuthException;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,20 @@ public class AuthService {
     public final JwtService jwtService;
     public final UserRepository userRepository;
     public final UserService userService;
+
+    public SignUpResponseDTO signup(SignUpRequestDTO request){
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encryptedPassword = passwordEncoder.encode(request.getPassword());
+
+        User newUser = User.builder()
+                .email(request.getEmail())
+                .password(encryptedPassword)
+                .name(request.getName())
+                .build();
+        userRepository.save(newUser);
+
+        return new SignUpResponseDTO(request.getEmail(), request.getName(), request.getPassword());
+    }
 
     public LoginResponseDTO login(LoginRequestDTO request) {
         String email = request.getEmail();

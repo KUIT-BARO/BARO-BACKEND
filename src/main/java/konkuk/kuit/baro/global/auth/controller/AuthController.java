@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import konkuk.kuit.baro.global.auth.dto.request.LoginRequestDTO;
+import konkuk.kuit.baro.global.auth.dto.request.SignUpRequestDTO;
+import konkuk.kuit.baro.global.auth.dto.response.SignUpResponseDTO;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.auth.service.AuthService;
 import konkuk.kuit.baro.global.auth.dto.response.LoginResponseDTO;
@@ -30,9 +32,8 @@ public class AuthController {
     )
     // @CustomExceptionDescription(SIGNUP)
     @PostMapping("/signup")
-    public BaseResponse<LoginResponseDTO> signup(@RequestBody SignUpRequestDto request) {
-        authService.signup(request);
-        return ApiResponseDto.success(SuccessCode.USER_SIGNUP_SUCCESS);
+    public BaseResponse<SignUpResponseDTO> signup(@RequestBody SignUpRequestDTO request) {
+        return BaseResponse.ok(authService.signup(request));
     }
 
     @Operation(

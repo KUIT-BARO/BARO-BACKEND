@@ -46,7 +46,7 @@ public class SecurityConfig {
                                 SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/h2-console/**", "/actuator/**").permitAll()
-                        .requestMatchers("auth/login/**").permitAll()
+                        .requestMatchers("/auth/signup/**", "/auth/login/**").permitAll()
                         .requestMatchers("/**").authenticated()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll())
                 .exceptionHandling(customizer -> customizer

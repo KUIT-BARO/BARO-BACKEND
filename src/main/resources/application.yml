@@ -5,7 +5,7 @@ spring:
     group:
       local : local-db, dev-port, common
       dev: dev-db, dev-port, common
-      prod: prod-db, prod-port,, common
+      prod: prod-db, prod-port,common
     active: local
 ---
 # 로컬용 DB
@@ -74,7 +74,7 @@ spring:
         highlight_sql: true
   data:
     redis:
-      host: ${REDIS_HOST}
+      host: ${REDIS_HOST:}
       port: ${REDIS_PORT}
 ---
 # 공통 속성
@@ -88,8 +88,13 @@ spring:
       add-mappings: false
 jwt:
   secret: ${jwt.secret}
-  access-token-expiration: ${jwt.access-token-expiration}
-  refresh-token-expiration: ${jwt.refresh-token-expiration}
+  access:
+    expiration: ${jwt.access.expiration}
+    header: ${jwt.access.header}
+  refresh:
+    expiration: ${jwt.refresh.expiration}
+    header: ${jwt.refresh.header}
+
 ---
 # 개발용 포트
 spring:
