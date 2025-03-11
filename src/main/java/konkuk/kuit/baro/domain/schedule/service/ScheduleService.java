@@ -94,7 +94,7 @@ public class ScheduleService {
             throw new CustomException(SCHEDULE_CONFLICT);
         }
     }
-
+    
     private void validateCommonScheduleRules(AddScheduleRequestDTO req) {
         if (req.getScheduleName().length() > 25) {
             throw new CustomException(INVALID_SCHEDULE_NAME);
