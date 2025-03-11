@@ -49,8 +49,7 @@ public enum SwaggerResponseDescription {
             SCHEDULE_NOT_FOUND
     ))),
     GET_SCHEDULES(new LinkedHashSet<>(Set.of(
-            USER_NOT_FOUND,
-            SCHEDULE_NOT_EXISTS
+            USER_NOT_FOUND
     )));
 
     private final Set<ErrorCode> errorCodeList;

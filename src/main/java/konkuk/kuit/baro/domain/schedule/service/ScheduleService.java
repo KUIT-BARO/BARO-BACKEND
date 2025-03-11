@@ -94,7 +94,7 @@ public class ScheduleService {
             throw new CustomException(SCHEDULE_CONFLICT);
         }
     }
-    
+
     private void validateCommonScheduleRules(AddScheduleRequestDTO req) {
         if (req.getScheduleName().length() > 25) {
             throw new CustomException(INVALID_SCHEDULE_NAME);
@@ -107,9 +107,6 @@ public class ScheduleService {
     public GetSchedulesResponseDTO getSchedules() {
         User loginUser = userRepository.findById(1L).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         List<SchedulesDTO> schedules = scheduleRepository.findAllByUserId(loginUser.getId());
-        if(schedules.isEmpty()){
-            throw new CustomException(SCHEDULE_NOT_EXISTS);
-        }
         return new GetSchedulesResponseDTO(
                 loginUser.getProfileImage(),
                 loginUser.getName(),
