@@ -34,7 +34,6 @@ class ScheduleRepositoryTest {
                 .name("홍길동")
                 .password("qwer1234!")
                 .profileImage("image.png")
-                .color("0XFFFF")
                 .build();
 
         userRepository.save(user);
