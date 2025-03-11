@@ -32,7 +32,7 @@ public class ScheduleController {
 
     @Tag(name = "My Page", description = "유저 마이페이지 관련 API")
     @Operation(summary = "일정 수정", description = "일정표의 일정을 수정합니다.")
-    @PatchMapping("/{scheduleId}")
+    @PatchMapping("{scheduleId}")
     @CustomExceptionDescription(SCHEDULE_UPDATE)
     public BaseResponse<Void> updateSchedule(@PathVariable Long scheduleId, @RequestBody @Validated AddScheduleRequestDTO req){
         scheduleService.updateSchedule(req, scheduleId);
@@ -45,6 +45,14 @@ public class ScheduleController {
     @CustomExceptionDescription(GET_SCHEDULES)
     public BaseResponse<GetSchedulesResponseDTO> getSchedules(){
         return BaseResponse.ok(scheduleService.getSchedules());
+    }
+
+    @Tag(name = "My Page", description = "유저 마이페이지 관련 API")
+    @Operation(summary = "일정 삭제", description = "선택한 일정을 삭제합니다.")
+    @DeleteMapping("{scheduleId}")
+    public BaseResponse<Void> deleteSchedule(@PathVariable Long scheduleId){
+        scheduleService.deleteSchedule(scheduleId);
+        return BaseResponse.ok(null);
     }
 
 }

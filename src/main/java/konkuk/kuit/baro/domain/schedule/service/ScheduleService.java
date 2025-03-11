@@ -114,5 +114,10 @@ public class ScheduleService {
                 schedules
         );
     }
+
+    @Transactional
+    public void deleteSchedule(Long scheduleId) {
+        scheduleRepository.deleteById(scheduleId);
+    }
 }
 
