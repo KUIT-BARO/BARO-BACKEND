@@ -22,7 +22,14 @@ public enum ErrorCode implements ResponseStatus {
     USER_CURRENT_PASSWORD_WRONG(203, BAD_REQUEST.value(), "입력하신 비밀번호가 현재 비밀번호와 일치하지 않습니다."),
     USER_NEW_PASSWORD_NOT_MATCH(204, BAD_REQUEST.value(), "입력하신 새 비밀번호와 일치하지 않습니다."),
     USER_NEW_PASSWORD_SAME(205, BAD_REQUEST.value(), "입력하신 새 비밀번호가 현재 비밀번호와 일치합니다."),
-    USER_PASSWORD_LENGTH(206, BAD_REQUEST.value(), "비밀번호는 8자 이상입니다.");
+    USER_PASSWORD_LENGTH(206, BAD_REQUEST.value(), "비밀번호는 8자 이상입니다."),
+
+    // Schedule
+    INVALID_SCHEDULE_NAME(300, BAD_REQUEST.value(), "일정명은 12자 이하로 입력해야 합니다."),
+    SCHEDULE_CONFLICT(301,CONFLICT.value(),"겹치는 일정이 존재합니다."),
+    INVALID_SCHEDULE_TIME(302, BAD_REQUEST.value(), "시작 시간과 종료 시간이 동일할 수 없습니다."),
+    SCHEDULE_NOT_FOUND(303, HttpStatus.NOT_FOUND.value(), "존재하지 않는 일정입니다."),
+    SCHEDULE_NOT_EXISTS(304, HttpStatus.NOT_FOUND.value(), "등록된 일정이 없습니다.");
     @Getter
     private final int code;
     private final int httpStatus;

@@ -1,6 +1,5 @@
 package konkuk.kuit.baro.domain.schedule.model;
 
-import konkuk.kuit.baro.global.common.response.status.BaseStatus;
 import lombok.Getter;
 
 import java.util.Arrays;
