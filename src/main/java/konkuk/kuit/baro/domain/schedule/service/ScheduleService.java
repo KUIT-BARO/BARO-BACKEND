@@ -96,7 +96,7 @@ public class ScheduleService {
     }
 
     private void validateCommonScheduleRules(AddScheduleRequestDTO req) {
-        if (req.getScheduleName().length() > 12) {
+        if (req.getScheduleName().length() > 25) {
             throw new CustomException(INVALID_SCHEDULE_NAME);
         }
         if (req.getStartTime().equals(req.getEndTime())) {
