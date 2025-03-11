@@ -18,7 +18,7 @@ import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescr
 
 @Slf4j
 @RestController
-@RequestMapping("/promise")
+@RequestMapping("/promises")
 @RequiredArgsConstructor
 public class PromiseController {
 
