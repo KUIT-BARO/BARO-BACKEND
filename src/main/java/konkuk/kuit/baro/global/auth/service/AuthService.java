@@ -14,6 +14,7 @@ import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,10 +28,10 @@ public class AuthService {
 
     public final JwtService jwtService;
     public final UserRepository userRepository;
-    public final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     public SignUpResponseDTO signup(SignUpRequestDTO request){
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
         String encryptedPassword = passwordEncoder.encode(request.getPassword());
 
         User newUser = User.builder()
@@ -50,7 +51,7 @@ public class AuthService {
         String accessToken = jwtService.createAccessToken(email);
         String refreshToken = jwtService.createRefreshToken();
         jwtService.updateRefreshToken(refreshToken, email);
-        Optional<User> userOptional = userRepository.findByEmailAndPassword(email, password);
+        Optional<User> userOptional = authenticate(email, password);
         if (userOptional.isEmpty()) {
             throw new AuthException(ErrorCode.USER_NOT_FOUND);
         }
@@ -77,8 +78,22 @@ public class AuthService {
         jwtService.isTokenValid(access);
         //refresh token 삭제
         jwtService.deleteRefreshToken(refresh);
-        //access token blacklist 처리 -> 로그아웃한 사용자가 요청 시 access token이 redis에 존재하면 jwtAuthenticationProcessingFilter에서 인증처리 거부
+        //access token blacklist 처리 -> 로그아웃한 사용자가 요청 시 access token이 redis에 존재하면 jwtAuthenticationFilter에서 인증처리 거부
         jwtService.invalidAccessToken(access);
+    }
+
+    public Optional<User> authenticate(String email, String password) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                return Optional.of(user);
+            }
+        }
+
+        return Optional.empty();
     }
 
 }

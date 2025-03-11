@@ -1,5 +1,7 @@
 package konkuk.kuit.baro.global.common.config.redis;
 
+
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -13,13 +15,14 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
-    @Value("${spring.data.redis.host: 127.0.0.1}")
+    @Value("${spring.data.redis.host}")
     private String host;
 
-    @Value("${spring.data.redis.port: 6379}")
+    @Value("${spring.data.redis.port}")
     private int port;
 
-    public RedisConfig() {
+    @PostConstruct
+    public void init() {
         log.info("Redis Host: {}", host);
         log.info("Redis Port: {}", port);
     }
