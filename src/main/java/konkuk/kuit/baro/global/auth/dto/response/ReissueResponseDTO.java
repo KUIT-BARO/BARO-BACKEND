@@ -12,10 +12,8 @@ import lombok.NoArgsConstructor;
 public class ReissueResponseDTO {
 
     @Schema(description = "엑세스토큰")
-    @NotNull
     private String accessToken;
 
     @Schema(description = "리프레쉬토큰")
-    @NotNull
     private String refreshToken;
 }

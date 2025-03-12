@@ -12,15 +12,12 @@ import lombok.NoArgsConstructor;
 public class SignUpResponseDTO {
 
     @Schema(description = "이메일", example = "konkuk@gmail.com")
-    @NotNull
     private String email;
 
     @Schema(description = "비밀번호", example = "12345")
-    @NotNull
     private String password;
 
     @Schema(description = "이름", example = "이정연")
-    @NotNull
     private String name;
 
 }
