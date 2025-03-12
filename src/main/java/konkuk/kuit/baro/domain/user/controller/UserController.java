@@ -8,6 +8,7 @@ import konkuk.kuit.baro.domain.user.dto.response.UserHomePageResponseDTO;
 import konkuk.kuit.baro.domain.user.dto.response.UserProfileResponseDTO;
 import konkuk.kuit.baro.domain.user.dto.response.UserProfileSettingResponseDTO;
 import konkuk.kuit.baro.domain.user.service.UserService;
+import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class UserController {
     @Operation(summary = "유저 프로필 수정 화면", description = "프로필 수정 기능 호출 시 프로필을 조회하는 기능입니다.")
     @GetMapping("profile")
     @CustomExceptionDescription(USER_PROFILE)
-    public BaseResponse<UserProfileResponseDTO> getProfile(Long userId){
+    public BaseResponse<UserProfileResponseDTO> getProfile(@CurrentUserId Long userId){
         return BaseResponse.ok(userService.getProfile(userId));
     }
 
