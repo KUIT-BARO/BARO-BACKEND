@@ -1,5 +1,6 @@
 package konkuk.kuit.baro.global.common.config.security;
 
+import jakarta.servlet.http.HttpServletRequest;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.global.auth.entrypoint.CustomAuthenticationEntryPoint;
 import konkuk.kuit.baro.global.auth.jwt.filter.JwtAuthenticationFilter;
@@ -18,6 +19,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import konkuk.kuit.baro.global.auth.jwt.filter.ExceptionHandlerFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,10 +30,12 @@ public class SecurityConfig {
 
     private final JwtService jwtService;
     private final RedisService redisService;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -40,7 +46,7 @@ public class SecurityConfig {
                                 SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/h2-console/**", "/actuator/**").permitAll()
-                        .requestMatchers("/auth/signup/**", "/auth/login/**").permitAll()
+                        .requestMatchers("/auth/signup/**", "/auth/login/**", "/auth/reissue/**").permitAll()
                         .requestMatchers("/**").authenticated()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll())
                 .exceptionHandling(customizer -> customizer

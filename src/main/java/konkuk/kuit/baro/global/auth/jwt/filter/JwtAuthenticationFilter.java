@@ -53,7 +53,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                                        HttpServletResponse response, FilterChain filterChain) {
         jwtService.extractAccessToken(request)
                 .ifPresent(this::saveAuthentication); // 사용자 정보가 있으면 인증 처리
-
         try {
             filterChain.doFilter(request, response);  // 필터 체인 실행
         } catch (IOException | ServletException e) {

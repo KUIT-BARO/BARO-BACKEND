@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -123,17 +125,21 @@ public class JwtService {
         return userInfo;
     }
 
-    private void sendTokens(HttpServletResponse response, String reissuedAccessToken,
+    /*private void sendTokens(HttpServletResponse response, String reissuedAccessToken,
                             String reissuedRefreshToken) {
         response.setHeader(accessHeader, BEARER + reissuedAccessToken);
         response.setHeader(refreshHeader, BEARER + reissuedRefreshToken);
-    }
+    }*/
 
-    public void reissueAndSendTokens(HttpServletResponse response, String refreshToken) {
+    public List<String> reissueAndSendTokens(HttpServletResponse response, String refreshToken) {
         String userInfo = findRefreshTokenAndExtractUserInfo(refreshToken);
         String reissuedRefreshToken = reissueRefreshToken(userInfo);
         String reissuedAccessToken = createAccessToken(userInfo);
 
-        sendTokens(response, reissuedAccessToken, reissuedRefreshToken);
+        List<String> tokenList = new ArrayList<>();
+        tokenList.add(reissuedRefreshToken);
+        tokenList.add(reissuedAccessToken);
+
+        return tokenList;
     }
 }

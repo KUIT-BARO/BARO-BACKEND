@@ -8,6 +8,7 @@ import konkuk.kuit.baro.domain.user.service.UserService;
 import konkuk.kuit.baro.global.auth.dto.request.LoginRequestDTO;
 import konkuk.kuit.baro.global.auth.dto.request.SignUpRequestDTO;
 import konkuk.kuit.baro.global.auth.dto.response.LoginResponseDTO;
+import konkuk.kuit.baro.global.auth.dto.response.ReissueResponseDTO;
 import konkuk.kuit.baro.global.auth.dto.response.SignUpResponseDTO;
 import konkuk.kuit.baro.global.auth.exception.AuthException;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
@@ -18,8 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-import java.util.StringTokenizer;
+import java.util.*;
 
 @Service
 @Transactional
@@ -60,12 +60,16 @@ public class AuthService {
         return new LoginResponseDTO(accessToken, refreshToken, user.getId(), email, user.getName());
     }
 
-    public void reissueTokens(HttpServletRequest request, HttpServletResponse response) {
+    public ReissueResponseDTO reissueTokens(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = jwtService.extractRefreshToken(request)
                 .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
         jwtService.isTokenValid(refreshToken);
 
-        jwtService.reissueAndSendTokens(response, refreshToken);
+        List<String> tokenList = jwtService.reissueAndSendTokens(response, refreshToken);
+        String accessTokenResponse = tokenList.get(0);
+        String refreshTokenResponse = tokenList.get(1);
+
+        return new ReissueResponseDTO(accessTokenResponse, refreshTokenResponse );
     }
 
     public void logout(Optional<String> accessToken, Optional<String> refreshToken) {
