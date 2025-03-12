@@ -34,6 +34,10 @@ public class AuthService {
 
         String encryptedPassword = passwordEncoder.encode(request.getPassword());
 
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new AuthException(ErrorCode.USER_ALREADY_EXISTS);
+        }
+
         User newUser = User.builder()
                 .email(request.getEmail())
                 .password(encryptedPassword)
