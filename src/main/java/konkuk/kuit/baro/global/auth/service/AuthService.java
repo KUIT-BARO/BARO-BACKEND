@@ -47,14 +47,15 @@ public class AuthService {
     public LoginResponseDTO login(LoginRequestDTO request) {
         String email = request.getEmail();
         String password = request.getPassword();
+        Optional<User> userOptional = authenticate(email, password);
+
+        if (userOptional.isEmpty()) {
+            throw new AuthException(ErrorCode.USER_NOT_FOUND);
+        }
 
         String accessToken = jwtService.createAccessToken(email);
         String refreshToken = jwtService.createRefreshToken();
         jwtService.updateRefreshToken(refreshToken, email);
-        Optional<User> userOptional = authenticate(email, password);
-        if (userOptional.isEmpty()) {
-            throw new AuthException(ErrorCode.USER_NOT_FOUND);
-        }
 
         User user = userOptional.get();
         return new LoginResponseDTO(accessToken, refreshToken, user.getId(), email, user.getName());

@@ -47,7 +47,6 @@ public class JwtService {
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String USER_INFO_CLAIM = "userInfo";
-    private static final String USER_ID_CLAIM = "userId";
     private static final String BEARER = "Bearer ";
     private static final String NOT_EXIST = "false";
 
@@ -142,4 +141,13 @@ public class JwtService {
 
         return tokenList;
     }
+
+    public String extractUserInfo(String token) {
+        return JWT.require(Algorithm.HMAC512(secretKey))
+                .build()
+                .verify(token)
+                .getClaim(USER_INFO_CLAIM)
+                .asString();
+    }
+
 }

@@ -35,7 +35,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     if (!jwtService.isTokenValid(accessToken)) { //accessToken 만료 시
                         throw new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN);
                     }
-
                 });
         checkAccessTokenAndSaveAuthentication(request, response, filterChain);
     }
@@ -52,7 +51,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void checkAccessTokenAndSaveAuthentication(HttpServletRequest request,
                                                        HttpServletResponse response, FilterChain filterChain) {
         jwtService.extractAccessToken(request)
-                .ifPresent(this::saveAuthentication); // 사용자 정보가 있으면 인증 처리
+                .ifPresent(accessToken -> {
+                    String email = jwtService.extractUserInfo(accessToken); // userId 추출
+                    saveAuthentication(email);
+                });
         try {
             filterChain.doFilter(request, response);  // 필터 체인 실행
         } catch (IOException | ServletException e) {
@@ -60,8 +62,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void saveAuthentication(String username) {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+    private void saveAuthentication(String email) {
+        Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, new ArrayList<>());
         SecurityContextHolder.getContext().setAuthentication(authentication); // 인증 정보 저장
     }
+
 }
