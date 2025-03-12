@@ -32,15 +32,23 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 class PromisePlaceVoteHistoryRepositoryTest {
 
-    @Autowired private PromisePlaceVoteHistoryRepository promisePlaceVoteHistoryRepository;
-    @Autowired private PromiseRepository promiseRepository;
-    @Autowired private PromiseMemberRepository promiseMemberRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private PromiseSuggestedPlaceRepository promiseSuggestedPlaceRepository;
-    @Autowired private PlaceRepository placeRepository;
-    @Autowired private PromiseVoteRepository promiseVoteRepository;
+    @Autowired
+    private PromisePlaceVoteHistoryRepository promisePlaceVoteHistoryRepository;
+    @Autowired
+    private PromiseRepository promiseRepository;
+    @Autowired
+    private PromiseMemberRepository promiseMemberRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PromiseSuggestedPlaceRepository promiseSuggestedPlaceRepository;
+    @Autowired
+    private PlaceRepository placeRepository;
+    @Autowired
+    private PromiseVoteRepository promiseVoteRepository;
 
-    @PersistenceContext private EntityManager em;
+    @PersistenceContext
+    private EntityManager em;
 
     @BeforeEach
     void init() {
@@ -49,7 +57,6 @@ class PromisePlaceVoteHistoryRepositoryTest {
                 .name("홍길동")
                 .password("qwer1234!")
                 .profileImage("image.png")
-                .color("0XFFFF")
                 .build();
 
         userRepository.save(user);
@@ -63,7 +70,7 @@ class PromisePlaceVoteHistoryRepositoryTest {
 
         promiseRepository.save(promise);
 
-        PromiseMember promiseMember = PromiseMember.createPromiseMember(true, user, promise);
+        PromiseMember promiseMember = PromiseMember.createPromiseMember(true, "#F4F4F4", user, promise);
 
         promiseMemberRepository.save(promiseMember);
 

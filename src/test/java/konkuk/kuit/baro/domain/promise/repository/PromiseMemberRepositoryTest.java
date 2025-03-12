@@ -23,11 +23,15 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 class PromiseMemberRepositoryTest {
 
-    @Autowired private PromiseMemberRepository promiseMemberRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private PromiseRepository promiseRepository;
+    @Autowired
+    private PromiseMemberRepository promiseMemberRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PromiseRepository promiseRepository;
 
-    @PersistenceContext private EntityManager em;
+    @PersistenceContext
+    private EntityManager em;
 
     @BeforeEach
     void init() {
@@ -36,7 +40,6 @@ class PromiseMemberRepositoryTest {
                 .name("홍길동")
                 .password("qwer1234!")
                 .profileImage("image.png")
-                .color("0XFFFF")
                 .build();
 
         userRepository.save(user);
@@ -59,7 +62,7 @@ class PromiseMemberRepositoryTest {
         Promise findPromise = promiseRepository.findById(1L).get();
 
         // when
-        PromiseMember promiseMember = PromiseMember.createPromiseMember(true, findUser, findPromise);
+        PromiseMember promiseMember = PromiseMember.createPromiseMember(true, "#F4F4F4", findUser, findPromise);
         promiseMemberRepository.save(promiseMember);
 
         em.flush();
@@ -77,7 +80,7 @@ class PromiseMemberRepositoryTest {
         User findUser = userRepository.findById(1L).get();
         Promise findPromise = promiseRepository.findById(1L).get();
 
-        PromiseMember promiseMember = PromiseMember.createPromiseMember(true, findUser, findPromise);
+        PromiseMember promiseMember = PromiseMember.createPromiseMember(true, "#F4F4F4", findUser, findPromise);
         promiseMemberRepository.save(promiseMember);
 
         em.flush();
@@ -102,7 +105,7 @@ class PromiseMemberRepositoryTest {
         User findUser = userRepository.findById(1L).get();
         Promise findPromise = promiseRepository.findById(1L).get();
 
-        PromiseMember promiseMember = PromiseMember.createPromiseMember(true, findUser, findPromise);
+        PromiseMember promiseMember = PromiseMember.createPromiseMember(true, "#F4F4F4", findUser, findPromise);
         promiseMemberRepository.save(promiseMember);
 
         em.flush();

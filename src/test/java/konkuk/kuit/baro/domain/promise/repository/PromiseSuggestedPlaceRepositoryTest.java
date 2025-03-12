@@ -41,7 +41,6 @@ class PromiseSuggestedPlaceRepositoryTest {
                 .name("홍길동")
                 .password("qwer1234!")
                 .profileImage("image.png")
-                .color("0XFFFF")
                 .build();
 
         userRepository.save(user);
@@ -55,7 +54,7 @@ class PromiseSuggestedPlaceRepositoryTest {
 
         promiseRepository.save(promise);
 
-        PromiseMember promiseMember = PromiseMember.createPromiseMember(true, user, promise);
+        PromiseMember promiseMember = PromiseMember.createPromiseMember(true,"#F4F4F4", user, promise);
 
         promiseMemberRepository.save(promiseMember);
 

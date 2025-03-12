@@ -38,9 +38,6 @@ public class User extends BaseEntity {
     @Column(name = "profile_image", nullable = false)
     private String profileImage;
 
-    @Column(name = "color", length = 20, nullable = false)
-    private String color;
-
     // 일정을 확인하기 위한 양방향 연관 관계
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private List<Schedule> schedules = new ArrayList<>();
@@ -54,12 +51,11 @@ public class User extends BaseEntity {
     private List<PromiseMember> promiseMembers = new ArrayList<>();
 
     @Builder
-    public User(String email, String password, String name, String profileImage, String color) {
+    public User(String email, String password, String name, String profileImage) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.profileImage = profileImage;
-        this.color = color;
     }
 
     // 연관 관계 편의 메서드
