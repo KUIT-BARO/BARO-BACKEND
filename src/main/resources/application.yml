@@ -86,6 +86,16 @@ spring:
   web:
     resources:
       add-mappings: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: baro.server.team@gmail.com
+    password: fzsi zfov fwaw kqlh
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.timeout: 5000
+      mail.smtp.starttls.enable: true
+
 jwt:
   secret: ${jwt.secret}
   access:
