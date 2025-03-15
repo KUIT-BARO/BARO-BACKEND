@@ -59,4 +59,33 @@ public class AuthController {
         authService.logout(request);
         return BaseResponse.ok(null);
     }
+
+    @Operation(
+            summary = "인증번호 전송",
+            description = "메일로 인증번호를 전송합니다. 액세스 토큰이 필요합니다."
+    )
+    @PostMapping("/mail/send")
+    public BaseResponse<Void> sendJoinMail(@RequestBody MailRequestDTO emailPostDto) {
+        EmailMessage emailMessage = EmailMessage.builder()
+                .to(emailPostDto.getEmail())
+                .subject("[SAVIEW] 이메일 인증을 위한 인증 코드 발송")
+                .build();
+
+        String code = mailService.sendMail(emailMessage, "email");
+
+        MailResponseDTO mailResponseDto = new MailResponseDTO();
+        mailResponseDto.setCode(code);
+
+        return BaseResponse.ok(null);
+    }
+
+    @Operation(
+            summary = "인증번호 검증",
+            description = "메일로 인증번호를 검증합니다. 액세스 토큰이 필요합니다."
+    )
+    @GetMapping("/mail/check")
+    public BaseResponse<Boolean> checkMail(@RequestParam String userNumber) {
+        boolean isMatch = userNumber.equals(String.valueOf(number));
+        return BaseResponse.ok(isMatch);
+    }
 }

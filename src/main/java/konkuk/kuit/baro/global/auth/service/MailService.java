@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
+import org.thymeleaf.context.Context;
+
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -18,35 +21,56 @@ public class MailService {
 
     private final JavaMailSender javaMailSender;
 
-    public int createNumber() {
-        return (int) (Math.random() * 90000) + 100000;   // 인증번호가 무조건 1로 시작함;
-    }
+    private final SpringTemplateEngine templateEngine;
 
-    public MimeMessage createMail(String mail, int number) throws MessagingException {
-        MimeMessage message = javaMailSender.createMimeMessage();
-        message.setFrom(senderEmail);
-        message.setRecipients(MimeMessage.RecipientType.TO, mail);
-        message.setSubject("이메일 인증");
+    private final UserService userService;
 
-        String body = """
-            <h3>요청하신 인증 번호입니다.</h3>
-            <h1>%d</h1>
-            <h3>감사합니다.</h3>
-            """.formatted(number);
+    public String sendMail(EmailMessage emailMessage, String type) {
+        String authNum = createCode();
 
-        message.setText(body, "UTF-8", "html");
-        return message;
-    }
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
-    public int sendMail(String mail) {
-        int number = createNumber();
+        if (type.equals("password")) userService.SetTempPassword(emailMessage.getTo(), authNum);
+
         try {
-            MimeMessage message = createMail(mail, number);
-            javaMailSender.send(message);
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+            mimeMessageHelper.setTo(emailMessage.getTo()); // 메일 수신자
+            mimeMessageHelper.setSubject(emailMessage.getSubject()); // 메일 제목
+            mimeMessageHelper.setText(setContext(authNum, type), true); // 메일 본문 내용, HTML 여부
+            javaMailSender.send(mimeMessage);
+
+            log.info("Success");
+
+            return authNum;
+
         } catch (MessagingException e) {
-            throw new CustomException(ErrorCode.MAIL_SEND_FAILED);
+            log.info("fail");
+            throw new RuntimeException(e);
         }
-        return number;
+    }
+
+    // 인증번호 및 임시 비밀번호 생성 메서드
+    public String createCode() {
+        Random random = new Random();
+        StringBuffer key = new StringBuffer();
+
+        for (int i = 0; i < 8; i++) {
+            int index = random.nextInt(4);
+
+            switch (index) {
+                case 0: key.append((char) ((int) random.nextInt(26) + 97)); break;
+                case 1: key.append((char) ((int) random.nextInt(26) + 65)); break;
+                default: key.append(random.nextInt(9));
+            }
+        }
+        return key.toString();
+    }
+
+    // thymeleaf를 통한 html 적용
+    public String setContext(String code, String type) {
+        Context context = new Context();
+        context.setVariable("code", code);
+        return templateEngine.process(type, context);
     }
 }
 
