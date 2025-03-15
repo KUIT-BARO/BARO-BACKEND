@@ -2,16 +2,22 @@ package konkuk.kuit.baro.global.auth.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import konkuk.kuit.baro.domain.user.service.UserService;
+import konkuk.kuit.baro.global.auth.dto.request.MailRequestDTO;
 import konkuk.kuit.baro.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.util.Random;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MailService {
@@ -25,27 +31,23 @@ public class MailService {
 
     private final UserService userService;
 
-    public String sendMail(EmailMessage emailMessage, String type) {
-        String authNum = createCode();
+    public void sendMail(MailRequestDTO request) {
+        String authCode = createCode();
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
-        if (type.equals("password")) userService.SetTempPassword(emailMessage.getTo(), authNum);
-
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-            mimeMessageHelper.setTo(emailMessage.getTo()); // 메일 수신자
-            mimeMessageHelper.setSubject(emailMessage.getSubject()); // 메일 제목
-            mimeMessageHelper.setText(setContext(authNum, type), true); // 메일 본문 내용, HTML 여부
+            mimeMessageHelper.setTo(senderEmail); // 메일 수신자
+            mimeMessageHelper.setSubject("[BARO] 이메일 인증을 위한 인증 코드 발송"); // 메일 제목
+            mimeMessageHelper.setText(setContext(authCode), true); // 메일 본문 내용, HTML 여부
             javaMailSender.send(mimeMessage);
 
             log.info("Success");
 
-            return authNum;
-
         } catch (MessagingException e) {
             log.info("fail");
-            throw new RuntimeException(e);
+            throw new CustomException(ErrorCode.MAIL_SEND_FAILED);
         }
     }
 
@@ -67,10 +69,10 @@ public class MailService {
     }
 
     // thymeleaf를 통한 html 적용
-    public String setContext(String code, String type) {
+    public String setContext(String code) {
         Context context = new Context();
         context.setVariable("code", code);
-        return templateEngine.process(type, context);
+        return templateEngine.process("email.html", context);
     }
 }
 

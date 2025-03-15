@@ -65,16 +65,9 @@ public class AuthController {
             description = "메일로 인증번호를 전송합니다. 액세스 토큰이 필요합니다."
     )
     @PostMapping("/mail/send")
-    public BaseResponse<Void> sendJoinMail(@RequestBody MailRequestDTO emailPostDto) {
-        EmailMessage emailMessage = EmailMessage.builder()
-                .to(emailPostDto.getEmail())
-                .subject("[SAVIEW] 이메일 인증을 위한 인증 코드 발송")
-                .build();
+    public BaseResponse<Void> sendJoinMail(@RequestBody MailRequestDTO mailRequestDTO) {
 
-        String code = mailService.sendMail(emailMessage, "email");
-
-        MailResponseDTO mailResponseDto = new MailResponseDTO();
-        mailResponseDto.setCode(code);
+        mailService.sendMail(mailRequestDTO);
 
         return BaseResponse.ok(null);
     }
