@@ -49,7 +49,7 @@ public class Promise extends BaseEntity {
     private LocalTime fixedEndTime;
 
     @Setter
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id")
     private Place place;  // 확정된 장소
 
