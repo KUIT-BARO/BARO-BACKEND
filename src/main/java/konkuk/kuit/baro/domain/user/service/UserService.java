@@ -106,18 +106,16 @@ public class UserService {
             return new UserHomePageResponseDTO(loginUser.getName()); // 사용자 이름만 반환
         }
         List<UserHomePagePromiseDTO> promiseDTO = new ArrayList<>();
-        int fastestDday = Integer.MIN_VALUE;
+        int fastestDday = Integer.MAX_VALUE;
         for (PromiseMember promiseMember : findPromiseMember) {
-            log.info("Promise member: {}", promiseMember.getId());
-            Promise promise = promiseMemberRepository.findByPromiseMemberId(promiseMember.getId());
+            Promise promise = promiseMember.getPromise();
             if(promise != null){
-                log.info("Promise Name : {}", promise.getPromiseName());
                 LocalDate promiseDate = promise.getFixedDate();
                 String hostName = promiseMemberRepository.findHostNameByPromiseId(promise.getId());
                 int numberOfPromiseMember = promiseMemberRepository.findNumberOfPromiseMemberById(promise.getId());
                 String promiseMembers = hostName + " 외 " + (numberOfPromiseMember - 1) + "명";
                 int Dday = promiseDate.getDayOfYear() - LocalDate.now().getDayOfYear();
-                if(Dday > fastestDday){
+                if(Dday < fastestDday){
                     fastestDday = Dday;
                 }
                 promiseDTO.add(new UserHomePagePromiseDTO(

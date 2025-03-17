@@ -1,6 +1,5 @@
 package konkuk.kuit.baro.domain.promise.repository;
 
-import konkuk.kuit.baro.domain.promise.model.Promise;
 import konkuk.kuit.baro.domain.promise.model.PromiseMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,9 +10,7 @@ import java.util.List;
 @Repository
 public interface PromiseMemberRepository extends JpaRepository<PromiseMember, Long> {
     List<PromiseMember> findAllByUserId(Long userId);
-    @Query("SELECT p FROM Promise p WHERE p.id = :promiseMemberId ")
-    Promise findByPromiseMemberId(Long promiseMemberId);
-
+    
     @Query("SELECT COUNT(*) FROM PromiseMember pm where pm.promise.id = :promiseId")
     int findNumberOfPromiseMemberById(Long promiseId);
 
