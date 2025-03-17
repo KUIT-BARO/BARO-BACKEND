@@ -28,6 +28,9 @@ public enum SwaggerResponseDescription {
     USER_DELETE(new LinkedHashSet<>(Set.of(
             USER_NOT_FOUND
     ))),
+    USER_HOME(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND
+    ))),
 
     //Promise
     PROMISE_SUGGEST(new LinkedHashSet<>(Set.of(

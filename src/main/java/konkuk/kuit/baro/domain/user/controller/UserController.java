@@ -2,21 +2,18 @@ package konkuk.kuit.baro.domain.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import konkuk.kuit.baro.domain.user.dto.request.UserUpdatePasswordRequestDTO;
 import konkuk.kuit.baro.domain.user.dto.request.UserUpdateProfileRequestDTO;
+import konkuk.kuit.baro.domain.user.dto.response.UserHomePageResponseDTO;
 import konkuk.kuit.baro.domain.user.dto.response.UserProfileResponseDTO;
 import konkuk.kuit.baro.domain.user.dto.response.UserProfileSettingResponseDTO;
 import konkuk.kuit.baro.domain.user.service.UserService;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
-import konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.format.DecimalStyle;
 
 import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.*;
 
@@ -69,5 +66,13 @@ public class UserController {
     public BaseResponse<Void> delete(Long userId){
         userService.deleteUser(userId);
         return BaseResponse.ok(null);
+    }
+
+    @Tag(name = "Home Page", description = "홈 화면 API")
+    @Operation(summary = "홈 화면 조회", description = "메인 홈 화면을 조회합니다.")
+    @GetMapping()
+    @CustomExceptionDescription(USER_HOME)
+    public BaseResponse<UserHomePageResponseDTO> getHomePage(){
+        return BaseResponse.ok(userService.getHomePage(1L));
     }
 }
