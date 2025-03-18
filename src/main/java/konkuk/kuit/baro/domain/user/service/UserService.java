@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -114,7 +115,7 @@ public class UserService {
                 String hostName = promiseMemberRepository.findHostNameByPromiseId(promise.getId());
                 int numberOfPromiseMember = promiseMemberRepository.findNumberOfPromiseMemberById(promise.getId());
                 String promiseMembers = hostName + " 외 " + (numberOfPromiseMember - 1) + "명";
-                int Dday = promiseDate.getDayOfYear() - LocalDate.now().getDayOfYear();
+                int Dday = (int) ChronoUnit.DAYS.between(LocalDate.now(), promiseDate);
                 if(Dday < fastestDday){
                     fastestDday = Dday;
                 }
