@@ -14,6 +14,7 @@ import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import konkuk.kuit.baro.global.auth.dto.request.CodeCheckRequestDTO;
 
 import java.util.Optional;
 
@@ -79,8 +80,8 @@ public class AuthController {
     )
     @GetMapping("/mail/check")
     public BaseResponse<Boolean> checkMail(@CurrentUserId Long userId,
-                                           @RequestBody CheckCodeRequestDTO checkCodeRequestDTO) {
-        mailService.checkVerificationNumber(userId, checkCodeRequestDTO);
+                                           @RequestBody CodeCheckRequestDTO checkCodeRequestDTO) {
+        mailService.checkVerificationNumber(checkCodeRequestDTO, userId);
         return BaseResponse.ok(null);
     }
 }
