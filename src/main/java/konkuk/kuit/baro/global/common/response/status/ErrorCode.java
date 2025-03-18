@@ -46,7 +46,9 @@ public enum ErrorCode implements ResponseStatus {
     MAIL_SEND_FAILED(606, BAD_REQUEST.value(), "메일 전송에 실패했습니다."),
     INVALID_EMAIL_CODE(607, BAD_REQUEST.value(), "인증 번호가 다릅니다."),
     EXPIRED_EMAIL_CODE(608, BAD_REQUEST.value(), "인증 번호가 만료되었거나 없습니다."),
-    AUTHCODE_ALREADY_AUTHENTICATED(609, BAD_REQUEST.value(), "이미 인증이 된 번호입니다.");
+    AUTHCODE_ALREADY_AUTHENTICATED(609, BAD_REQUEST.value(), "이미 인증이 된 번호입니다."),
+     AUTHCODE_UNAUTHORIZED(610, HttpStatus.UNAUTHORIZED.value(), "이메일 인증을 하지 않았습니다.");
+
     @Getter
     private final int code;
     private final int httpStatus;
