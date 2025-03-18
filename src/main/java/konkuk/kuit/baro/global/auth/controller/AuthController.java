@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import konkuk.kuit.baro.domain.user.service.UserService;
 import konkuk.kuit.baro.global.auth.dto.request.LoginRequestDTO;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
+import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
 import konkuk.kuit.baro.global.auth.service.AuthService;
 import konkuk.kuit.baro.global.auth.dto.response.LoginResponseDTO;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
@@ -77,8 +78,9 @@ public class AuthController {
             description = "메일로 인증번호를 검증합니다. 액세스 토큰이 필요합니다."
     )
     @GetMapping("/mail/check")
-    public BaseResponse<Boolean> checkMail(@RequestParam String userNumber) {
-        boolean isMatch = userNumber.equals(String.valueOf(number));
-        return BaseResponse.ok(isMatch);
+    public BaseResponse<Boolean> checkMail(@CurrentUserId Long userId,
+                                           @RequestBody CheckCodeRequestDTO checkCodeRequestDTO) {
+        mailService.checkVerificationNumber(userId, checkCodeRequestDTO);
+        return BaseResponse.ok(null);
     }
 }
