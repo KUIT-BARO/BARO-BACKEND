@@ -45,10 +45,10 @@ public class SecurityConfig {
                         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/h2-console/**", "/actuator/**").permitAll()
-                        .requestMatchers("/auth/signup/**", "/auth/login/**", "/auth/reissue/**").permitAll()
-                        .requestMatchers("/**").authenticated()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll())
+                        .requestMatchers("/h2-console/**", "/actuator/**", "/swagger-ui/**",
+                                "/v3/api-docs/**", "/auth/signup/**", "/auth/login/**",
+                                "/auth/reissue/**").permitAll()
+                        .requestMatchers("/**").authenticated())
                 .exceptionHandling(customizer -> customizer
                         .authenticationEntryPoint(customAuthenticationEntryPoint()))
                 .addFilterAfter(jwtAuthenticationFilter(), LogoutFilter.class)
