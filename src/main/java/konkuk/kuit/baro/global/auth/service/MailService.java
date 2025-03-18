@@ -4,14 +4,12 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
-import konkuk.kuit.baro.domain.user.service.UserService;
 import konkuk.kuit.baro.global.auth.dto.request.CodeCheckRequestDTO;
 import konkuk.kuit.baro.global.auth.dto.request.MailRequestDTO;
 import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -114,7 +112,7 @@ public class MailService {
     public String setContext(String authCode) {
         Context context = new Context();
         context.setVariable("code", authCode);
-        return templateEngine.process("email.html", context);
+        return templateEngine.process("templates/email.html", context);
     }
 }
 
