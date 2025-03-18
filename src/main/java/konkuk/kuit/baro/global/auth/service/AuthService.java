@@ -4,12 +4,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
-import konkuk.kuit.baro.domain.user.service.UserService;
 import konkuk.kuit.baro.global.auth.dto.request.LoginRequestDTO;
 import konkuk.kuit.baro.global.auth.dto.request.SignUpRequestDTO;
 import konkuk.kuit.baro.global.auth.dto.response.LoginResponseDTO;
 import konkuk.kuit.baro.global.auth.dto.response.ReissueResponseDTO;
-import konkuk.kuit.baro.global.auth.dto.response.SignUpResponseDTO;
 import konkuk.kuit.baro.global.auth.exception.AuthException;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
@@ -30,7 +28,7 @@ public class AuthService {
     public final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public SignUpResponseDTO signup(SignUpRequestDTO request){
+    public void signup(SignUpRequestDTO request){
 
         String encryptedPassword = passwordEncoder.encode(request.getPassword());
 
@@ -44,9 +42,7 @@ public class AuthService {
                 .name(request.getName())
                 .build();
         userRepository.save(newUser);
-
-        return new SignUpResponseDTO(request.getEmail(), request.getName(), request.getPassword());
-    }
+  }
 
     public LoginResponseDTO login(LoginRequestDTO request) {
         String email = request.getEmail();

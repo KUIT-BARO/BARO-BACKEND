@@ -17,15 +17,4 @@ public class LoginResponseDTO {
 
     @Schema(description = "리프레쉬토큰")
     private String refreshToken;
-
-    @Schema(description = "유저 아이디", example = "1")
-    private Long userId;
-
-    @Schema(description = "이메일", example = "konkuk@gmail.com")
-    private String email;
-
-    @Schema(description = "이름", example = "이정연")
-    private String name;
-
-
 }

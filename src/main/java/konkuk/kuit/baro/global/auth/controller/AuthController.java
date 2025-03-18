@@ -7,11 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import konkuk.kuit.baro.global.auth.dto.request.LoginRequestDTO;
 import konkuk.kuit.baro.global.auth.dto.request.SignUpRequestDTO;
 import konkuk.kuit.baro.global.auth.dto.response.ReissueResponseDTO;
-import konkuk.kuit.baro.global.auth.dto.response.SignUpResponseDTO;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.auth.service.AuthService;
 import konkuk.kuit.baro.global.auth.dto.response.LoginResponseDTO;
-import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +31,9 @@ public class AuthController {
     )
     // @CustomExceptionDescription(SIGNUP)
     @PostMapping("/signup")
-    public BaseResponse<SignUpResponseDTO> signup(@RequestBody SignUpRequestDTO request) {
-        return BaseResponse.ok(authService.signup(request));
+    public BaseResponse<Void> signup(@RequestBody SignUpRequestDTO request) {
+        authService.signup(request);
+        return BaseResponse.ok(null);
     }
 
     @Operation(
