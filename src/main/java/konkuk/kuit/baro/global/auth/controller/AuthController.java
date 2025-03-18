@@ -67,21 +67,18 @@ public class AuthController {
             description = "메일로 인증번호를 전송합니다. 액세스 토큰이 필요합니다."
     )
     @PostMapping("/mail/send")
-    public BaseResponse<Void> sendJoinMail(@RequestBody MailRequestDTO mailRequestDTO) {
-
+    public BaseResponse<Void> sendAuthCodeMail(@RequestBody MailRequestDTO mailRequestDTO) {
         mailService.sendMail(mailRequestDTO);
-
         return BaseResponse.ok(null);
     }
 
     @Operation(
             summary = "인증번호 검증",
-            description = "메일로 인증번호를 검증합니다. 액세스 토큰이 필요합니다."
+            description = "메일로 받은 인증번호를 검증합니다. 액세스 토큰이 필요합니다."
     )
     @GetMapping("/mail/check")
-    public BaseResponse<Boolean> checkMail(@CurrentUserId Long userId,
-                                           @RequestBody CodeCheckRequestDTO checkCodeRequestDTO) {
-        mailService.checkVerificationNumber(checkCodeRequestDTO, userId);
+    public BaseResponse<Boolean> checkAuthCode(@RequestBody CodeCheckRequestDTO checkCodeRequestDTO) {
+        mailService.checkAuthCode(checkCodeRequestDTO);
         return BaseResponse.ok(null);
     }
 }
