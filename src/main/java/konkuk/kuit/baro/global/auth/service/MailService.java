@@ -5,6 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.domain.user.service.UserService;
+import konkuk.kuit.baro.global.auth.dto.request.CodeCheckRequestDTO;
 import konkuk.kuit.baro.global.auth.dto.request.MailRequestDTO;
 import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.redis.RedisService;
@@ -70,7 +71,7 @@ public class MailService {
         }
     }
 
-    // 인증번호 및 임시 비밀번호 생성 메서드
+    // 인증 번호 구현하는 메서드
     public String createCode() {
         Random random = new Random();
         StringBuffer key = new StringBuffer();
