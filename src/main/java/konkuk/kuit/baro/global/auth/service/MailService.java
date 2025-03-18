@@ -98,7 +98,7 @@ public class MailService {
             throw new AuthException(ErrorCode.INVALID_EMAIL_CODE);
         }
         // 인증 성공: 값 변경 + TTL 재설정
-        redisService.setValues(request.getEmail(), "VERIFIED", Duration.ofSeconds(VERIFIED_TTL_SECONDS));
+        redisService.setValues(EMAIL_KEY_PREFIX + request.getEmail(), "VERIFIED", Duration.ofSeconds(VERIFIED_TTL_SECONDS));
     }
 
     public String getStoredCode(String email) {
@@ -110,7 +110,7 @@ public class MailService {
     public String setContext(String authCode) {
         Context context = new Context();
         context.setVariable("code", authCode);
-        return templateEngine.process("templates/email.html", context);
+        return templateEngine.process("email.html", context);
     }
 }
 
