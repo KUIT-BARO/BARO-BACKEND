@@ -58,7 +58,7 @@ public class AuthService {
         jwtService.storeRefreshToken(refreshToken, email);
 
         User user = userOptional.get();
-        return new LoginResponseDTO(accessToken, refreshToken, user.getId(), email, user.getName());
+        return new LoginResponseDTO(accessToken, refreshToken);
     }
 
     public ReissueResponseDTO reissueTokens(HttpServletRequest request, HttpServletResponse response) {

@@ -8,7 +8,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import konkuk.kuit.baro.global.common.exception.CustomException;
+import konkuk.kuit.baro.global.auth.exception.AuthException;
 import konkuk.kuit.baro.global.common.redis.RedisService;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import lombok.Getter;
@@ -105,7 +105,7 @@ public class JwtService {
 
     public void deleteRefreshToken(String refreshToken) {
         if (refreshToken == null) {
-            throw new CustomException(ErrorCode.SECURITY_UNAUTHORIZED);
+            throw new AuthException(ErrorCode.SECURITY_UNAUTHORIZED);
         }
         redisService.delete(refreshToken);
     }
@@ -119,7 +119,7 @@ public class JwtService {
         String userInfo = redisService.getValues(refreshToken);
 
         if (userInfo.equals(NOT_EXIST)) {
-            throw new CustomException(ErrorCode.SECURITY_INVALID_REFRESH_TOKEN);
+            throw new AuthException(ErrorCode.SECURITY_INVALID_REFRESH_TOKEN);
         }
         return userInfo;
     }
