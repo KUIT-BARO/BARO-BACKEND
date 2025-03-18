@@ -72,7 +72,7 @@ public class JwtService {
 
     public String reissueRefreshToken(String email) {
         String reissuedRefreshToken = createRefreshToken();
-        updateRefreshToken(reissuedRefreshToken, email);
+        storeRefreshToken(reissuedRefreshToken, email);
         return reissuedRefreshToken;
     }
 
@@ -89,7 +89,7 @@ public class JwtService {
     }
 
     //RefreshToken redis 저장
-    public void updateRefreshToken(String refreshToken, String userInfo) {
+    public void storeRefreshToken(String refreshToken, String userInfo) {
         redisService.setValues(refreshToken, userInfo,
                 Duration.ofMillis(refreshTokenExpirationPeriod));
     }
