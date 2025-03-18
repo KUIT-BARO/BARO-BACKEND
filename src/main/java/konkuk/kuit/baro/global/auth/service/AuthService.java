@@ -26,23 +26,6 @@ public class AuthService {
 
     public final JwtService jwtService;
     public final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    public void signup(SignUpRequestDTO request){
-
-        String encryptedPassword = passwordEncoder.encode(request.getPassword());
-
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new AuthException(ErrorCode.USER_ALREADY_EXISTS);
-        }
-
-        User newUser = User.builder()
-                .email(request.getEmail())
-                .password(encryptedPassword)
-                .name(request.getName())
-                .build();
-        userRepository.save(newUser);
-  }
 
     public LoginResponseDTO login(LoginRequestDTO request) {
         String email = request.getEmail();

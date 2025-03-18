@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import konkuk.kuit.baro.domain.user.service.UserService;
 import konkuk.kuit.baro.global.auth.dto.request.LoginRequestDTO;
 import konkuk.kuit.baro.global.auth.dto.request.SignUpRequestDTO;
 import konkuk.kuit.baro.global.auth.dto.response.ReissueResponseDTO;
@@ -24,6 +25,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtService jwtService;
+    private final UserService userService;
 
     @Operation(
             summary = "회원가입",
@@ -32,7 +34,7 @@ public class AuthController {
     // @CustomExceptionDescription(SIGNUP)
     @PostMapping("/signup")
     public BaseResponse<Void> signup(@RequestBody SignUpRequestDTO request) {
-        authService.signup(request);
+        userService.signup(request);
         return BaseResponse.ok(null);
     }
 

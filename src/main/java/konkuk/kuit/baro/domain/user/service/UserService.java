@@ -12,9 +12,12 @@ import konkuk.kuit.baro.domain.user.dto.response.UserProfileResponseDTO;
 import konkuk.kuit.baro.domain.user.dto.response.UserProfileSettingResponseDTO;
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
+import konkuk.kuit.baro.global.auth.dto.request.SignUpRequestDTO;
+import konkuk.kuit.baro.global.auth.exception.AuthException;
 import konkuk.kuit.baro.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +37,25 @@ public class UserService {
     private final UserRepository userRepository;
     private final PromiseMemberRepository promiseMemberRepository;
     private final PromiseRepository promiseRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Transactional
+    public void signup(SignUpRequestDTO request){
+
+        String encryptedPassword = passwordEncoder.encode(request.getPassword());
+
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
+        }
+
+        User newUser = User.builder()
+                .email(request.getEmail())
+                .password(encryptedPassword)
+                .name(request.getName())
+                .build();
+        userRepository.save(newUser);
+    }
+
 
     @Transactional
     public void updateProfile(UserUpdateProfileRequestDTO req) {
