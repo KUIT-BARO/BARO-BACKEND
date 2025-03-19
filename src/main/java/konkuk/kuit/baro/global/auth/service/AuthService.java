@@ -71,7 +71,7 @@ public class AuthService {
                 .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND)); // 바로 예외 발생
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new AuthException(ErrorCode.INVALID_PASSWORD);
+            throw new AuthException(ErrorCode.LOGIN_FAILED);
         }
     }
 }
