@@ -26,21 +26,17 @@ public class AuthService {
 
     public final JwtService jwtService;
     public final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public LoginResponseDTO login(LoginRequestDTO request) {
         String email = request.getEmail();
         String password = request.getPassword();
-        Optional<User> userOptional = authenticate(email, password);
-
-        if (userOptional.isEmpty()) {
-            throw new AuthException(ErrorCode.USER_NOT_FOUND);
-        }
+        authenticate(email, password);
 
         String accessToken = jwtService.createAccessToken(email);
         String refreshToken = jwtService.createRefreshToken();
         jwtService.storeRefreshToken(refreshToken, email);
 
-        User user = userOptional.get();
         return new LoginResponseDTO(accessToken, refreshToken);
     }
 
@@ -70,18 +66,12 @@ public class AuthService {
         jwtService.invalidAccessToken(access);
     }
 
-    public Optional<User> authenticate(String email, String password) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
+    public void authenticate(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND)); // 바로 예외 발생
 
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                return Optional.of(user);
-            }
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new AuthException(ErrorCode.INVALID_PASSWORD);
         }
-
-        return Optional.empty();
     }
-
 }

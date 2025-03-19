@@ -12,6 +12,9 @@ import static konkuk.kuit.baro.global.common.response.status.ErrorCode.*;
 public enum SwaggerResponseDescription {
 
     //User
+    USER_SIGNUP(new LinkedHashSet<>(Set.of(
+            USER_ALREADY_EXISTS
+    ))),
     USER_PROFILE_UPDATE(new LinkedHashSet<>(Set.of(
             USER_NOT_FOUND,
             USER_NAME_LENGTH

@@ -28,17 +28,6 @@ public class AuthController {
     private final UserService userService;
 
     @Operation(
-            summary = "회원가입",
-            description = "회원가입을 합니다. 토큰이 필요하지 않습니다."
-    )
-    // @CustomExceptionDescription(SIGNUP)
-    @PostMapping("/signup")
-    public BaseResponse<Void> signup(@RequestBody SignUpRequestDTO request) {
-        userService.signup(request);
-        return BaseResponse.ok(null);
-    }
-
-    @Operation(
             summary = "로그인",
             description = "로그인합니다. 토큰이 필요하지 않습니다."
     )

@@ -8,6 +8,7 @@ import konkuk.kuit.baro.domain.user.dto.response.UserHomePageResponseDTO;
 import konkuk.kuit.baro.domain.user.dto.response.UserProfileResponseDTO;
 import konkuk.kuit.baro.domain.user.dto.response.UserProfileSettingResponseDTO;
 import konkuk.kuit.baro.domain.user.service.UserService;
+import konkuk.kuit.baro.global.auth.dto.request.SignUpRequestDTO;
 import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
@@ -24,6 +25,17 @@ import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescr
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+
+    @Operation(
+            summary = "회원가입",
+            description = "회원가입을 합니다. 토큰이 필요하지 않습니다."
+    )
+    @CustomExceptionDescription(USER_SIGNUP)
+    @PostMapping("/signup")
+    public BaseResponse<Void> signup(@RequestBody SignUpRequestDTO request) {
+        userService.signup(request);
+        return BaseResponse.ok(null);
+    }
 
     @Tag(name = "My Page", description = "유저 마이페이지 관련 API")
     @Operation(summary = "유저 프로필 수정", description = "유저의 이름, 프로필 사진을 변경합니다.")
