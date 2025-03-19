@@ -11,6 +11,7 @@ import konkuk.kuit.baro.global.auth.dto.response.ReissueResponseDTO;
 import konkuk.kuit.baro.global.auth.exception.AuthException;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
+import konkuk.kuit.baro.global.common.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,14 +28,15 @@ public class AuthService {
     public final JwtService jwtService;
     public final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    public final JwtUtil jwtUtil;
 
     public LoginResponseDTO login(LoginRequestDTO request) {
         String email = request.getEmail();
         String password = request.getPassword();
         authenticate(email, password);
 
-        String accessToken = jwtService.createAccessToken(email);
-        String refreshToken = jwtService.createRefreshToken();
+        String accessToken = jwtUtil.createAccessToken(email);
+        String refreshToken = jwtUtil.createRefreshToken();
         jwtService.storeRefreshToken(refreshToken, email);
 
         return new LoginResponseDTO(accessToken, refreshToken);
@@ -43,7 +45,7 @@ public class AuthService {
     public ReissueResponseDTO reissueTokens(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = jwtService.extractRefreshToken(request)
                 .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
-        jwtService.isTokenValid(refreshToken);
+        jwtUtil.isTokenValid(refreshToken);
 
         List<String> tokenList = jwtService.reissueAndSendTokens(response, refreshToken);
         String accessTokenResponse = tokenList.get(0);
@@ -58,8 +60,8 @@ public class AuthService {
         String refresh = refreshToken
                 .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
 
-        jwtService.isTokenValid(refresh);
-        jwtService.isTokenValid(access);
+        jwtUtil.isTokenValid(refresh);
+        jwtUtil.isTokenValid(access);
         //refresh token 삭제
         jwtService.deleteRefreshToken(refresh);
         //access token blacklist 처리 -> 로그아웃한 사용자가 요청 시 access token이 redis에 존재하면 jwtAuthenticationFilter에서 인증처리 거부

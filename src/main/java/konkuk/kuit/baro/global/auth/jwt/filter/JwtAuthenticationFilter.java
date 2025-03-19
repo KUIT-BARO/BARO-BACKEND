@@ -8,6 +8,7 @@ import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.auth.exception.AuthException;
 import konkuk.kuit.baro.global.common.redis.RedisService;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
+import konkuk.kuit.baro.global.common.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import java.util.StringTokenizer;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final RedisService redisService;
+    private final JwtUtil jwtUtil;
 
     // private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
@@ -32,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         jwtService.extractAccessToken(request)
                 .ifPresent(accessToken -> {
-                    if (!jwtService.isTokenValid(accessToken)) { //accessToken 만료 시
+                    if (!jwtUtil.isTokenValid(accessToken)) { //accessToken 만료 시
                         throw new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN);
                     }
                 });
@@ -52,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                                        HttpServletResponse response, FilterChain filterChain) {
         jwtService.extractAccessToken(request)
                 .ifPresent(accessToken -> {
-                    String email = jwtService.extractUserInfo(accessToken); // userId 추출
+                    String email = jwtUtil.extractUserInfo(accessToken); // userId 추출
                     saveAuthentication(email);
                 });
         try {

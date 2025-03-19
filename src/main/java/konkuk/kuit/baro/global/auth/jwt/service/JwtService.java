@@ -1,42 +1,23 @@
 package konkuk.kuit.baro.global.auth.jwt.service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import konkuk.kuit.baro.global.auth.exception.AuthException;
+import konkuk.kuit.baro.global.common.util.JwtUtil;
 import konkuk.kuit.baro.global.common.redis.RedisService;
-import konkuk.kuit.baro.domain.user.repository.UserRepository;
-import lombok.Getter;
+import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 @RequiredArgsConstructor
-@Getter
 public class JwtService {
-
-    @Value("${jwt.secret}")
-    private String secretKey;
-
-    @Value("${jwt.access.expiration}")
-    private Long accessTokenExpirationPeriod;
-
-    @Value("${jwt.refresh.expiration}")
-    private Long refreshTokenExpirationPeriod;
 
     @Value("${jwt.access.header}")
     private String accessHeader;
@@ -44,37 +25,11 @@ public class JwtService {
     @Value("${jwt.refresh.header}")
     private String refreshHeader;
 
-    private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
-    private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-    private static final String USER_INFO_CLAIM = "userInfo";
     private static final String BEARER = "Bearer ";
     private static final String NOT_EXIST = "false";
 
-    private final UserRepository userRepository;
     private final RedisService redisService;
-
-    public String createAccessToken(String email) {
-        Date now = new Date();
-        return JWT.create()
-                .withSubject(ACCESS_TOKEN_SUBJECT)
-                .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
-                .withClaim(USER_INFO_CLAIM, email)
-                .sign(Algorithm.HMAC512(secretKey));
-    }
-
-    public String createRefreshToken() {
-        Date now = new Date();
-        return JWT.create()
-                .withSubject(REFRESH_TOKEN_SUBJECT)
-                .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
-                .sign(Algorithm.HMAC512(secretKey));
-    }
-
-    public String reissueRefreshToken(String email) {
-        String reissuedRefreshToken = createRefreshToken();
-        storeRefreshToken(reissuedRefreshToken, email);
-        return reissuedRefreshToken;
-    }
+    private final JwtUtil jwtUtil;
 
     public Optional<String> extractRefreshToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(refreshHeader))
@@ -88,19 +43,9 @@ public class JwtService {
                 .map(accessToken -> accessToken.replace(BEARER, ""));
     }
 
-    //RefreshToken redis 저장
     public void storeRefreshToken(String refreshToken, String userInfo) {
         redisService.setValues(refreshToken, userInfo,
-                Duration.ofMillis(refreshTokenExpirationPeriod));
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
-            return true;
-        } catch (JWTVerificationException e) {
-            return false;
-        }
+                Duration.ofMillis(jwtUtil.getRefreshTokenExpirationPeriod()));
     }
 
     public void deleteRefreshToken(String refreshToken) {
@@ -112,7 +57,7 @@ public class JwtService {
 
     public void invalidAccessToken(String accessToken) {
         redisService.setValues(accessToken, "logout",
-                Duration.ofMillis(accessTokenExpirationPeriod));
+                Duration.ofMillis(jwtUtil.getAccessTokenExpirationPeriod()));
     }
 
     public String findRefreshTokenAndExtractUserInfo(String refreshToken) {
@@ -124,16 +69,11 @@ public class JwtService {
         return userInfo;
     }
 
-    /*private void sendTokens(HttpServletResponse response, String reissuedAccessToken,
-                            String reissuedRefreshToken) {
-        response.setHeader(accessHeader, BEARER + reissuedAccessToken);
-        response.setHeader(refreshHeader, BEARER + reissuedRefreshToken);
-    }*/
-
     public List<String> reissueAndSendTokens(HttpServletResponse response, String refreshToken) {
         String userInfo = findRefreshTokenAndExtractUserInfo(refreshToken);
-        String reissuedRefreshToken = reissueRefreshToken(userInfo);
-        String reissuedAccessToken = createAccessToken(userInfo);
+        String reissuedRefreshToken = jwtUtil.createRefreshToken();
+        storeRefreshToken(reissuedRefreshToken, userInfo);
+        String reissuedAccessToken = jwtUtil.createAccessToken(userInfo);
 
         List<String> tokenList = new ArrayList<>();
         tokenList.add(reissuedRefreshToken);
@@ -141,13 +81,4 @@ public class JwtService {
 
         return tokenList;
     }
-
-    public String extractUserInfo(String token) {
-        return JWT.require(Algorithm.HMAC512(secretKey))
-                .build()
-                .verify(token)
-                .getClaim(USER_INFO_CLAIM)
-                .asString();
-    }
-
 }
