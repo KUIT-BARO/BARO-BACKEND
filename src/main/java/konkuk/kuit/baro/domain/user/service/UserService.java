@@ -120,6 +120,7 @@ public class UserService {
                     fastestDday = Dday;
                 }
                 promiseDTO.add(new UserHomePagePromiseDTO(
+                        promise.getId(),
                         promise.getPlace().getPlaceName(),
                         promise.getPromiseName(),
                         promise.getFixedDate(),

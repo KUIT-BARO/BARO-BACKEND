@@ -13,6 +13,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserHomePagePromiseDTO {
+    @Schema(description = "약속 ID", example = "1")
+    private Long promiseId;
+
     @Schema(description = "약속 장소명", example = "스타벅스 건대입구점")
     private String placeName;
 
