@@ -91,6 +91,23 @@ public class PromiseService {
 
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
+    @Transactional
+    public PromiseManagementResponseDTO getPromiseManagementData(PromiseManagementRequestDTO request, Long loginUserId){
+        User loginUser = findLoginUser(loginUserId);
+
+        // 사용자 ID를 기준으로 본인이 속한 Promise 목록 조회 (fetch join 사용)
+        List<Promise> myPromiseList = promiseMemberRepository.findWithPromiseByUserId(loginUser.getId());
+
+        // DTO 변환
+        List<PromiseResponseDTO> promiseDTOList = myPromiseList.stream()
+                .map(promise -> new PromiseResponseDTO(promise.getId(), promise.getPromiseName(), promise.getSuggestedStartDate(), promise.getSuggestedEndDate(), promise.getFixedDate()))
+                .collect(Collectors.toList());
+
+        return new PromiseManagementResponseDTO(promiseDTOList);
+    }
+
+    private User findLoginUser(Long loginUserId) {
+        return userRepository.findById(loginUserId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
