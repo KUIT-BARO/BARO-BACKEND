@@ -6,8 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import konkuk.kuit.baro.domain.user.service.UserService;
 import konkuk.kuit.baro.global.auth.dto.request.LoginRequestDTO;
-import konkuk.kuit.baro.global.auth.dto.request.SignUpRequestDTO;
-import konkuk.kuit.baro.global.auth.dto.response.ReissueResponseDTO;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.auth.service.AuthService;
 import konkuk.kuit.baro.global.auth.dto.response.LoginResponseDTO;
@@ -43,7 +41,7 @@ public class AuthController {
     )
     // @CustomExceptionDescription(REISSUE)
     @PostMapping("/reissue")
-    public BaseResponse<ReissueResponseDTO> reissueTokens(HttpServletRequest request, HttpServletResponse response) {
+    public BaseResponse<Void> reissueTokens(HttpServletRequest request, HttpServletResponse response) {
         authService.reissueTokens(request, response);
         return BaseResponse.ok(null);
     }
