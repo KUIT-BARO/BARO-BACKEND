@@ -44,7 +44,8 @@ public class AuthController {
     // @CustomExceptionDescription(REISSUE)
     @PostMapping("/reissue")
     public BaseResponse<ReissueResponseDTO> reissueTokens(HttpServletRequest request, HttpServletResponse response) {
-        return BaseResponse.ok(authService.reissueTokens(request, response));
+        authService.reissueTokens(request, response);
+        return BaseResponse.ok(null);
     }
 
     @Operation(

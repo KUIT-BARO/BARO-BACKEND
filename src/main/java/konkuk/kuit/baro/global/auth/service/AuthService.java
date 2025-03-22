@@ -42,16 +42,11 @@ public class AuthService {
         return new LoginResponseDTO(accessToken, refreshToken);
     }
 
-    public ReissueResponseDTO reissueTokens(HttpServletRequest request, HttpServletResponse response) {
+    public void reissueTokens(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = jwtService.extractRefreshToken(request)
                 .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
         jwtUtil.isTokenValid(refreshToken);
-
-        List<String> tokenList = jwtService.reissueAndSendTokens(response, refreshToken);
-        String accessTokenResponse = tokenList.get(0);
-        String refreshTokenResponse = tokenList.get(1);
-
-        return new ReissueResponseDTO(accessTokenResponse, refreshTokenResponse );
+        jwtService.reissueAndSendTokens(response, refreshToken);
     }
 
     public void logout(Optional<String> accessToken, Optional<String> refreshToken) {

@@ -69,7 +69,13 @@ public class JwtService {
         return userInfo;
     }
 
-    public List<String> reissueAndSendTokens(HttpServletResponse response, String refreshToken) {
+    private void sendTokens(HttpServletResponse response, String reissuedAccessToken,
+                            String reissuedRefreshToken) {
+        response.setHeader(accessHeader, BEARER + reissuedAccessToken);
+        response.setHeader(refreshHeader, BEARER + reissuedRefreshToken);
+    }
+
+    public void reissueAndSendTokens(HttpServletResponse response, String refreshToken) {
         // 기존 Refresh Token 검증 및 사용자 정보 추출
         String userInfo = findRefreshTokenAndExtractUserInfo(refreshToken);
 
@@ -83,10 +89,6 @@ public class JwtService {
         // 새로운 Refresh Token을 DB나 Redis에 저장
         storeRefreshToken(reissuedRefreshToken, userInfo);
 
-        List<String> tokenList = new ArrayList<>();
-        tokenList.add(reissuedRefreshToken);
-        tokenList.add(reissuedAccessToken);
-
-        return tokenList;
+        sendTokens(response, reissuedAccessToken, reissuedRefreshToken);
     }
 }
