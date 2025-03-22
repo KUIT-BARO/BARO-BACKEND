@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                                        HttpServletResponse response, FilterChain filterChain) {
         jwtService.extractAccessToken(request)
                 .ifPresent(accessToken -> {
-                    String email = jwtUtil.extractUserInfo(accessToken); // userId 추출
+                    String email = jwtUtil.extractUserInfo(accessToken);
                     saveAuthentication(email);
                 });
         try {

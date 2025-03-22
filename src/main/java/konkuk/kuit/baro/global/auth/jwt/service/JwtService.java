@@ -70,10 +70,18 @@ public class JwtService {
     }
 
     public List<String> reissueAndSendTokens(HttpServletResponse response, String refreshToken) {
+        // 기존 Refresh Token 검증 및 사용자 정보 추출
         String userInfo = findRefreshTokenAndExtractUserInfo(refreshToken);
+
+        // 기존 Refresh Token 폐기 (DB나 Redis에서 삭제)
+        deleteRefreshToken(refreshToken);
+
+        // 새로운 Refresh Token 발급
         String reissuedRefreshToken = jwtUtil.createRefreshToken();
-        storeRefreshToken(reissuedRefreshToken, userInfo);
         String reissuedAccessToken = jwtUtil.createAccessToken(userInfo);
+
+        // 새로운 Refresh Token을 DB나 Redis에 저장
+        storeRefreshToken(reissuedRefreshToken, userInfo);
 
         List<String> tokenList = new ArrayList<>();
         tokenList.add(reissuedRefreshToken);

@@ -6,6 +6,7 @@ import konkuk.kuit.baro.global.auth.entrypoint.CustomAuthenticationEntryPoint;
 import konkuk.kuit.baro.global.auth.jwt.filter.JwtAuthenticationFilter;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.common.redis.RedisService;
+import konkuk.kuit.baro.global.common.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,7 @@ public class SecurityConfig {
     private final JwtService jwtService;
     private final RedisService redisService;
     private final CorsConfigurationSource corsConfigurationSource;
+    private final JwtUtil jwtUtil;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -59,7 +61,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtService, redisService);
+        return new JwtAuthenticationFilter(jwtService, redisService, jwtUtil);
     }
 
     @Bean
