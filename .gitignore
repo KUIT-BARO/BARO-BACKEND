@@ -39,5 +39,8 @@ out/
 # application-secret.yml 파일 무시
 application-secret.yml
 
+# 테스트용 application.yml 파일 무시
+/src/test/resources/application.yml
+
 # DS_Store 파일 무시
 .DS_Store
