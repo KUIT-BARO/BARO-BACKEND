@@ -12,15 +12,15 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SuggestedPromiseResponseDTO {
+public class VotingPromiseResponseDTO {
     @Schema(description = "약속 ID", example = "1")
     private Long promiseId;
 
     @Schema(description = "약속명", example = "BARO 회의")
     private String promiseName;
 
-    @Schema(description = "투표까지의 기한", example = "3")
-    private int untilVoteDate;
+    @Schema(description = "투표종료까지의 기한", example = "3")
+    private int untilVoteEndDate;
 
     @Schema(description = "약속 제안된 지역", example = "건대입구 주변")
     private String suggestedRegion;
