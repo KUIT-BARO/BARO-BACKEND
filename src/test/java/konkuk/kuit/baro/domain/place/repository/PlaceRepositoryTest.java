@@ -5,6 +5,9 @@ import jakarta.persistence.PersistenceContext;
 import konkuk.kuit.baro.domain.place.model.Place;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,14 +26,15 @@ class PlaceRepositoryTest {
     @PersistenceContext
     private EntityManager em;
 
+    private static final GeometryFactory geometryFactory = new GeometryFactory();
+
     @Test
     @DisplayName("장소 저장 테스트")
     void save() {
         // given
         Place place = Place.builder()
                 .placeName("스타벅스 건대점")
-                .longitude(new BigDecimal("37.7749295"))
-                .latitude(new BigDecimal("-122.4194155"))
+                .location(geometryFactory.createPoint(new Coordinate(37.7749295, -122.4194155)))
                 .placeAddress("광진구 화양동")
                 .build();
 
@@ -50,8 +54,7 @@ class PlaceRepositoryTest {
         // given
         Place place = Place.builder()
                 .placeName("스타벅스 건대점")
-                .longitude(new BigDecimal("37.7749295"))
-                .latitude(new BigDecimal("-122.4194155"))
+                .location(geometryFactory.createPoint(new Coordinate(37.7749295, -122.4194155)))
                 .placeAddress("광진구 화양동")
                 .build();
 
