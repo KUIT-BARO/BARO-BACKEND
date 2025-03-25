@@ -3,6 +3,7 @@ package konkuk.kuit.baro.domain.promise.service;
 import konkuk.kuit.baro.domain.promise.dto.request.SetPromiseAvailableTimeRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.request.TimeDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseAvailableTimeResponseDTO;
+import konkuk.kuit.baro.domain.promise.dto.response.PromiseMemberAvailableTimeDTO;
 import konkuk.kuit.baro.domain.promise.model.Promise;
 import konkuk.kuit.baro.domain.promise.model.PromiseAvailableTime;
 import konkuk.kuit.baro.domain.promise.model.PromiseMember;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static konkuk.kuit.baro.global.common.response.status.ErrorCode.*;
@@ -34,7 +36,12 @@ public class PromiseAvailableTimeService {
     private final PromiseAvailableTimeRepository promiseAvailableTimeRepository;
 
     public PromiseAvailableTimeResponseDTO getPromiseAvailableTime(Long promiseId) {
-        return new PromiseAvailableTimeResponseDTO(promiseMemberRepository.findPromiseMemberDTOByPromiseId(promiseId));
+        List<PromiseMember> promiseMembers = promiseMemberRepository.findAllByPromiseId(promiseId);
+        List<List<PromiseMemberAvailableTimeDTO>> availableTimes = new ArrayList<>();
+        for (PromiseMember promiseMember : promiseMembers) {
+            availableTimes.add(promiseAvailableTimeRepository.findAllByPromiseMemberId(promiseMember.getId()));
+        }
+        return new PromiseAvailableTimeResponseDTO(promiseMemberRepository.findPromiseMemberDTOByPromiseId(promiseId), availableTimes);
     }
 
     public void setPromiseAvailableTime(SetPromiseAvailableTimeRequestDTO req, Long userId, Long promiseId) {

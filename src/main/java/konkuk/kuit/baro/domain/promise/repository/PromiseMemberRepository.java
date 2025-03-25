@@ -12,7 +12,9 @@ import java.util.List;
 @Repository
 public interface PromiseMemberRepository extends JpaRepository<PromiseMember, Long> {
     List<PromiseMember> findAllByUserId(Long userId);
-    
+
+    List<PromiseMember> findAllByPromiseId(Long promiseId);
+
     @Query("SELECT COUNT(*) FROM PromiseMember pm where pm.promise.id = :promiseId")
     int findNumberOfPromiseMemberById(Long promiseId);
 

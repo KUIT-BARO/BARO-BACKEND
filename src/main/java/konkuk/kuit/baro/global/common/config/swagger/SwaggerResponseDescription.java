@@ -38,7 +38,8 @@ public enum SwaggerResponseDescription {
     ))),
     SET_AVAILALBLE_TIME(new LinkedHashSet<>(Set.of(
             USER_NOT_FOUND,
-            PROMISE_NOT_FOUND
+            PROMISE_NOT_FOUND,
+            INVALID_TIME_INPUT
     ))),
 
     //Schedule
