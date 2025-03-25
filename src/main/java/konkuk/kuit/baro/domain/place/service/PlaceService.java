@@ -2,7 +2,9 @@ package konkuk.kuit.baro.domain.place.service;
 
 import konkuk.kuit.baro.domain.category.repository.PlaceCategoryRepository;
 import konkuk.kuit.baro.domain.pin.model.Pin;
+import konkuk.kuit.baro.domain.pin.repository.PinRepository;
 import konkuk.kuit.baro.domain.place.dto.request.PlaceSearchRequestDTO;
+import konkuk.kuit.baro.domain.place.dto.response.PinListResponseDTO;
 import konkuk.kuit.baro.domain.place.dto.response.PlaceSearchResponseDTO;
 import konkuk.kuit.baro.domain.place.dto.response.PlaceSummaryInfoResponseDTO;
 import konkuk.kuit.baro.domain.place.model.Place;
@@ -27,6 +29,7 @@ public class PlaceService {
 
     private final PlaceRepository placeRepository;
     private final PlaceCategoryRepository placeCategoryRepository;
+    private final PinRepository pinRepository;
 
     public List<PlaceSearchResponseDTO> placeSearch(PlaceSearchRequestDTO request) {
 
@@ -54,6 +57,18 @@ public class PlaceService {
         placeSummary.setPlaceCategories(placeCategories);
 
         return placeSummary;
+    }
+
+    public List<PinListResponseDTO> placePinList(Long placeId) {
+
+        Place findPlace = placeRepository.findById(placeId)
+                        .orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
+
+        List<Pin> pins = findPlace.getPins();
+
+        return pins.stream()
+                .map(pin -> new PinListResponseDTO(pin.getId(),findPlace.getPlaceName(), findPlace.getPlaceAddress()))
+                .toList();
     }
 
     private Boolean validateLocation(Double latitude, Double longitude) {
