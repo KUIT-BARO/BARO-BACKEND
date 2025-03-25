@@ -20,8 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static konkuk.kuit.baro.global.common.response.status.ErrorCode.PROMISE_NOT_FOUND;
-import static konkuk.kuit.baro.global.common.response.status.ErrorCode.USER_NOT_FOUND;
+import static konkuk.kuit.baro.global.common.response.status.ErrorCode.*;
 
 @Service
 @Transactional
@@ -39,6 +38,13 @@ public class PromiseAvailableTimeService {
     }
 
     public void setPromiseAvailableTime(SetPromiseAvailableTimeRequestDTO req, Long userId, Long promiseId) {
+        List<TimeDTO> times = req.getTimes();
+
+        for (TimeDTO time : times) {
+            if(time.getStartTime().equals(time.getEndTime())) {
+                throw new CustomException(INVALID_TIME_INPUT);
+            }
+        }
 
         User loginUser = userRepository.findById(1L).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
@@ -46,7 +52,6 @@ public class PromiseAvailableTimeService {
 
         addPromiseMember(promiseId, loginUser, promise);
 
-        List<TimeDTO> times = req.getTimes();
         for (TimeDTO time : times) {
             PromiseAvailableTime promiseAvailableTime = PromiseAvailableTime.createPromiseAvailableTime(
                     time.getDate(),
@@ -57,6 +62,7 @@ public class PromiseAvailableTimeService {
 
             promiseAvailableTimeRepository.save(promiseAvailableTime);
         }
+
 
     }
 
