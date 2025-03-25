@@ -8,6 +8,7 @@ import konkuk.kuit.baro.global.auth.dto.request.LoginRequestDTO;
 import konkuk.kuit.baro.global.auth.dto.response.LoginResponseDTO;
 import konkuk.kuit.baro.global.auth.exception.AuthException;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
+import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import konkuk.kuit.baro.global.common.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +55,6 @@ public class AuthService {
 
         jwtUtil.isTokenValid(refresh);
         jwtUtil.isTokenValid(access);
-        //refresh token 삭제
         jwtService.deleteRefreshToken(refresh);
         //access token blacklist 처리 -> 로그아웃한 사용자가 요청 시 access token이 redis에 존재하면 jwtAuthenticationFilter에서 인증처리 거부
         jwtService.invalidAccessToken(access);
@@ -62,7 +62,7 @@ public class AuthService {
 
     public void authenticate(String email, String password) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND)); // 바로 예외 발생
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new AuthException(ErrorCode.LOGIN_FAILED);

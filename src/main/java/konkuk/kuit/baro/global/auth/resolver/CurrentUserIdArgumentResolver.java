@@ -1,6 +1,7 @@
 package konkuk.kuit.baro.global.auth.resolver;
 
 import konkuk.kuit.baro.global.auth.exception.AuthException;
+import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -31,7 +32,7 @@ public class CurrentUserIdArgumentResolver implements HandlerMethodArgumentResol
 
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND))
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND))
                 .getId(); // userId 반환
     }
 }
