@@ -27,12 +27,6 @@ public class Place extends BaseEntity {
     @Column(name = "place_name", length = 30, nullable = false)
     private String placeName;
 
-//    @Column(name = "latitude", nullable = false, precision = 10, scale = 7)
-//    private Point latitude; // 위도
-//
-//    @Column(name = "longitude", nullable = false, precision = 10, scale = 7)
-//    private Point longitude; // 경도
-
     @Column(name = "location", nullable = false, columnDefinition = "POINT SRID 4326")
     private Point location; // Point (경도, 위도)
 
