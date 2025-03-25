@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PlacesResponseDTO {
+public class PlaceSearchResponseDTO {
 
     @Schema(example = "1", description = "장소 ID")
     private Long placeId;

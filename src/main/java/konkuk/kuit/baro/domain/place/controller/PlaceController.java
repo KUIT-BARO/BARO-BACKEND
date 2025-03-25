@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import konkuk.kuit.baro.domain.place.dto.request.PlaceSearchRequestDTO;
-import konkuk.kuit.baro.domain.place.dto.response.PlacesResponseDTO;
+import konkuk.kuit.baro.domain.place.dto.response.PlaceSearchResponseDTO;
 import konkuk.kuit.baro.domain.place.service.PlaceService;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
@@ -28,7 +28,7 @@ public class PlaceController {
     @Operation(summary = "장소 탐색", description = "현재 좌표와 카테고리를 기준으로 반경 2KM 이내의 장소를 조회합니다.")
     @GetMapping
     @CustomExceptionDescription(PLACE_SEARCH)
-    public BaseResponse<List<PlacesResponseDTO>> placeSearch(@ModelAttribute @Valid PlaceSearchRequestDTO placeSearchRequestDTO) {
+    public BaseResponse<List<PlaceSearchResponseDTO>> placeSearch(@ModelAttribute @Valid PlaceSearchRequestDTO placeSearchRequestDTO) {
         return BaseResponse.ok(placeService.placeSearch(placeSearchRequestDTO));
     }
 }

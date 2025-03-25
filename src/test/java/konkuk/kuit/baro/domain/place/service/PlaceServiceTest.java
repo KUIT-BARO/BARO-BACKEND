@@ -6,17 +6,15 @@ import konkuk.kuit.baro.domain.category.model.PlaceCategory;
 import konkuk.kuit.baro.domain.category.repository.CategoryRepository;
 import konkuk.kuit.baro.domain.category.repository.PlaceCategoryRepository;
 import konkuk.kuit.baro.domain.place.dto.request.PlaceSearchRequestDTO;
-import konkuk.kuit.baro.domain.place.dto.response.PlacesResponseDTO;
+import konkuk.kuit.baro.domain.place.dto.response.PlaceSearchResponseDTO;
 import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
 import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.locationtech.jts.geom.Coordinate;
@@ -24,11 +22,9 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -104,7 +100,7 @@ class PlaceServiceTest {
         List<Long> categoryIds = List.of(1L, 2L);
 
         // when
-        List<PlacesResponseDTO> result = placeService.placeSearch(new PlaceSearchRequestDTO(categoryIds, 37.5423265, 127.0759204));
+        List<PlaceSearchResponseDTO> result = placeService.placeSearch(new PlaceSearchRequestDTO(categoryIds, 37.5423265, 127.0759204));
 
         // then
         assertThat(result).size().isEqualTo(2);
@@ -135,7 +131,7 @@ class PlaceServiceTest {
     @DisplayName("null or [] 값 전달시 체크")
     void findByDistanceAndPlaceCategoryWithNullAndEmptyValue(List<Long> input) {
         // when
-        List<PlacesResponseDTO> result = placeService.placeSearch(new PlaceSearchRequestDTO(input, 37.5423265, 127.0759204));
+        List<PlaceSearchResponseDTO> result = placeService.placeSearch(new PlaceSearchRequestDTO(input, 37.5423265, 127.0759204));
 
         // then
         assertThat(result).isEmpty();
