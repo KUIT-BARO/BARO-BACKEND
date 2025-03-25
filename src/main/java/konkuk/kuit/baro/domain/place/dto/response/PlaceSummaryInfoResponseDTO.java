@@ -24,7 +24,7 @@ public class PlaceSummaryInfoResponseDTO {
     @Schema(example = "서울 광진구 화양동 5-47", description = "주소")
     private String placeAddress;
 
-    @Schema(example = "[키즈존, 북적이는]", description = "장소 카테고리 이름")
+    @Schema(example = "[\"카페\", \"레스토랑\", \"공원\"]", description = "장소 카테고리 이름")
     private List<String> placeCategories;
 
     public PlaceSummaryInfoResponseDTO(
