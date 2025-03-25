@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import konkuk.kuit.baro.domain.place.dto.request.PlaceSearchRequestDTO;
+import konkuk.kuit.baro.domain.place.dto.response.PinListResponseDTO;
 import konkuk.kuit.baro.domain.place.dto.response.PlaceSearchResponseDTO;
 import konkuk.kuit.baro.domain.place.dto.response.PlaceSummaryInfoResponseDTO;
 import konkuk.kuit.baro.domain.place.service.PlaceService;
@@ -33,11 +34,19 @@ public class PlaceController {
         return BaseResponse.ok(placeService.placeSearch(placeSearchRequestDTO));
     }
 
-    @Tag(name = "장소 탐색 - 장소 요약 정보 조회 API", description = "장소 탐색 시 장소 요약 정보 조회 관련 API")
+    @Tag(name = "장소 탐색 API", description = "장소 탐색 관련 API")
     @Operation(summary = "장소 요약 정보 조회", description = "특정 장소에 대한 요약 정보 ex) 장소명, 별점, 핀 개수 등등을 조회합니다")
     @GetMapping("/{placeId}")
     @CustomExceptionDescription(PLACE_SUMMARY_INFO)
     public BaseResponse<PlaceSummaryInfoResponseDTO> placeSummaryInfo(@PathVariable("placeId") Long placeId) {
         return BaseResponse.ok(placeService.placeSummaryInfo(placeId));
+    }
+
+    @Tag(name = "장소 탐색 API", description = "장소 탐색 관련 API")
+    @Operation(summary = "장소 핀 목록 조회", description = "특정 장소에 대한 핀 목록을 조회합니다.")
+    @GetMapping("/{placeId}/pins")
+    @CustomExceptionDescription(PLACE_SUMMARY_INFO)
+    public BaseResponse<List<PinListResponseDTO>> placePinList(@PathVariable("placeId") Long placeId) {
+        return BaseResponse.ok(placeService.placePinList(placeId));
     }
 }
