@@ -56,6 +56,9 @@ public enum SwaggerResponseDescription {
     ))),
     PLACE_SEARCH(new LinkedHashSet<>(Set.of(
             INVALID_LOCATION
+    ))),
+    PLACE_SUMMARY_INFO(new LinkedHashSet<>(Set.of(
+            PLACE_NOT_FOUND
     )));
 
     private final Set<ErrorCode> errorCodeList;
