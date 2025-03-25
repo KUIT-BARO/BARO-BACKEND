@@ -53,6 +53,9 @@ public enum SwaggerResponseDescription {
     ))),
     GET_SCHEDULES(new LinkedHashSet<>(Set.of(
             USER_NOT_FOUND
+    ))),
+    PLACE_SEARCH(new LinkedHashSet<>(Set.of(
+            INVALID_LOCATION
     )));
 
     private final Set<ErrorCode> errorCodeList;
