@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import konkuk.kuit.baro.domain.schedule.dto.request.AddScheduleRequestDTO;
 import konkuk.kuit.baro.domain.schedule.dto.response.GetSchedulesResponseDTO;
+import konkuk.kuit.baro.domain.schedule.dto.response.SchedulesDTO;
 import konkuk.kuit.baro.domain.schedule.service.ScheduleService;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.*;
 
@@ -53,6 +56,13 @@ public class ScheduleController {
     public BaseResponse<Void> deleteSchedule(@PathVariable Long scheduleId){
         scheduleService.deleteSchedule(scheduleId);
         return BaseResponse.ok(null);
+    }
+
+    @Tag(name = "Promise Acceptance", description = "약속 수락 관련 API")
+    @Operation(summary = "약속 참여자 일정표 조회", description = "약속 참여자들의 일정표를 조회합니다.")
+    @GetMapping("{userId}")
+    public BaseResponse<List<SchedulesDTO>> getPromiseMemberSchedules(@PathVariable Long userId){
+        return BaseResponse.ok(scheduleService.getSchedulesByUserId(userId));
     }
 
 }
