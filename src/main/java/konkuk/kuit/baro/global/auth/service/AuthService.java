@@ -47,7 +47,10 @@ public class AuthService {
         jwtService.reissueAndSendTokens(response, refreshToken);
     }
 
-    public void logout(Optional<String> accessToken, Optional<String> refreshToken) {
+    public void logout(HttpServletRequest request) {
+        Optional<String> accessToken = jwtService.extractAccessToken(request);
+        Optional<String> refreshToken = jwtService.extractRefreshToken(request);
+
         String access = accessToken
                 .orElseThrow(() -> new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
         String refresh = refreshToken

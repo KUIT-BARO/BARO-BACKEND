@@ -25,6 +25,9 @@ public class JwtService {
     @Value("${jwt.refresh.header}")
     private String refreshHeader;
 
+    private static final String ACCESS_TOKEN_KEY_PREFIX = "auth:access:";
+    private static final String REFRESH_TOKEN_KEY_PREFIX = "auth:refresh:";
+
     private static final String BEARER = "Bearer ";
     private static final String NOT_EXIST = "false";
 
@@ -44,7 +47,7 @@ public class JwtService {
     }
 
     public void storeRefreshToken(String refreshToken, String userInfo) {
-        redisService.setValues(refreshToken, userInfo,
+        redisService.setValues(REFRESH_TOKEN_KEY_PREFIX + refreshToken, userInfo,
                 Duration.ofMillis(jwtUtil.getRefreshTokenExpirationPeriod()));
     }
 
@@ -52,16 +55,16 @@ public class JwtService {
         if (refreshToken == null) {
             throw new AuthException(ErrorCode.SECURITY_UNAUTHORIZED);
         }
-        redisService.delete(refreshToken);
+        redisService.delete(REFRESH_TOKEN_KEY_PREFIX + refreshToken);
     }
 
     public void invalidAccessToken(String accessToken) {
-        redisService.setValues(accessToken, "logout",
+        redisService.setValues(ACCESS_TOKEN_KEY_PREFIX + accessToken, "logout",
                 Duration.ofMillis(jwtUtil.getAccessTokenExpirationPeriod()));
     }
 
     public String findRefreshTokenAndExtractUserInfo(String refreshToken) {
-        String userInfo = redisService.getValues(refreshToken);
+        String userInfo = redisService.getValues(REFRESH_TOKEN_KEY_PREFIX + refreshToken);
 
         if (userInfo.equals(NOT_EXIST)) {
             throw new AuthException(ErrorCode.SECURITY_INVALID_REFRESH_TOKEN);
