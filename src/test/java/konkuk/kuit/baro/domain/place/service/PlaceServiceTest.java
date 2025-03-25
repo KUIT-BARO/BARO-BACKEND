@@ -8,6 +8,7 @@ import konkuk.kuit.baro.domain.category.repository.PlaceCategoryRepository;
 import konkuk.kuit.baro.domain.pin.model.Pin;
 import konkuk.kuit.baro.domain.pin.repository.PinRepository;
 import konkuk.kuit.baro.domain.place.dto.request.PlaceSearchRequestDTO;
+import konkuk.kuit.baro.domain.place.dto.response.PinListResponseDTO;
 import konkuk.kuit.baro.domain.place.dto.response.PlaceSearchResponseDTO;
 import konkuk.kuit.baro.domain.place.dto.response.PlaceSummaryInfoResponseDTO;
 import konkuk.kuit.baro.domain.place.model.Place;
@@ -24,7 +25,6 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,15 +38,21 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 class PlaceServiceTest {
 
-    @Autowired PlaceRepository placeRepository;
-    @Autowired PlaceService placeService;
-    @Autowired CategoryRepository categoryRepository;
-    @Autowired PlaceCategoryRepository placeCategoryRepository;
-    @Autowired UserRepository userRepository;
+    @Autowired
+    PlaceRepository placeRepository;
+    @Autowired
+    PlaceService placeService;
+    @Autowired
+    CategoryRepository categoryRepository;
+    @Autowired
+    PlaceCategoryRepository placeCategoryRepository;
+    @Autowired
+    UserRepository userRepository;
 
     private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
-    @Autowired EntityManager em;
+    @Autowired
+    EntityManager em;
     @Autowired
     private PinRepository pinRepository;
 
@@ -149,22 +155,22 @@ class PlaceServiceTest {
         // 5. 핀 데이터 생성
         List<Pin> pins = List.of(
                 // 건국대 (평균 별점 = (5+4+3)/3 = 4.0)
-                Pin.createPin("건국대 리뷰1", (short)5, user1, place1),
-                Pin.createPin("건국대 리뷰2", (short)4, user2, place1),
-                Pin.createPin("건국대 리뷰3", (short)3, user3, place1),
+                Pin.createPin("건국대 리뷰1", (short) 5, user1, place1),
+                Pin.createPin("건국대 리뷰2", (short) 4, user2, place1),
+                Pin.createPin("건국대 리뷰3", (short) 3, user3, place1),
 
                 // 학생회관 (평균 4.0)
-                Pin.createPin("학생회관 리뷰", (short)4, user1, place2),
+                Pin.createPin("학생회관 리뷰", (short) 4, user1, place2),
 
                 // 왕십리역 (평균 = (5+5+4+2)/4 = 4.0)
-                Pin.createPin("왕십리역 리뷰1", (short)5, user1, place4),
-                Pin.createPin("왕십리역 리뷰2", (short)5, user2, place4),
-                Pin.createPin("왕십리역 리뷰3", (short)4, user3, place4),
-                Pin.createPin("왕십리역 리뷰4", (short)2, user1, place4),
+                Pin.createPin("왕십리역 리뷰1", (short) 5, user1, place4),
+                Pin.createPin("왕십리역 리뷰2", (short) 5, user2, place4),
+                Pin.createPin("왕십리역 리뷰3", (short) 4, user3, place4),
+                Pin.createPin("왕십리역 리뷰4", (short) 2, user1, place4),
 
                 // 테스트장소2 (평균 = (1+5)/2 = 3.0)
-                Pin.createPin("테스트 리뷰1", (short)1, user1, place6),
-                Pin.createPin("테스트 리뷰2", (short)5, user2, place6)
+                Pin.createPin("테스트 리뷰1", (short) 1, user1, place6),
+                Pin.createPin("테스트 리뷰2", (short) 5, user2, place6)
         );
         pinRepository.saveAll(pins);
     }
@@ -230,6 +236,23 @@ class PlaceServiceTest {
         assertThat(result.getStar()).isNull();
         assertThat(result.getPinCount()).isZero();
         assertThat(result.getPlaceCategories()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("특정 장소에 대한 핀 목록 조회 테스트")
+    void findPinListByPlaceId() {
+        List<PinListResponseDTO> result = placeService.placePinList(1L);
+
+        assertThat(result).size().isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("핀이 등록되어있지 않은 장소에 대한 핀 목록 조회")
+    void findPinListWithNoPins() {
+        List<PinListResponseDTO> result = placeService.placePinList(5L);
+
+        assertThat(result).isEmpty();
+
     }
 
 
