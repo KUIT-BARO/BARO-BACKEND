@@ -3,7 +3,11 @@ package konkuk.kuit.baro.domain.place.service;
 import konkuk.kuit.baro.domain.place.dto.response.PlacesResponseDTO;
 import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
+import konkuk.kuit.baro.global.common.exception.CustomException;
+import konkuk.kuit.baro.global.common.response.status.ErrorCode;
+import konkuk.kuit.baro.global.common.util.GeometryUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -11,9 +15,7 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.*;
 import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor
@@ -22,15 +24,30 @@ public class PlaceService {
 
     private final PlaceRepository placeRepository;
 
-    private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+    public List<PlacesResponseDTO> placeSearch(List<Long> placeCategoryIds, Double latitude, Double longitude) {
 
-    public List<PlacesResponseDTO> placeSearch(Double latitude, Double longitude) {
-        Point currentUserLocation = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+        if (!validateLocation(latitude, longitude)) {
+            throw new CustomException(ErrorCode.INVALID_LOCATION);
+        }
 
-        List<Place> places = placeRepository.findByDistance(currentUserLocation);
+        Point currentUserLocation = GeometryUtil.createPoint(latitude, longitude);
+
+        List<Place> places = placeRepository.findByDistanceAndPlaceCategories(currentUserLocation, placeCategoryIds);
 
         return places.stream()
                 .map(place -> new PlacesResponseDTO(place.getId(), place.getLocation().getY(), place.getLocation().getX()))
                 .toList();
+    }
+
+    private Boolean validateLocation(Double latitude, Double longitude) {
+        if (latitude > 90 || latitude < -90) {
+            return false;
+        }
+
+        if (longitude > 180 || longitude < -180) {
+            return false;
+        }
+
+        return true;
     }
 }

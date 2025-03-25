@@ -12,7 +12,11 @@ import java.util.List;
 @Repository
 public interface PlaceRepository extends JpaRepository<Place, Long> {
 
-    @Query("SELECT p FROM Place p " +
-            "WHERE ST_Contains(ST_Buffer(:currentUserLocation, 2000), p.location) ")
-    List<Place> findByDistance(@Param("currentUserLocation") Point currentUserLocation);
+    @Query("SELECT DISTINCT p FROM Place p " +
+            "JOIN p.placeCategories pc " +
+            "WHERE ST_Contains(ST_Buffer(:currentUserLocation, 2000), p.location) " +
+            "AND pc.category.id IN :placeCategoryIds")
+    List<Place> findByDistanceAndPlaceCategories(
+            @Param("currentUserLocation") Point currentUserLocation,
+            @Param("placeCategoryIds") List<Long> placeCategoryIds);
 }
