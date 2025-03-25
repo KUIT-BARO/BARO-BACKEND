@@ -1,5 +1,6 @@
 package konkuk.kuit.baro.domain.place.service;
 
+import konkuk.kuit.baro.domain.place.dto.request.PlaceSearchRequestDTO;
 import konkuk.kuit.baro.domain.place.dto.response.PlacesResponseDTO;
 import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
@@ -24,15 +25,15 @@ public class PlaceService {
 
     private final PlaceRepository placeRepository;
 
-    public List<PlacesResponseDTO> placeSearch(List<Long> placeCategoryIds, Double latitude, Double longitude) {
+    public List<PlacesResponseDTO> placeSearch(PlaceSearchRequestDTO request) {
 
-        if (!validateLocation(latitude, longitude)) {
+        if (!validateLocation(request.getLatitude(), request.getLongitude())) {
             throw new CustomException(ErrorCode.INVALID_LOCATION);
         }
 
-        Point currentUserLocation = GeometryUtil.createPoint(latitude, longitude);
+        Point currentUserLocation = GeometryUtil.createPoint(request.getLatitude(), request.getLongitude());
 
-        List<Place> places = placeRepository.findByDistanceAndPlaceCategories(currentUserLocation, placeCategoryIds);
+        List<Place> places = placeRepository.findByDistanceAndPlaceCategories(currentUserLocation, request.getPlaceCategoryIds());
 
         return places.stream()
                 .map(place -> new PlacesResponseDTO(place.getId(), place.getLocation().getY(), place.getLocation().getX()))

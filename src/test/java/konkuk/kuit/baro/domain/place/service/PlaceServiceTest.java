@@ -5,6 +5,7 @@ import konkuk.kuit.baro.domain.category.model.Category;
 import konkuk.kuit.baro.domain.category.model.PlaceCategory;
 import konkuk.kuit.baro.domain.category.repository.CategoryRepository;
 import konkuk.kuit.baro.domain.category.repository.PlaceCategoryRepository;
+import konkuk.kuit.baro.domain.place.dto.request.PlaceSearchRequestDTO;
 import konkuk.kuit.baro.domain.place.dto.response.PlacesResponseDTO;
 import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
@@ -103,7 +104,7 @@ class PlaceServiceTest {
         List<Long> categoryIds = List.of(1L, 2L);
 
         // when
-        List<PlacesResponseDTO> result = placeService.placeSearch(categoryIds, 37.5423265, 127.0759204);
+        List<PlacesResponseDTO> result = placeService.placeSearch(new PlaceSearchRequestDTO(categoryIds, 37.5423265, 127.0759204));
 
         // then
         assertThat(result).size().isEqualTo(2);
@@ -114,7 +115,7 @@ class PlaceServiceTest {
     @DisplayName("올바르지 않은 위도값 체크")
     void findByDistanceAndPlaceCategoryWrongLatitude(Double latitude) {
 
-        assertThatThrownBy(() -> placeService.placeSearch(null, latitude, 127.0))
+        assertThatThrownBy(() -> placeService.placeSearch(new PlaceSearchRequestDTO(List.of(1L, 2L), latitude, 127.0)))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.INVALID_LOCATION.getMessage());
     }
@@ -124,17 +125,17 @@ class PlaceServiceTest {
     @DisplayName("올바르지 않은 경도값 체크")
     void findByDistanceAndPlaceCategoryWrongLongitude(Double longitude) {
 
-        assertThatThrownBy(() -> placeService.placeSearch(null, 37.2348123, longitude))
+        assertThatThrownBy(() -> placeService.placeSearch(new PlaceSearchRequestDTO(List.of(1L, 2L), 37.2348123, longitude)))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.INVALID_LOCATION.getMessage());
     }
 
     @ParameterizedTest
     @NullAndEmptySource
-    @DisplayName("null 값 전달시 예외 체크")
+    @DisplayName("null or [] 값 전달시 체크")
     void findByDistanceAndPlaceCategoryWithNullAndEmptyValue(List<Long> input) {
         // when
-        List<PlacesResponseDTO> result = placeService.placeSearch(input, 37.5423265, 127.0759204);
+        List<PlacesResponseDTO> result = placeService.placeSearch(new PlaceSearchRequestDTO(input, 37.5423265, 127.0759204));
 
         // then
         assertThat(result).isEmpty();
