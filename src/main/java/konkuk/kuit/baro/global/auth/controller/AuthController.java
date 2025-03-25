@@ -9,11 +9,14 @@ import konkuk.kuit.baro.global.auth.dto.request.LoginRequestDTO;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.auth.service.AuthService;
 import konkuk.kuit.baro.global.auth.dto.response.LoginResponseDTO;
+import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+
+import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.*;
 
 @Tag(name = "Auth", description = "Auth 관련 API")
 @RestController
@@ -29,7 +32,7 @@ public class AuthController {
             summary = "로그인",
             description = "로그인합니다. 토큰이 필요하지 않습니다."
     )
-    // @CustomExceptionDescription(LOGIN)
+    @CustomExceptionDescription(LOGIN)
     @PostMapping("/login")
     public BaseResponse<LoginResponseDTO> login(@RequestBody LoginRequestDTO request) {
         return BaseResponse.ok(authService.login(request));
@@ -39,7 +42,7 @@ public class AuthController {
             summary = "토큰 재발급",
             description = "리프레시 토큰을 가지고 토큰을 재발급합니다. 리프레시 토큰이 필요합니다."
     )
-    // @CustomExceptionDescription(REISSUE)
+    @CustomExceptionDescription(REISSUE)
     @PostMapping("/reissue")
     public BaseResponse<Void> reissueTokens(HttpServletRequest request, HttpServletResponse response) {
         authService.reissueTokens(request, response);
@@ -50,7 +53,7 @@ public class AuthController {
             summary = "로그아웃",
             description = "로그아웃합니다. 액세스 토큰과 리프레시 토큰이 필요합니다."
     )
-    // @CustomExceptionDescription(LOGOUT)
+    @CustomExceptionDescription(LOGOUT)
     @PatchMapping("/logout")
     public BaseResponse<Void> logout(HttpServletRequest request) {
         Optional<String> accessToken = jwtService.extractAccessToken(request);
