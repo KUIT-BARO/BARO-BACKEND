@@ -59,6 +59,9 @@ public enum SwaggerResponseDescription {
     ))),
     PLACE_SUMMARY_INFO(new LinkedHashSet<>(Set.of(
             PLACE_NOT_FOUND
+    ))),
+    PLACE_PIN_LIST(new LinkedHashSet<>(Set.of(
+            PLACE_NOT_FOUND
     )));
 
     private final Set<ErrorCode> errorCodeList;
