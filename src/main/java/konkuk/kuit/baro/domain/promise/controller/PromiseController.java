@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
+import konkuk.kuit.baro.domain.promise.dto.request.SetPromiseAvailableTimeRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseAvailableTimeResponseDTO;
 import konkuk.kuit.baro.domain.promise.service.PromiseAvailableTimeService;
 import konkuk.kuit.baro.domain.promise.service.PromiseService;
@@ -11,9 +12,11 @@ import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.PROMISE_SUGGEST;
+import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.SET_AVAILALBLE_TIME;
 
 @Slf4j
 @RestController
@@ -41,5 +44,16 @@ public class PromiseController {
     @GetMapping("{promiseId}/time-choice")
     public BaseResponse<PromiseAvailableTimeResponseDTO> getPromiseAvailableTime(@PathVariable Long promiseId) {
         return BaseResponse.ok(promiseAvailableTimeService.getPromiseAvailableTime(promiseId));
+    }
+
+    @Tag(name = "Promise Acceptance", description = "약속 수락 관련 API")
+    @Operation(summary = "약속 수락 - 시간 선택", description = "약속 참여자가 가능한 시간대를 선택합니다.")
+    @PostMapping("{promiseId}/time-choice")
+    @CustomExceptionDescription(SET_AVAILALBLE_TIME)
+    public BaseResponse<Void> setPromiseAvailableTime(@PathVariable Long promiseId, Long userId,
+                                                      @Validated @RequestBody SetPromiseAvailableTimeRequestDTO req){
+        promiseAvailableTimeService.setPromiseAvailableTime(req, userId, promiseId);
+        return BaseResponse.ok(null);
+
     }
 }

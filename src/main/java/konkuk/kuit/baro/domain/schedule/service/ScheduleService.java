@@ -119,5 +119,7 @@ public class ScheduleService {
     public void deleteSchedule(Long scheduleId) {
         scheduleRepository.deleteById(scheduleId);
     }
+
+
 }
 

@@ -29,5 +29,12 @@ public interface PromiseMemberRepository extends JpaRepository<PromiseMember, Lo
     @Query("SELECT new konkuk.kuit.baro.domain.promise.dto.response." +
            "PromiseMemberDTO(pm.user.id,pm.user.profileImage) " +
            "FROM PromiseMember pm WHERE pm.promise.id = :promiseId")
-    List<PromiseMemberDTO> findPromiseMemberByPromiseId(Long promiseId);
+    List<PromiseMemberDTO> findPromiseMemberDTOByPromiseId(Long promiseId);
+
+    @Query("SELECT pm.user.id " +
+           "FROM PromiseMember pm " +
+           "WHERE pm.promise.id = :promiseId")
+    List<Long> findUserIdListByPromiseid(Long promiseId);
+
+    PromiseMember findByUserIdAndPromiseId(Long userId, Long promiseId);
 }
