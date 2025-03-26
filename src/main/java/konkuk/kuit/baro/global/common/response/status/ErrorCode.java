@@ -29,9 +29,12 @@ public enum ErrorCode implements ResponseStatus {
     SCHEDULE_CONFLICT(301,CONFLICT.value(),"겹치는 일정이 존재합니다."),
     INVALID_SCHEDULE_TIME(302, BAD_REQUEST.value(), "시작 시간과 종료 시간이 동일할 수 없습니다."),
     SCHEDULE_NOT_FOUND(303, HttpStatus.NOT_FOUND.value(), "존재하지 않는 일정입니다."),
-    SCHEDULE_NOT_EXISTS(304, HttpStatus.NOT_FOUND.value(), "등록된 일정이 없습니다.");
+    SCHEDULE_NOT_EXISTS(304, HttpStatus.NOT_FOUND.value(), "등록된 일정이 없습니다."),
 
-    //Promise
+
+    // Place
+    INVALID_LOCATION(400, BAD_REQUEST.value(), "위도, 경도값이 올바르지 않습니다.");
+
     @Getter
     private final int code;
     private final int httpStatus;

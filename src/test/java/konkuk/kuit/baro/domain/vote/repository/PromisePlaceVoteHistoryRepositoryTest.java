@@ -17,6 +17,8 @@ import konkuk.kuit.baro.domain.vote.model.PromiseVote;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Description;
@@ -47,6 +49,8 @@ class PromisePlaceVoteHistoryRepositoryTest {
     @Autowired
     private PromiseVoteRepository promiseVoteRepository;
 
+    private static final GeometryFactory geometryFactory = new GeometryFactory();
+
     @PersistenceContext
     private EntityManager em;
 
@@ -76,8 +80,7 @@ class PromisePlaceVoteHistoryRepositoryTest {
 
         Place place = Place.builder()
                 .placeName("스타벅스 건대점")
-                .longitude(new BigDecimal("37.7749295"))
-                .latitude(new BigDecimal("-122.4194155"))
+                .location(geometryFactory.createPoint(new Coordinate(37.7749295, -122.4194155)))
                 .placeAddress("광진구 화양동")
                 .build();
 

@@ -7,6 +7,7 @@ import konkuk.kuit.baro.domain.promise.model.PromiseSuggestedPlace;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
+import org.locationtech.jts.geom.Point;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,11 +27,9 @@ public class Place extends BaseEntity {
     @Column(name = "place_name", length = 30, nullable = false)
     private String placeName;
 
-    @Column(name = "latitude", nullable = false, precision = 10, scale = 7)
-    private BigDecimal latitude; // 위도
+    @Column(name = "location", nullable = false, columnDefinition = "POINT SRID 4326")
+    private Point location; // Point (경도, 위도)
 
-    @Column(name = "longitude", nullable = false, precision = 10, scale = 7)
-    private BigDecimal longitude; // 경도
 
     @Column(name = "place_address", length = 50, nullable = false)
     private String placeAddress;
@@ -48,10 +47,9 @@ public class Place extends BaseEntity {
     private List<PromiseSuggestedPlace> promiseSuggestedPlaces = new ArrayList<>();
 
     @Builder
-    public Place(String placeName, BigDecimal latitude, BigDecimal longitude, String placeAddress) {
+    public Place(String placeName, Point location, String placeAddress) {
         this.placeName = placeName;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.location = location;
         this.placeAddress = placeAddress;
     }
 
