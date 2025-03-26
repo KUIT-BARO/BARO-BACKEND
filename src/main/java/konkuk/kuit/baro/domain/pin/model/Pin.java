@@ -68,4 +68,11 @@ public class Pin extends BaseEntity {
     }
 
     public void addPinCategory(PinCategory pinCategory) { this.pinCategories.add(pinCategory); }
+
+    public List<String> getCategoryNameList() {
+        return this.pinCategories
+                .stream()
+                .map(pinCategory -> pinCategory.getCategory().getCategoryName())
+                .toList();
+    }
 }

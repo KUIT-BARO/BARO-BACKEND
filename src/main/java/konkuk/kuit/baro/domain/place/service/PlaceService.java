@@ -62,13 +62,21 @@ public class PlaceService {
     public List<PinListResponseDTO> placePinList(Long placeId) {
 
         Place findPlace = placeRepository.findById(placeId)
-                        .orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
 
         List<Pin> pins = findPlace.getPins();
 
         return pins.stream()
-                .map(pin -> new PinListResponseDTO(pin.getId(),findPlace.getPlaceName(), findPlace.getPlaceAddress()))
+                .map(pin -> new PinListResponseDTO(pin.getId(),
+                        extractUsernameFromPin(pin),
+                        findPlace.getPlaceName(),
+                        findPlace.getPlaceAddress(),
+                        pin.getCategoryNameList()))
                 .toList();
+    }
+
+    private String extractUsernameFromPin(Pin pin) {
+        return pin.getUser().getName();
     }
 
     private Boolean validateLocation(Double latitude, Double longitude) {
