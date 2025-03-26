@@ -33,7 +33,8 @@ public enum ErrorCode implements ResponseStatus {
 
 
     // Place
-    INVALID_LOCATION(400, BAD_REQUEST.value(), "위도, 경도값이 올바르지 않습니다.");
+    INVALID_LOCATION(400, BAD_REQUEST.value(), "위도, 경도값이 올바르지 않습니다."),
+    PLACE_NOT_FOUND(401, HttpStatus.NOT_FOUND.value(), "존재하지 않는 장소입니다.");
 
     @Getter
     private final int code;

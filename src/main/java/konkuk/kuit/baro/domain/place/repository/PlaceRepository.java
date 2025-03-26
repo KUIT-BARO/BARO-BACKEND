@@ -1,5 +1,6 @@
 package konkuk.kuit.baro.domain.place.repository;
 
+import konkuk.kuit.baro.domain.place.dto.response.PlaceSummaryInfoResponseDTO;
 import konkuk.kuit.baro.domain.place.model.Place;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PlaceRepository extends JpaRepository<Place, Long> {
@@ -19,4 +21,25 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     List<Place> findByDistanceAndPlaceCategories(
             @Param("currentUserLocation") Point currentUserLocation,
             @Param("placeCategoryIds") List<Long> placeCategoryIds);
+
+
+
+    @Query(value = """
+        SELECT NEW
+        konkuk.kuit.baro.domain.place.dto.response.PlaceSummaryInfoResponseDTO(
+            p.placeName,
+            AVG(pin.score),
+            COUNT(pin),
+            p.placeAddress
+        )
+        FROM Place p
+        LEFT JOIN p.pins pin
+        WHERE p.id = :placeId
+        GROUP BY p.id
+        """)
+    Optional<PlaceSummaryInfoResponseDTO> findPlaceSummaryById(@Param("placeId") Long placeId);
+
+
+
+
 }
