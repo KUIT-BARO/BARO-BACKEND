@@ -25,7 +25,7 @@ import java.util.List;
 import static konkuk.kuit.baro.global.common.response.status.ErrorCode.*;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 public class PromiseAvailableTimeService {
@@ -44,6 +44,7 @@ public class PromiseAvailableTimeService {
         return new PromiseAvailableTimeResponseDTO(promiseMemberRepository.findPromiseMemberDTOByPromiseId(promiseId), availableTimes);
     }
 
+    @Transactional
     public void setPromiseAvailableTime(SetPromiseAvailableTimeRequestDTO req, Long userId, Long promiseId) {
         User loginUser = userRepository.findById(1L).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
@@ -65,6 +66,7 @@ public class PromiseAvailableTimeService {
 
 
     }
+
 
     private void addPromiseMember(Long promiseId, User loginUser, Promise promise) {
         List<Long> userIdList = promiseMemberRepository.findUserIdListByPromiseid(promiseId);
