@@ -45,20 +45,13 @@ public class PromiseAvailableTimeService {
     }
 
     public void setPromiseAvailableTime(SetPromiseAvailableTimeRequestDTO req, Long userId, Long promiseId) {
-        List<TimeDTO> times = req.getTimes();
-
-        for (TimeDTO time : times) {
-            if(time.getStartTime().equals(time.getEndTime())) {
-                throw new CustomException(INVALID_TIME_INPUT);
-            }
-        }
-
         User loginUser = userRepository.findById(1L).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         Promise promise = promiseRepository.findById(promiseId).orElseThrow(() -> new CustomException(PROMISE_NOT_FOUND));
 
         addPromiseMember(promiseId, loginUser, promise);
 
+        List<TimeDTO> times = req.getTimes();
         for (TimeDTO time : times) {
             PromiseAvailableTime promiseAvailableTime = PromiseAvailableTime.createPromiseAvailableTime(
                     time.getDate(),
