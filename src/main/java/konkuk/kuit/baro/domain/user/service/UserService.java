@@ -14,6 +14,7 @@ import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.global.auth.dto.request.SignUpRequestDTO;
 import konkuk.kuit.baro.global.auth.exception.AuthException;
+import konkuk.kuit.baro.global.auth.service.MailService;
 import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ public class UserService {
     private final PromiseMemberRepository promiseMemberRepository;
     private final PromiseRepository promiseRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
 
     @Transactional
     public void signup(SignUpRequestDTO request){
@@ -46,7 +48,10 @@ public class UserService {
         String encryptedPassword = passwordEncoder.encode(request.getPassword());
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
+            throw new CustomException(ErrorCode.USER_DUPLICATE_EMAIL);
+        }
+        if (!"VERIFIED".equals(mailService.getStoredCode(request.getEmail()))){
+            throw new AuthException(ErrorCode.AUTHCODE_UNAUTHORIZED);
         }
 
         User newUser = User.builder()

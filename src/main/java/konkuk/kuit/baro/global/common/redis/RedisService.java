@@ -36,4 +36,6 @@ public class RedisService {
     protected boolean checkExistsValue(String value) {
         return !value.equals("false");
     }
+
+    // public void setTTL(String key, Duration duration) {redisTemplate.expire(key, duration);}
 }
