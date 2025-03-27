@@ -89,8 +89,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: baro.server.team@gmail.com
-    password: fzsi zfov fwaw kqlh
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail.smtp.auth: true
       mail.smtp.timeout: 5000

@@ -55,10 +55,7 @@ public class MailService {
 
             String key = EMAIL_KEY_PREFIX + request.getEmail();
             redisService.setValues(key, authCode, Duration.ofMinutes(VERIFICATION_CODE_EXPIRY_MINUTES));
-            log.info("Success: sendMail > Key={}, Saved Value in Redis={}", key, redisService.getValues(key));
-
         } catch (MailException e) {  //JavaMailSender의 전송과정에서 오류 발생 시
-            log.info("fail");
             throw new AuthException(ErrorCode.MAIL_SEND_FAILED);
         }
     }
