@@ -5,6 +5,10 @@ import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseMemberSuggestStateDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseStatusResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.SuggestionProgress;
+import konkuk.kuit.baro.domain.promise.dto.response.ConfirmedPromiseResponseDTO;
+import konkuk.kuit.baro.domain.promise.dto.response.PromiseManagementResponseDTO;
+import konkuk.kuit.baro.domain.promise.dto.response.SuggestedPromiseResponseDTO;
+import konkuk.kuit.baro.domain.promise.dto.response.VotingPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.model.Promise;
 import konkuk.kuit.baro.domain.promise.model.PromiseMember;
 import konkuk.kuit.baro.domain.promise.repository.PromiseAvailableTimeRepository;
@@ -14,6 +18,7 @@ import konkuk.kuit.baro.domain.promise.repository.PromiseSuggestedPlaceRepositor
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.global.common.exception.CustomException;
+import konkuk.kuit.baro.global.common.response.status.BaseStatus;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import konkuk.kuit.baro.global.common.util.ColorUtil;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +26,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static konkuk.kuit.baro.domain.promise.dto.response.SuggestionProgress.*;
 
@@ -98,13 +107,45 @@ public class PromiseService {
         // 사용자 ID를 기준으로 본인이 속한 Promise 목록 조회 (fetch join 사용)
         List<Promise> myPromiseList = promiseMemberRepository.findWithPromiseByUserId(loginUser.getId());
 
-        // DTO 변환
-        List<PromiseResponseDTO> promiseDTOList = myPromiseList.stream()
-                .map(promise -> new PromiseResponseDTO(promise.getId(), promise.getPromiseName(), promise.getSuggestedStartDate(), promise.getSuggestedEndDate(), promise.getFixedDate()))
+         // 약속 상태별로 필터링
+        List<SuggestedPromiseResponseDTO> suggestedPromises = myPromiseList.stream()
+                .filter(promise -> promise.getStatus() == BaseStatus.PENDING)
+                .map(promise -> new SuggestedPromiseResponseDTO(
+                        promise.getId(),
+                        promise.getPromiseName(),
+                        calculateDday(promise.getSuggestedEndDate()),
+                        promise.getSuggestedRegion(),
+                        promise.getSuggestedStartDate(),
+                        promise.getSuggestedEndDate()))
                 .collect(Collectors.toList());
 
-        return new PromiseManagementResponseDTO(promiseDTOList);
-    }
+        List<VotingPromiseResponseDTO> votingPromises = myPromiseList.stream()
+                .filter(promise -> promise.getStatus() == BaseStatus.VOTING)
+                .map(promise -> new VotingPromiseResponseDTO(
+                        promise.getId(),
+                        promise.getPromiseName(),
+                        calculateDday(promise.getSuggestedEndDate()),
+                        promise.getSuggestedRegion(),
+                        promise.getSuggestedStartDate(),
+                        promise.getSuggestedEndDate()))
+                .collect(Collectors.toList());
+
+        List<ConfirmedPromiseResponseDTO> confirmedPromises = myPromiseList.stream()
+                .filter(promise -> promise.getStatus() == BaseStatus.CONFIRMED)
+                .map(promise -> new ConfirmedPromiseResponseDTO(
+                        promise.getId(),
+                        promise.getPromiseName(),
+                        getPromiseMembersName(promise.getId()),
+                        promise.getPlace().getPlaceName(),
+                        promise.getFixedDate()))
+                .collect(Collectors.toList());
+
+        // 모든 리스트가 비어 있어도 null 대신 빈 리스트 사용
+        return new PromiseManagementResponseDTO(
+                suggestedPromises.isEmpty() ? Collections.emptyList() : suggestedPromises,
+                votingPromises.isEmpty() ? Collections.emptyList() : votingPromises,
+                confirmedPromises.isEmpty() ? Collections.emptyList() : confirmedPromises
+        );}
 
     private User findLoginUser(Long loginUserId) {
         return userRepository.findById(loginUserId)
@@ -205,4 +246,20 @@ public class PromiseService {
                 ).toList();
     }
 
+
+    private int calculateDday(LocalDate endDate) {
+        return (int) ChronoUnit.DAYS.between(LocalDate.now(), endDate);
+    }
+
+    private List<String> getPromiseMembersName(Long promiseId){
+        List<PromiseMember> promiseMembers = promiseMemberRepository.findAllByPromiseId(promiseId);
+
+        if (promiseMembers == null || promiseMembers.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return promiseMembers.stream()
+                .map(promiseMember -> promiseMember.getUser().getName())
+                .collect(Collectors.toList());
+    }
 }
