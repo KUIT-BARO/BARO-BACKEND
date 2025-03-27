@@ -25,7 +25,7 @@ public class User extends BaseEntity {
     @Column(name = "user_id", nullable = false)
     private Long id;
 
-    @Column(name = "email", length = 100, nullable = false)
+    @Column(name = "email", length = 100, nullable = false, unique = true)
     private String email;
 
     @Column(name = "password", length = 200, nullable = false)
@@ -35,7 +35,7 @@ public class User extends BaseEntity {
     private String name;
 
     @Lob
-    @Column(name = "profile_image", nullable = false)
+    @Column(name = "profile_image", nullable = true)
     private String profileImage;
 
     // 일정을 확인하기 위한 양방향 연관 관계
