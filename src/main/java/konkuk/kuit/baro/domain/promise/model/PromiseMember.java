@@ -3,10 +3,7 @@ package konkuk.kuit.baro.domain.promise.model;
 import jakarta.persistence.*;
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;

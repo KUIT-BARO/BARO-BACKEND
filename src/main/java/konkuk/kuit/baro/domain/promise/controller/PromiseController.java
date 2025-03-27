@@ -4,17 +4,19 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
+import konkuk.kuit.baro.domain.promise.dto.request.SetPromiseAvailableTimeRequestDTO;
+import konkuk.kuit.baro.domain.promise.dto.response.PromiseAvailableTimeResponseDTO;
+import konkuk.kuit.baro.domain.promise.service.PromiseAvailableTimeService;
 import konkuk.kuit.baro.domain.promise.service.PromiseService;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.*;
+import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.PROMISE_SUGGEST;
+import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.SET_AVAILALBLE_TIME;
 
 @Slf4j
 @RestController
@@ -23,6 +25,7 @@ import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescr
 public class PromiseController {
 
     private final PromiseService promiseService;
+    private final PromiseAvailableTimeService promiseAvailableTimeService;
 
     @Tag(name = "약속 제안 API", description = "약속 제안 관련 API")
     @Operation(summary = "약속 제안", description = "약속 이름, 날짜, 장소등을 입력하여 약속을 제안합니다.")
@@ -34,5 +37,23 @@ public class PromiseController {
         promiseService.promiseSuggest(request, 1L);
 
         return BaseResponse.ok(null);
+    }
+
+    @Tag(name = "Promise Acceptance", description = "약속 수락 관련 API")
+    @Operation(summary = "약속 수락 - 시간 선택 초기", description = "약속 시간 선택 초기 화면입니다.")
+    @GetMapping("{promiseId}/time-choice")
+    public BaseResponse<PromiseAvailableTimeResponseDTO> getPromiseAvailableTime(@PathVariable Long promiseId) {
+        return BaseResponse.ok(promiseAvailableTimeService.getPromiseAvailableTime(promiseId));
+    }
+
+    @Tag(name = "Promise Acceptance", description = "약속 수락 관련 API")
+    @Operation(summary = "약속 수락 - 시간 선택", description = "약속 참여자가 가능한 시간대를 선택합니다.")
+    @PostMapping("{promiseId}/time-choice")
+    @CustomExceptionDescription(SET_AVAILALBLE_TIME)
+    public BaseResponse<Void> setPromiseAvailableTime(@PathVariable Long promiseId, Long userId,
+                                                      @Validated @RequestBody SetPromiseAvailableTimeRequestDTO req){
+        promiseAvailableTimeService.setPromiseAvailableTime(req, userId, promiseId);
+        return BaseResponse.ok(null);
+
     }
 }

@@ -119,5 +119,11 @@ public class ScheduleService {
     public void deleteSchedule(Long scheduleId) {
         scheduleRepository.deleteById(scheduleId);
     }
+
+    public List<SchedulesDTO> getSchedulesByUserId(Long userId) {
+        return scheduleRepository.findAllByUserId(userId);
+    }
+
+
 }
 

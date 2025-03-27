@@ -1,5 +1,6 @@
 package konkuk.kuit.baro.domain.promise.repository;
 
+import konkuk.kuit.baro.domain.promise.dto.response.PromiseMemberDTO;
 import konkuk.kuit.baro.domain.promise.model.PromiseMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +12,9 @@ import java.util.List;
 @Repository
 public interface PromiseMemberRepository extends JpaRepository<PromiseMember, Long> {
     List<PromiseMember> findAllByUserId(Long userId);
-    
+
+    List<PromiseMember> findAllByPromiseId(Long promiseId);
+
     @Query("SELECT COUNT(*) FROM PromiseMember pm where pm.promise.id = :promiseId")
     int findNumberOfPromiseMemberById(Long promiseId);
 
@@ -24,4 +27,16 @@ public interface PromiseMemberRepository extends JpaRepository<PromiseMember, Lo
 
     @Query("SELECT pm.color FROM PromiseMember pm WHERE pm.id = :promiseId")
     List<String> findColorsByPromiseId(Long promiseId);
+
+    @Query("SELECT new konkuk.kuit.baro.domain.promise.dto.response." +
+           "PromiseMemberDTO(pm.user.id,pm.user.profileImage) " +
+           "FROM PromiseMember pm WHERE pm.promise.id = :promiseId")
+    List<PromiseMemberDTO> findPromiseMemberDTOByPromiseId(Long promiseId);
+
+    @Query("SELECT pm.user.id " +
+           "FROM PromiseMember pm " +
+           "WHERE pm.promise.id = :promiseId")
+    List<Long> findUserIdListByPromiseid(Long promiseId);
+
+    PromiseMember findByUserIdAndPromiseId(Long userId, Long promiseId);
 }

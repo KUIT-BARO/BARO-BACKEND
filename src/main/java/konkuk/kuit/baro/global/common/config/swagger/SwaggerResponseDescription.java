@@ -36,6 +36,10 @@ public enum SwaggerResponseDescription {
     PROMISE_SUGGEST(new LinkedHashSet<>(Set.of(
             USER_NOT_FOUND
     ))),
+    SET_AVAILALBLE_TIME(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND,
+            PROMISE_NOT_FOUND
+    ))),
 
     //Schedule
     SCHEDULE_ADD(new LinkedHashSet<>(Set.of(
