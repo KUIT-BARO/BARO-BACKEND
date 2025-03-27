@@ -101,7 +101,7 @@ public class PromiseService {
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
     @Transactional
-    public PromiseManagementResponseDTO getPromiseManagementData(PromiseManagementRequestDTO request, Long loginUserId){
+    public PromiseManagementResponseDTO getPromiseManagementData(Long loginUserId){
         User loginUser = findLoginUser(loginUserId);
 
         // 사용자 ID를 기준으로 본인이 속한 Promise 목록 조회 (fetch join 사용)
