@@ -11,6 +11,7 @@ import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -48,20 +49,16 @@ public class MailService {
         }
 
         String authCode = createCode();
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessage mimeMessage = createEmailMessage(request.getEmail(), authCode);
 
         try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-            mimeMessageHelper.setTo(request.getEmail()); // 메일 수신자
-            mimeMessageHelper.setSubject("[BARO] 이메일 인증을 위한 인증 코드 발송"); // 메일 제목
-            mimeMessageHelper.setText(setContext(authCode), true); // 메일 본문 내용, HTML 여부
             javaMailSender.send(mimeMessage);
 
             String key = EMAIL_KEY_PREFIX + request.getEmail();
             redisService.setValues(key, authCode, Duration.ofMinutes(VERIFICATION_CODE_EXPIRY_MINUTES));
             log.info("Success: sendMail > Key={}, Saved Value in Redis={}", key, redisService.getValues(key));
 
-        } catch (MessagingException e) {
+        } catch (MailException e) {  //JavaMailSender의 전송과정에서 오류 발생 시
             log.info("fail");
             throw new AuthException(ErrorCode.MAIL_SEND_FAILED);
         }
@@ -82,6 +79,21 @@ public class MailService {
             }
         }
         return key.toString();
+    }
+
+    private MimeMessage createEmailMessage(String recipient, String authCode) {
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+
+            mimeMessageHelper.setTo(recipient);
+            mimeMessageHelper.setSubject("[BARO] 이메일 인증을 위한 인증 코드 발송");
+            mimeMessageHelper.setText(setContext(authCode), true);
+
+            return mimeMessage;
+        } catch (MessagingException e) {  // SMTP 전송 오류, 포맷 오류 발생 시
+            throw new AuthException(ErrorCode.MAIL_SEND_FAILED);
+        }
     }
 
     public void checkAuthCode(CodeCheckRequestDTO request) {
