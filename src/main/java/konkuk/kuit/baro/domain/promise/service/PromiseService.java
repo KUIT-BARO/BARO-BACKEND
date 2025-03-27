@@ -251,15 +251,7 @@ public class PromiseService {
         return (int) ChronoUnit.DAYS.between(LocalDate.now(), endDate);
     }
 
-    private List<String> getPromiseMembersName(Long promiseId){
-        List<PromiseMember> promiseMembers = promiseMemberRepository.findAllByPromiseId(promiseId);
-
-        if (promiseMembers == null || promiseMembers.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        return promiseMembers.stream()
-                .map(promiseMember -> promiseMember.getUser().getName())
-                .collect(Collectors.toList());
+    private List<String> getPromiseMembersName(Long promiseId) {
+        return promiseMemberRepository.findMemberNamesByPromiseId(promiseId);
     }
 }
