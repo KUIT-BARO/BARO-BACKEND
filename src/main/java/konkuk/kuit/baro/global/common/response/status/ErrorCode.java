@@ -19,11 +19,11 @@ public enum ErrorCode implements ResponseStatus {
     // 유저
     USER_NOT_FOUND(201, HttpStatus.NOT_FOUND.value(), "존재하지 않는 유저입니다."),
     USER_NAME_LENGTH(202, BAD_REQUEST.value(), "이름은 12자 이하입니다."),
-     USER_CURRENT_PASSWORD_WRONG(203, BAD_REQUEST.value(), "입력하신 비밀번호가 현재 비밀번호와 일치하지 않습니다."),
+    USER_CURRENT_PASSWORD_WRONG(203, BAD_REQUEST.value(), "입력하신 비밀번호가 현재 비밀번호와 일치하지 않습니다."),
     USER_NEW_PASSWORD_NOT_MATCH(204, BAD_REQUEST.value(), "입력하신 새 비밀번호와 일치하지 않습니다."),
     USER_NEW_PASSWORD_SAME(205, BAD_REQUEST.value(), "입력하신 새 비밀번호가 현재 비밀번호와 일치합니다."),
     USER_PASSWORD_LENGTH(206, BAD_REQUEST.value(), "비밀번호는 8자 이상입니다."),
-    USER_ALREADY_EXISTS(207, BAD_REQUEST.value(), "중복된 이메일의 사용자가 존재합니다."),
+    USER_DUPLICATE_EMAIL(207, BAD_REQUEST.value(), "중복된 이메일의 사용자가 존재합니다."),
     // Schedule
     INVALID_SCHEDULE_NAME(300, BAD_REQUEST.value(), "일정명은 12자 이하로 입력해야 합니다."),
     SCHEDULE_CONFLICT(301,CONFLICT.value(),"겹치는 일정이 존재합니다."),

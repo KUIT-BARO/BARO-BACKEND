@@ -2,7 +2,6 @@ package konkuk.kuit.baro.global.auth.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.global.auth.dto.request.CodeCheckRequestDTO;
 import konkuk.kuit.baro.global.auth.dto.request.MailRequestDTO;
@@ -45,7 +44,7 @@ public class MailService {
 
     public void sendMail(MailRequestDTO request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
+            throw new CustomException(ErrorCode.USER_DUPLICATE_EMAIL);
         }
 
         String authCode = createCode();
