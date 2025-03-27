@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/h2-console/**", "/actuator/**", "/swagger-ui/**",
                                 "/v3/api-docs/**", "/users/signup/**", "/auth/login/**",
-                                "/auth/reissue/**").permitAll()
+                                "/auth/mail/**","/auth/reissue/**").permitAll()
                         .requestMatchers("/**").authenticated())
                 .exceptionHandling(customizer -> customizer
                         .authenticationEntryPoint(customAuthenticationEntryPoint()))

@@ -10,11 +10,13 @@ import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
 import konkuk.kuit.baro.global.auth.service.AuthService;
 import konkuk.kuit.baro.global.auth.dto.response.LoginResponseDTO;
+import konkuk.kuit.baro.global.auth.service.MailService;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import konkuk.kuit.baro.global.auth.dto.request.CodeCheckRequestDTO;
+import konkuk.kuit.baro.global.auth.dto.request.MailRequestDTO;
 
 import java.util.Optional;
 
@@ -27,8 +29,7 @@ import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescr
 public class AuthController {
 
     private final AuthService authService;
-    private final JwtService jwtService;
-    private final UserService userService;
+    private final MailService mailService;
 
     @Operation(
             summary = "로그인",

@@ -26,7 +26,7 @@ public enum SwaggerResponseDescription {
 
     //User
     USER_SIGNUP(new LinkedHashSet<>(Set.of(
-            USER_ALREADY_EXISTS
+            USER_DUPLICATE_EMAIL
     ))),
     USER_PROFILE_UPDATE(new LinkedHashSet<>(Set.of(
             USER_NOT_FOUND,
