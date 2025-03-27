@@ -2,8 +2,10 @@ package konkuk.kuit.baro.domain.place.service;
 
 import jakarta.persistence.EntityManager;
 import konkuk.kuit.baro.domain.category.model.Category;
+import konkuk.kuit.baro.domain.category.model.PinCategory;
 import konkuk.kuit.baro.domain.category.model.PlaceCategory;
 import konkuk.kuit.baro.domain.category.repository.CategoryRepository;
+import konkuk.kuit.baro.domain.category.repository.PinCategoryRepository;
 import konkuk.kuit.baro.domain.category.repository.PlaceCategoryRepository;
 import konkuk.kuit.baro.domain.pin.model.Pin;
 import konkuk.kuit.baro.domain.pin.repository.PinRepository;
@@ -28,6 +30,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -48,6 +51,8 @@ class PlaceServiceTest {
     PlaceCategoryRepository placeCategoryRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    PinCategoryRepository pinCategoryRepository;
 
     private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
@@ -173,6 +178,34 @@ class PlaceServiceTest {
                 Pin.createPin("테스트 리뷰2", (short) 5, user2, place6)
         );
         pinRepository.saveAll(pins);
+
+        // 6. 핀-카테고리 연결
+        pinCategoryRepository.saveAll(List.of(
+                // 건국대 핀들: 카페, 교육
+                PinCategory.createPinCategory(pins.get(0), category1),
+                PinCategory.createPinCategory(pins.get(0), category4),
+                PinCategory.createPinCategory(pins.get(1), category1),
+                PinCategory.createPinCategory(pins.get(1), category4),
+                PinCategory.createPinCategory(pins.get(2), category1),
+                PinCategory.createPinCategory(pins.get(2), category4),
+
+                // 학생회관 핀: 식당
+                PinCategory.createPinCategory(pins.get(3), category2),
+
+                // 왕십리역 핀들: 교통
+                PinCategory.createPinCategory(pins.get(4), category5),
+                PinCategory.createPinCategory(pins.get(5), category5),
+                PinCategory.createPinCategory(pins.get(6), category5),
+                PinCategory.createPinCategory(pins.get(7), category5),
+
+                // 테스트장소2 핀들: 카페, 식당, 교육
+                PinCategory.createPinCategory(pins.get(8), category1),
+                PinCategory.createPinCategory(pins.get(8), category2),
+                PinCategory.createPinCategory(pins.get(8), category4),
+                PinCategory.createPinCategory(pins.get(9), category1),
+                PinCategory.createPinCategory(pins.get(9), category2),
+                PinCategory.createPinCategory(pins.get(9), category4)
+        ));
     }
 
     @Test
