@@ -1,10 +1,7 @@
 package konkuk.kuit.baro.domain.promise.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,6 +10,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ConfirmedPromiseResponseDTO {
     @Schema(description = "약속 ID", example = "1")
     private Long promiseId;
