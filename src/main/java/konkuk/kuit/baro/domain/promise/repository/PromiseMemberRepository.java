@@ -32,6 +32,9 @@ public interface PromiseMemberRepository extends JpaRepository<PromiseMember, Lo
     @Query("SELECT pm.promise FROM PromiseMember pm JOIN FETCH pm.promise WHERE pm.user.id = :userId")
     List<Promise> findWithPromiseByUserId(@Param("userId") Long userId);
 
+    @Query("SELECT pm.promise FROM PromiseMember pm JOIN FETCH pm.promise WHERE pm.user.id = :userId AND pm.isHost = true")
+    List<Promise> findWithPromiseByUserIdAndIsHost(@Param("userId") Long userId);
+
     @Query("SELECT pm.user.name FROM PromiseMember pm WHERE pm.promise.id = :promiseId")
     List<String> findMemberNamesByPromiseId(@Param("promiseId") Long promiseId);
 

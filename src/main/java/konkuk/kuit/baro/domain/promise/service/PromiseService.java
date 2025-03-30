@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -101,51 +102,70 @@ public class PromiseService {
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
     @Transactional
-    public PromiseManagementResponseDTO getPromiseManagementData(Long loginUserId){
+    public PromiseManagementResponseDTO getPromiseManagementData(Long loginUserId) {
+        return getPromiseManagementDataByUser(loginUserId, false);
+    }
+
+    @Transactional
+    public PromiseManagementResponseDTO getHostPromiseManagementData(Long loginUserId) {
+        return getPromiseManagementDataByUser(loginUserId, true);
+    }
+
+    private PromiseManagementResponseDTO getPromiseManagementDataByUser(Long loginUserId, boolean isHost) {
         User loginUser = findLoginUser(loginUserId);
 
-        // 사용자 ID를 기준으로 본인이 속한 Promise 목록 조회 (fetch join 사용)
-        List<Promise> myPromiseList = promiseMemberRepository.findWithPromiseByUserId(loginUser.getId());
+        List<Promise> myPromiseList = isHost
+                ? promiseMemberRepository.findWithPromiseByUserIdAndIsHost(loginUser.getId())
+                : promiseMemberRepository.findWithPromiseByUserId(loginUser.getId());
 
-         // 약속 상태별로 필터링
-        List<SuggestedPromiseResponseDTO> suggestedPromises = myPromiseList.stream()
-                .filter(promise -> promise.getStatus() == BaseStatus.PENDING)
+        List<SuggestedPromiseResponseDTO> suggestedPromises = filterAndMapSuggestedPromises(myPromiseList, BaseStatus.PENDING);
+        List<VotingPromiseResponseDTO> votingPromises = filterAndMapPromises(myPromiseList, BaseStatus.VOTING);
+        List<ConfirmedPromiseResponseDTO> confirmedPromises = filterAndMapConfirmedPromises(myPromiseList);
+
+        return new PromiseManagementResponseDTO(suggestedPromises, votingPromises, confirmedPromises);
+    }
+
+    private List<SuggestedPromiseResponseDTO> filterAndMapSuggestedPromises(List<Promise> promises, BaseStatus status) {
+        return promises.stream()
+                .filter(promise -> promise.getStatus() == status)
                 .map(promise -> new SuggestedPromiseResponseDTO(
                         promise.getId(),
                         promise.getPromiseName(),
                         calculateDday(promise.getSuggestedEndDate()),
                         promise.getSuggestedRegion(),
                         promise.getSuggestedStartDate(),
-                        promise.getSuggestedEndDate()))
+                        promise.getSuggestedEndDate()
+                ))
                 .collect(Collectors.toList());
+    }
 
-        List<VotingPromiseResponseDTO> votingPromises = myPromiseList.stream()
-                .filter(promise -> promise.getStatus() == BaseStatus.VOTING)
+    private List<VotingPromiseResponseDTO> filterAndMapPromises(List<Promise> promises, BaseStatus status) {
+        return promises.stream()
+                .filter(promise -> promise.getStatus() == status)
                 .map(promise -> new VotingPromiseResponseDTO(
                         promise.getId(),
                         promise.getPromiseName(),
                         calculateDday(promise.getSuggestedEndDate()),
                         promise.getSuggestedRegion(),
                         promise.getSuggestedStartDate(),
-                        promise.getSuggestedEndDate()))
+                        promise.getSuggestedEndDate()
+                ))
                 .collect(Collectors.toList());
+    }
 
-        List<ConfirmedPromiseResponseDTO> confirmedPromises = myPromiseList.stream()
+    private List<ConfirmedPromiseResponseDTO> filterAndMapConfirmedPromises(List<Promise> promises) {
+        return promises.stream()
                 .filter(promise -> promise.getStatus() == BaseStatus.CONFIRMED)
                 .map(promise -> new ConfirmedPromiseResponseDTO(
                         promise.getId(),
                         promise.getPromiseName(),
                         getPromiseMembersName(promise.getId()),
                         promise.getPlace().getPlaceName(),
-                        promise.getFixedDate()))
+                        promise.getFixedDate()
+                ))
                 .collect(Collectors.toList());
+    }
 
-        // 모든 리스트가 비어 있어도 null 대신 빈 리스트 사용
-        return new PromiseManagementResponseDTO(
-                suggestedPromises.isEmpty() ? Collections.emptyList() : suggestedPromises,
-                votingPromises.isEmpty() ? Collections.emptyList() : votingPromises,
-                confirmedPromises.isEmpty() ? Collections.emptyList() : confirmedPromises
-        );}
 
     private User findLoginUser(Long loginUserId) {
         return userRepository.findById(loginUserId)
@@ -252,6 +272,7 @@ public class PromiseService {
     }
 
     private List<String> getPromiseMembersName(Long promiseId) {
-        return promiseMemberRepository.findMemberNamesByPromiseId(promiseId);
+        List<String> memberNames = promiseMemberRepository.findMemberNamesByPromiseId(promiseId);
+        return memberNames != null ? memberNames : new ArrayList<>();  // null일 경우 빈 리스트 반환
     }
 }
