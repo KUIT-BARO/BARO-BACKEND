@@ -23,7 +23,7 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
             @Param("placeCategoryIds") List<Long> placeCategoryIds);
 
     @Query("SELECT p FROM Place p WHERE ST_X(p.location) = :longitude AND ST_Y(p.location) = :latitude")
-    Place findByLocation(double latitude, double longitude);
+    Optional<Place> findByLocation(double latitude, double longitude);
 
     @Query(value = """
         SELECT NEW

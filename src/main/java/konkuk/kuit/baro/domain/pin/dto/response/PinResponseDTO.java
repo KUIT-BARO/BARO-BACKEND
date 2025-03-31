@@ -1,4 +1,4 @@
-package konkuk.kuit.baro.domain.pin.dto;
+package konkuk.kuit.baro.domain.pin.dto.response;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;

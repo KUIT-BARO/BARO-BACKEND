@@ -1,6 +1,7 @@
 package konkuk.kuit.baro.domain.pin.service;
 
-import konkuk.kuit.baro.domain.pin.dto.PinResponseDTO;
+import konkuk.kuit.baro.domain.pin.dto.request.PinRequestDTO;
+import konkuk.kuit.baro.domain.pin.dto.response.PinResponseDTO;
 import konkuk.kuit.baro.domain.pin.model.Pin;
 import konkuk.kuit.baro.domain.pin.repository.PinRepository;
 import konkuk.kuit.baro.domain.place.model.Place;
@@ -42,10 +43,9 @@ public class PinService {
                 .orElseThrow((() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
         Place place = placeRepository.findByLocation(request.getLatitude(), request.getLongitude())
                 .orElseGet(() -> {
-                    Point placePoint = GeometryUtil.createPoint(request.getLatitude(), request.getLongitude())
                     Place newPlace = Place.builder()
                             .placeName(request.getPlaceName())
-                            .location(placePoint)
+                            .location(GeometryUtil.createPoint(request.getLatitude(), request.getLongitude()))
                             .placeAddress(request.getPlaceAddress())
                             .build();
                     return placeRepository.save(newPlace);
