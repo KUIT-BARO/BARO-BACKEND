@@ -104,7 +104,7 @@ public class PromiseService {
     @Transactional
     public PromiseManagementResponseDTO getPromiseManagementData(Long loginUserId, boolean isHost) {
         User loginUser = findLoginUser(loginUserId);
-        List<Promise> myPromiseList = promiseMemberRepository.findWithPromiseByUserId(loginUser.getId(), isHost);
+        List<Promise> myPromiseList = promiseMemberRepository.findByUserIdAndHost(loginUser.getId(), isHost);
         if( myPromiseList == null){myPromiseList = new ArrayList<>();}  // null일 경우 빈 리스트 반환
 
         List<SuggestedPromiseResponseDTO> suggestedPromises = new ArrayList<>();
