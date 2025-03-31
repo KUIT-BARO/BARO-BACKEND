@@ -105,6 +105,7 @@ public class PromiseService {
     public PromiseManagementResponseDTO getPromiseManagementData(Long loginUserId, boolean isHost) {
         User loginUser = findLoginUser(loginUserId);
         List<Promise> myPromiseList = promiseMemberRepository.findWithPromiseByUserId(loginUser.getId(), isHost);
+        if( myPromiseList == null){myPromiseList = new ArrayList<>();}  // null일 경우 빈 리스트 반환
 
         List<SuggestedPromiseResponseDTO> suggestedPromises = new ArrayList<>();
         List<VotingPromiseResponseDTO> votingPromises = new ArrayList<>();
@@ -115,6 +116,8 @@ public class PromiseService {
                 case PENDING -> suggestedPromises.add(mapToSuggestedPromiseDTO(promise));
                 case VOTING -> votingPromises.add(mapToVotingPromiseDTO(promise));
                 case CONFIRMED -> confirmedPromises.add(mapToConfirmedPromiseDTO(promise));
+                case ACTIVE -> {}
+                default -> throw new IllegalArgumentException();
             }
         }
 

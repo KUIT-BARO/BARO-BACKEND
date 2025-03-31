@@ -30,8 +30,8 @@ public interface PromiseMemberRepository extends JpaRepository<PromiseMember, Lo
     List<String> findColorsByPromiseId(Long promiseId);
 
     @Query("SELECT pm.promise FROM PromiseMember pm " +
-            "JOIN FETCH pm.promise p " +
-            "LEFT JOIN FETCH p.place " +
+            "JOIN FETCH pm.promise " +
+            "LEFT JOIN FETCH pm.promise.place " +
             "WHERE pm.user.id = :userId " +
             "AND (:isHost IS NULL OR pm.isHost = :isHost)")
     List<Promise> findWithPromiseByUserId(

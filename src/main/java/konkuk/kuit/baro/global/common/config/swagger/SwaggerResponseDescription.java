@@ -56,6 +56,12 @@ public enum SwaggerResponseDescription {
             USER_NOT_FOUND,
             PROMISE_NOT_FOUND
     ))),
+    PROMISE_MANAGING_PAGE(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND
+    ))),
+    HOST_PROMISE_MANAGING_PAGE(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND
+    ))),
 
     //Schedule
     SCHEDULE_ADD(new LinkedHashSet<>(Set.of(
