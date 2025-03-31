@@ -101,14 +101,14 @@ public class PromiseController {
     @GetMapping("/management")
     // @CustomExceptionDescription(PROMISE_MANAGING_PAGE)
     public BaseResponse<PromiseManagementResponseDTO> getPromiseManagementPage() {
-        return BaseResponse.ok(promiseService.getPromiseManagementData(1L));
+        return BaseResponse.ok(promiseService.getPromiseManagementData(1L, true));
     }
 
     @Tag(name = "호스트의 약속 관리 페이지 API", description = "약속 제안 관련 API")
     @Operation(summary = "호스트의 약속 관리 페이지", description = "호스트가 약속 관리 페이지에 필요한 데이터를 반환합니다.")
     @GetMapping("/management/host")
-    // @CustomExceptionDescription(PROMISE_MANAGING_PAGE)
+    // @CustomExceptionDescription(HOST_PROMISE_MANAGING_PAGE)
     public BaseResponse<PromiseManagementResponseDTO> getHostPromiseManagementPage() {
-        return BaseResponse.ok(promiseService.getHostPromiseManagementData(1L));
+        return BaseResponse.ok(promiseService.getPromiseManagementData(1L, false));
     }
 }

@@ -102,70 +102,56 @@ public class PromiseService {
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
     @Transactional
-    public PromiseManagementResponseDTO getPromiseManagementData(Long loginUserId) {
-        return getPromiseManagementDataByUser(loginUserId, false);
-    }
-
-    @Transactional
-    public PromiseManagementResponseDTO getHostPromiseManagementData(Long loginUserId) {
-        return getPromiseManagementDataByUser(loginUserId, true);
-    }
-
-    private PromiseManagementResponseDTO getPromiseManagementDataByUser(Long loginUserId, boolean isHost) {
+    public PromiseManagementResponseDTO getPromiseManagementData(Long loginUserId, boolean isHost) {
         User loginUser = findLoginUser(loginUserId);
+        List<Promise> myPromiseList = promiseMemberRepository.findWithPromiseByUserId(loginUser.getId(), isHost);
 
-        List<Promise> myPromiseList = isHost
-                ? promiseMemberRepository.findWithPromiseByUserIdAndIsHost(loginUser.getId())
-                : promiseMemberRepository.findWithPromiseByUserId(loginUser.getId());
+        List<SuggestedPromiseResponseDTO> suggestedPromises = new ArrayList<>();
+        List<VotingPromiseResponseDTO> votingPromises = new ArrayList<>();
+        List<ConfirmedPromiseResponseDTO> confirmedPromises = new ArrayList<>();
 
-        List<SuggestedPromiseResponseDTO> suggestedPromises = filterAndMapSuggestedPromises(myPromiseList, BaseStatus.PENDING);
-        List<VotingPromiseResponseDTO> votingPromises = filterAndMapPromises(myPromiseList, BaseStatus.VOTING);
-        List<ConfirmedPromiseResponseDTO> confirmedPromises = filterAndMapConfirmedPromises(myPromiseList);
+        for (Promise promise : myPromiseList) {
+            switch (promise.getStatus()) {
+                case PENDING -> suggestedPromises.add(mapToSuggestedPromiseDTO(promise));
+                case VOTING -> votingPromises.add(mapToVotingPromiseDTO(promise));
+                case CONFIRMED -> confirmedPromises.add(mapToConfirmedPromiseDTO(promise));
+            }
+        }
 
         return new PromiseManagementResponseDTO(suggestedPromises, votingPromises, confirmedPromises);
     }
 
-    private List<SuggestedPromiseResponseDTO> filterAndMapSuggestedPromises(List<Promise> promises, BaseStatus status) {
-        return promises.stream()
-                .filter(promise -> promise.getStatus() == status)
-                .map(promise -> new SuggestedPromiseResponseDTO(
-                        promise.getId(),
-                        promise.getPromiseName(),
-                        calculateDday(promise.getSuggestedEndDate()),
-                        promise.getSuggestedRegion(),
-                        promise.getSuggestedStartDate(),
-                        promise.getSuggestedEndDate()
-                ))
-                .collect(Collectors.toList());
+    private SuggestedPromiseResponseDTO mapToSuggestedPromiseDTO(Promise promise) {
+        return new SuggestedPromiseResponseDTO(
+                promise.getId(),
+                promise.getPromiseName(),
+                calculateDday(promise.getSuggestedEndDate()),
+                promise.getSuggestedRegion(),
+                promise.getSuggestedStartDate(),
+                promise.getSuggestedEndDate()
+        );
     }
 
-    private List<VotingPromiseResponseDTO> filterAndMapPromises(List<Promise> promises, BaseStatus status) {
-        return promises.stream()
-                .filter(promise -> promise.getStatus() == status)
-                .map(promise -> new VotingPromiseResponseDTO(
-                        promise.getId(),
-                        promise.getPromiseName(),
-                        calculateDday(promise.getSuggestedEndDate()),
-                        promise.getSuggestedRegion(),
-                        promise.getSuggestedStartDate(),
-                        promise.getSuggestedEndDate()
-                ))
-                .collect(Collectors.toList());
+    private VotingPromiseResponseDTO mapToVotingPromiseDTO(Promise promise) {
+        return new VotingPromiseResponseDTO(
+                promise.getId(),
+                promise.getPromiseName(),
+                calculateDday(promise.getSuggestedEndDate()),
+                promise.getSuggestedRegion(),
+                promise.getSuggestedStartDate(),
+                promise.getSuggestedEndDate()
+        );
     }
 
-    private List<ConfirmedPromiseResponseDTO> filterAndMapConfirmedPromises(List<Promise> promises) {
-        return promises.stream()
-                .filter(promise -> promise.getStatus() == BaseStatus.CONFIRMED)
-                .map(promise -> new ConfirmedPromiseResponseDTO(
-                        promise.getId(),
-                        promise.getPromiseName(),
-                        getPromiseMembersName(promise.getId()),
-                        promise.getPlace().getPlaceName(),
-                        promise.getFixedDate()
-                ))
-                .collect(Collectors.toList());
+    private ConfirmedPromiseResponseDTO mapToConfirmedPromiseDTO(Promise promise) {
+        return new ConfirmedPromiseResponseDTO(
+                promise.getId(),
+                promise.getPromiseName(),
+                getPromiseMembersName(promise.getId()),
+                promise.getPlace().getPlaceName(),
+                promise.getFixedDate()
+        );
     }
-
 
     private User findLoginUser(Long loginUserId) {
         return userRepository.findById(loginUserId)
