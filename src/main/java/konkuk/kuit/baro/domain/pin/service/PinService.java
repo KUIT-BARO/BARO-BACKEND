@@ -1,6 +1,7 @@
 package konkuk.kuit.baro.domain.pin.service;
 
 import konkuk.kuit.baro.domain.category.repository.PlaceCategoryRepository;
+import konkuk.kuit.baro.domain.pin.dto.PinResponseDTO;
 import konkuk.kuit.baro.domain.pin.model.Pin;
 import konkuk.kuit.baro.domain.pin.repository.PinRepository;
 import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
@@ -19,16 +20,15 @@ public class PinService {
 
     public PinResponseDTO getPinData(Long pinId){
         Pin pin = pinRepository.findById(pinId)
-                .orElseThrow((() -> new CustomException(ErrorCode.PIN_NOT_FOUND))
+                .orElseThrow((() -> new CustomException(ErrorCode.PIN_NOT_FOUND)));
 
-    return new PinResponseDTO(
+        return new PinResponseDTO(
                 pin.getUser().getName(),
                 pin.getUser().getEmail(),
                 pin.getUser().getProfileImage(),
                 pin.getReview(),
                 pin.getScore(),
-                pin.getPlace().getPlaceName()
-        );
+                pin.getPlace().getPlaceName());
     }
 }
 
