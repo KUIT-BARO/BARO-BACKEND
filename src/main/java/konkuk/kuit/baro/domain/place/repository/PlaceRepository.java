@@ -22,6 +22,9 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
             @Param("currentUserLocation") Point currentUserLocation,
             @Param("placeCategoryIds") List<Long> placeCategoryIds);
 
+    @Query("SELECT p FROM Place p WHERE ST_X(p.location) = :longitude AND ST_Y(p.location) = :latitude")
+    Place findByLocation(double latitude, double longitude);
+
     @Query(value = """
         SELECT NEW
         konkuk.kuit.baro.domain.place.dto.response.PlaceSummaryInfoResponseDTO(
