@@ -88,6 +88,10 @@ public enum SwaggerResponseDescription {
             USER_NOT_FOUND,
             PROMISE_NOT_FOUND,
             PROMISE_MEMBER_NOT_FOUND
+    ))),
+
+    PENDING_PROMISE_STATUS(new LinkedHashSet<>(Set.of(
+            PROMISE_NOT_FOUND
     )));
 
     private final Set<ErrorCode> errorCodeList;
