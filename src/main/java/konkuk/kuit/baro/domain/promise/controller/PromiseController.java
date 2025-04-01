@@ -13,6 +13,7 @@ import konkuk.kuit.baro.domain.promise.dto.request.SetPromiseAvailableTimeReques
 import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.*;
 import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
+import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseAvailableTimeResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseStatusResponseDTO;
 import konkuk.kuit.baro.domain.promise.model.Promise;
@@ -41,8 +42,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.*;
-
-
 
 @Slf4j
 @RestController
@@ -85,18 +84,20 @@ public class PromiseController {
     @Tag(name = "Place Choice", description = "장소 선택 관련 API")
     @Operation(summary = "약속 수락 - 장소 선택 초기", description = "장소 선택 초기 화면입니다.")
     @GetMapping("{promiseId}/place-choice")
+    @CustomExceptionDescription(GET_SUGGESTED_PLACE)
     public BaseResponse<PromisePlaceResponseDTO> getSuggestedPlace
-            (@Validated @RequestBody PromisePlaceRequestDTO req) {
-        return BaseResponse.ok(promiseSuggestedPlaceService.getSuggestedPlace(req));
-    }
+            (@PathVariable Long promiseId,
+             @CurrentUserId @Parameter(hidden = true) Long userId,
+             @RequestParam Double latitude, @RequestParam Double longitude) {
+        return BaseResponse.ok(promiseSuggestedPlaceService.getSuggestedPlace(latitude, longitude, userId, promiseId));
 
     @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
     @Operation(summary = "약속 상태 확인", description = "약속의 상태를 확인합니다.")
     @GetMapping("/{promiseId}/status")
     @CustomExceptionDescription(PROMISE_STATUS)
-    public BaseResponse<PromiseStatusResponseDTO> getPromiseStatus(//@CurrentUserId Long userId,
+    public BaseResponse<PromiseStatusResponseDTO> getPromiseStatus(@CurrentUserId Long userId,
                                                                    @PathVariable("promiseId") Long promiseId) {
-        return BaseResponse.ok(promiseService.getPromiseStatus(1L, promiseId));
+        return BaseResponse.ok(promiseService.getPromiseStatus(userId, promiseId));
     }
 
     @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
