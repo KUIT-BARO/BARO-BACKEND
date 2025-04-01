@@ -14,6 +14,6 @@ import java.util.List;
 public class PromiseAvailableTimeResponseDTO {
     List<PromiseMemberDTO> promiseMembers;
 
-    List<List<PromiseMemberAvailableTimeDTO>> promiseAvailableTimes;
+    List<PromiseMemberAvailableTimeDTO> promiseAvailableTimes;
 
 }

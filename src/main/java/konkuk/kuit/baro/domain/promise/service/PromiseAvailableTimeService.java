@@ -37,9 +37,10 @@ public class PromiseAvailableTimeService {
 
     public PromiseAvailableTimeResponseDTO getPromiseAvailableTime(Long promiseId) {
         List<PromiseMember> promiseMembers = promiseMemberRepository.findAllByPromiseId(promiseId);
-        List<List<PromiseMemberAvailableTimeDTO>> availableTimes = new ArrayList<>();
+        List<PromiseMemberAvailableTimeDTO> availableTimes = new ArrayList<>();
         for (PromiseMember promiseMember : promiseMembers) {
-            availableTimes.add(promiseAvailableTimeRepository.findAllByPromiseMemberId(promiseMember.getId()));
+            availableTimes.add(new PromiseMemberAvailableTimeDTO(promiseMember.getId(),
+                    promiseAvailableTimeRepository.findAllByPromiseMemberId(promiseMember.getId())));
         }
         return new PromiseAvailableTimeResponseDTO(promiseMemberRepository.findPromiseMemberDTOByPromiseId(promiseId), availableTimes);
     }
