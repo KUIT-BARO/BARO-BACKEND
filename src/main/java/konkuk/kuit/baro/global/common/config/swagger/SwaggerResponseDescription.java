@@ -82,6 +82,12 @@ public enum SwaggerResponseDescription {
     ))),
     PLACE_PIN_LIST(new LinkedHashSet<>(Set.of(
             PLACE_NOT_FOUND
+    ))),
+
+    PROMISE_STATUS(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND,
+            PROMISE_NOT_FOUND,
+            PROMISE_MEMBER_NOT_FOUND
     )));
 
     private final Set<ErrorCode> errorCodeList;

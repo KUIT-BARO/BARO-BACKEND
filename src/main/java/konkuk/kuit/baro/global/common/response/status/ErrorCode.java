@@ -48,7 +48,10 @@ public enum ErrorCode implements ResponseStatus {
     EXPIRED_EMAIL_CODE(608, BAD_REQUEST.value(), "인증 번호가 만료되었거나 없습니다."),
     AUTHCODE_ALREADY_AUTHENTICATED(609, BAD_REQUEST.value(), "이미 인증이 된 번호입니다."),
     AUTHCODE_UNAUTHORIZED(610, HttpStatus.UNAUTHORIZED.value(), "이메일 인증을 하지 않았습니다."),
-    LOGIN_FAILED(611, BAD_REQUEST.value(), "이메일 혹은 비밀번호가 올바르지 않습니다.");
+    LOGIN_FAILED(611, BAD_REQUEST.value(), "이메일 혹은 비밀번호가 올바르지 않습니다."),
+
+    // PromiseMember
+    PROMISE_MEMBER_NOT_FOUND(700, HttpStatus.NOT_FOUND.value(), "해당 약속에 참여한 사용자가 아닙니다.");
 
     @Getter
     private final int code;

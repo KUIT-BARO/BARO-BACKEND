@@ -1,6 +1,7 @@
 package konkuk.kuit.baro.domain.promise.service;
 
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
+import konkuk.kuit.baro.domain.promise.dto.response.PromiseStatusResponseDTO;
 import konkuk.kuit.baro.domain.promise.model.Promise;
 import konkuk.kuit.baro.domain.promise.model.PromiseMember;
 import konkuk.kuit.baro.domain.promise.repository.PromiseMemberRepository;
@@ -53,8 +54,49 @@ public class PromiseService {
         promiseMemberRepository.save(promiseMember);
     }
 
-    private User findLoginUser(Long loginUserId) {
-        return userRepository.findById(loginUserId)
+    // 약속 상태 확인
+    public PromiseStatusResponseDTO getPromiseStatus(Long userId, Long promiseId) {
+        PromiseMember findPromiseMember = findPromiseMember(userId, promiseId);
+
+        return new PromiseStatusResponseDTO(extractPromiseStatus(findPromiseMember), findPromiseMember.getIsHost());
+    }
+
+
+    private User findLoginUser(Long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
+
+    private PromiseMember findPromiseMember(Long userId, Long promiseId) {
+
+        if (!userIsExist(userId)) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        if(!promiseIsExist(promiseId)) {
+            throw new CustomException(ErrorCode.PROMISE_NOT_FOUND);
+        }
+
+        PromiseMember findPromiseMember = promiseMemberRepository.findByUserIdAndPromiseId(userId, promiseId);
+
+        if (findPromiseMember == null) {
+            throw new CustomException(ErrorCode.PROMISE_MEMBER_NOT_FOUND);
+        }
+
+        return findPromiseMember;
+    }
+
+    private boolean userIsExist(Long userId) {
+        return userRepository.existsById(userId);
+    }
+
+    private boolean promiseIsExist(Long promiseId) {
+        return promiseRepository.existsById(promiseId);
+    }
+
+    private String extractPromiseStatus(PromiseMember promiseMember) {
+        return promiseMember.getPromise().getStatus().name();
+    }
+
+
 }
