@@ -12,9 +12,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PromiseMemberSuggestStateDTO {
 
-    @Schema(description = "유저 식별자", example = "1")
-    private Long userId;
-
     @Schema(description = "제안을 얼만큼 수행했는지 여부", example = "COMPLETE")
     private String suggestionProgress;
 
