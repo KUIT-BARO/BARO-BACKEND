@@ -87,9 +87,8 @@ public class PromiseController {
     @CustomExceptionDescription(GET_SUGGESTED_PLACE)
     public BaseResponse<PromisePlaceResponseDTO> getSuggestedPlace
             (@PathVariable Long promiseId,
-             @CurrentUserId @Parameter(hidden = true) Long userId,
              @RequestParam Double latitude, @RequestParam Double longitude) {
-        return BaseResponse.ok(promiseSuggestedPlaceService.getSuggestedPlace(latitude, longitude, userId, promiseId));
+        return BaseResponse.ok(promiseSuggestedPlaceService.getSuggestedPlace(latitude, longitude, promiseId));
 
     @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
     @Operation(summary = "약속 상태 확인", description = "약속의 상태를 확인합니다.")

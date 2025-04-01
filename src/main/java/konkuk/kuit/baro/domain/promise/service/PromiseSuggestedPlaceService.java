@@ -7,6 +7,7 @@ import konkuk.kuit.baro.domain.promise.dto.response.PromiseMemberDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromisePlaceResponseDTO;
 import konkuk.kuit.baro.domain.promise.repository.PromiseMemberRepository;
 import konkuk.kuit.baro.domain.promise.repository.PromiseSuggestedPlaceRepository;
+import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.util.GeometryUtil;
@@ -29,14 +30,11 @@ public class PromiseSuggestedPlaceService {
     private final UserRepository userRepository;
     private final PlaceRepository placeRepository;
     private final PromiseMemberRepository promiseMemberRepository;
-    private final PromiseSuggestedPlaceRepository promiseSuggestedPlaceRepository;
 
-    public PromisePlaceResponseDTO getSuggestedPlace(Double latitude, Double longitude, Long userId, Long promiseId) {
+    public PromisePlaceResponseDTO getSuggestedPlace(Double latitude, Double longitude, Long promiseId) {
         if (!validateLocation(latitude, longitude)) {
             throw new CustomException(INVALID_LOCATION);
         }
-
-        userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         Point suggestedPlaceLocation = GeometryUtil.createPoint(latitude, longitude);
 
@@ -48,7 +46,7 @@ public class PromiseSuggestedPlaceService {
 
         List<PromiseMemberDTO> promiseMemberDTOs = promiseMemberRepository.findPromiseMemberDTOByPromiseId(promiseId);
 
-        return new PromisePlaceResponseDTO(places, promiseMemberDTOs);
+        return new PromisePlaceResponseDTO(,places, promiseMemberDTOs);
     }
 
     private Boolean validateLocation(Double latitude, Double longitude) {
