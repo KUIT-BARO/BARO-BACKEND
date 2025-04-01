@@ -75,7 +75,7 @@ class PromiseTimeVoteHistoryRepositoryTest {
 
         PromiseVote savedPromiseVote = promiseVoteRepository.save(promiseVote);
 
-        PromiseCandidateTime promiseCandidateTime = PromiseCandidateTime.createPromiseCandidateTime(LocalDate.now(), LocalTime.now(), LocalTime.now().plusHours(1), savedPromiseVote);
+        PromiseCandidateTime promiseCandidateTime = PromiseCandidateTime.createPromiseCandidateTime(LocalDate.now(), LocalTime.now(), savedPromiseVote);
 
         promiseCandidateTimeRepository.save(promiseCandidateTime);
 

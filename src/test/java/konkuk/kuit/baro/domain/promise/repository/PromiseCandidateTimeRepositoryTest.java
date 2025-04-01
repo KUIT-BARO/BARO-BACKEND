@@ -82,7 +82,7 @@ class PromiseCandidateTimeRepositoryTest {
     void save() {
         // given
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
-        PromiseCandidateTime promiseCandidateTime = PromiseCandidateTime.createPromiseCandidateTime(LocalDate.now(), LocalTime.now(), LocalTime.now().plusHours(1), promiseVote);
+        PromiseCandidateTime promiseCandidateTime = PromiseCandidateTime.createPromiseCandidateTime(LocalDate.now(), LocalTime.now(), promiseVote);
 
         // when
         promiseCandidateTimeRepository.save(promiseCandidateTime);
@@ -96,7 +96,7 @@ class PromiseCandidateTimeRepositoryTest {
     void delete() {
         // given
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
-        PromiseCandidateTime promiseCandidateTime = PromiseCandidateTime.createPromiseCandidateTime(LocalDate.now(), LocalTime.now(), LocalTime.now().plusHours(1), promiseVote);
+        PromiseCandidateTime promiseCandidateTime = PromiseCandidateTime.createPromiseCandidateTime(LocalDate.now(), LocalTime.now(), promiseVote);
 
         promiseCandidateTimeRepository.save(promiseCandidateTime);
 
@@ -120,7 +120,7 @@ class PromiseCandidateTimeRepositoryTest {
     void delete_promise() {
         // given
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
-        PromiseCandidateTime promiseCandidateTime = PromiseCandidateTime.createPromiseCandidateTime(LocalDate.now(), LocalTime.now(), LocalTime.now().plusHours(1), promiseVote);
+        PromiseCandidateTime promiseCandidateTime = PromiseCandidateTime.createPromiseCandidateTime(LocalDate.now(), LocalTime.now(), promiseVote);
 
         promiseCandidateTimeRepository.save(promiseCandidateTime);
 
