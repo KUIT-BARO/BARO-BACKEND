@@ -1,6 +1,7 @@
 package konkuk.kuit.baro.domain.promise.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import konkuk.kuit.baro.domain.place.model.Place;
@@ -77,7 +78,7 @@ public class PromiseController {
     @Operation(summary = "약속 수락 - 시간 선택", description = "약속 참여자가 가능한 시간대를 선택합니다.")
     @PostMapping("{promiseId}/time-choice")
     @CustomExceptionDescription(SET_AVAILALBLE_TIME)
-    public BaseResponse<Void> setPromiseAvailableTime(@PathVariable Long promiseId, Long userId,
+    public BaseResponse<Void> setPromiseAvailableTime(@PathVariable Long promiseId, @CurrentUserId @Parameter(hidden = true) Long userId,
                                                       @Validated @RequestBody SetPromiseAvailableTimeRequestDTO req){
         promiseAvailableTimeService.setPromiseAvailableTime(req, userId, promiseId);
         return BaseResponse.ok(null);
@@ -88,7 +89,7 @@ public class PromiseController {
     @PostMapping("{promiseId}/place-choice")
     public BaseResponse<PromisePlaceResponseDTO> getSuggestedPlace
             (@PathVariable Long promiseId,
-             @CurrentUserId Long userId,
+             @CurrentUserId @Parameter(hidden = true) Long userId,
              @Validated @RequestBody PromisePlaceRequestDTO req) {
         return BaseResponse.ok(promiseSuggestedPlaceService.getSuggestedPlace(req,userId));
     }
