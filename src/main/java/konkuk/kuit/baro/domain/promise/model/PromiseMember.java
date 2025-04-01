@@ -65,6 +65,10 @@ public class PromiseMember extends BaseEntity {
         return promiseMember;
     }
 
+    public String extractProfileImage() {
+        return this.getUser().getProfileImage();
+    }
+
     // 연관 관계 편의 메서드
     private void setUser(User user) {
         this.user = user;
@@ -91,5 +95,6 @@ public class PromiseMember extends BaseEntity {
     public void addPromisePlaceVoteHistory(PromisePlaceVoteHistory promisePlaceVoteHistory) {
         this.promisePlaceVoteHistories.add(promisePlaceVoteHistory);
     }
+
 
 }
