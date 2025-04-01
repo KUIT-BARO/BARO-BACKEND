@@ -48,8 +48,9 @@ public class SecurityConfig {
                         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(PERMITTED_URLS).permitAll()
-                        .requestMatchers("/**").authenticated())
+//                        .requestMatchers(PERMITTED_URLS).permitAll()
+//                        .requestMatchers("/**").authenticated())
+                          .anyRequest().permitAll())
                 .exceptionHandling(customizer -> customizer
                         .authenticationEntryPoint(customAuthenticationEntryPoint()))
                 .addFilterAfter(jwtAuthenticationFilter(), LogoutFilter.class)
