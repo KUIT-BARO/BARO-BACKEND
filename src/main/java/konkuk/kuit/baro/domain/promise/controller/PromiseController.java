@@ -41,10 +41,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
-import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.*;
+
 
 @Slf4j
 @RestController
@@ -86,12 +84,10 @@ public class PromiseController {
 
     @Tag(name = "Place Choice", description = "장소 선택 관련 API")
     @Operation(summary = "약속 수락 - 장소 선택 초기", description = "장소 선택 초기 화면입니다.")
-    @PostMapping("{promiseId}/place-choice")
+    @GetMapping("{promiseId}/place-choice")
     public BaseResponse<PromisePlaceResponseDTO> getSuggestedPlace
-            (@PathVariable Long promiseId,
-             @CurrentUserId @Parameter(hidden = true) Long userId,
-             @Validated @RequestBody PromisePlaceRequestDTO req) {
-        return BaseResponse.ok(promiseSuggestedPlaceService.getSuggestedPlace(req,userId));
+            (@Validated @RequestBody PromisePlaceRequestDTO req) {
+        return BaseResponse.ok(promiseSuggestedPlaceService.getSuggestedPlace(req));
     }
 
     @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
