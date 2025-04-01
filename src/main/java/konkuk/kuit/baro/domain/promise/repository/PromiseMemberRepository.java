@@ -44,4 +44,5 @@ public interface PromiseMemberRepository extends JpaRepository<PromiseMember, Lo
     List<Long> findUserIdListByPromiseid(Long promiseId);
 
     PromiseMember findByUserIdAndPromiseId(Long userId, Long promiseId);
+
 }

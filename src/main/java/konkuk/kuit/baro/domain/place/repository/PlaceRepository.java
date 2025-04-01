@@ -22,8 +22,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
             @Param("currentUserLocation") Point currentUserLocation,
             @Param("placeCategoryIds") List<Long> placeCategoryIds);
 
-
-
     @Query(value = """
         SELECT NEW
         konkuk.kuit.baro.domain.place.dto.response.PlaceSummaryInfoResponseDTO(
@@ -38,6 +36,11 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
         GROUP BY p.id
         """)
     Optional<PlaceSummaryInfoResponseDTO> findPlaceSummaryById(@Param("placeId") Long placeId);
+
+    @Query("SELECT DISTINCT p FROM Place p " +
+            "WHERE ST_Contains(ST_Buffer(:suggestedPlaceLocation, 2000), p.location)"
+    )
+    List<Place> findByLocation(@Param("suggestedPlaceLocation") Point suggestedPlaceLocation);
 
 
 
