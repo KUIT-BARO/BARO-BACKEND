@@ -63,7 +63,7 @@ public enum SwaggerResponseDescription {
             USER_NOT_FOUND
     ))),
     GET_SUGGESTED_PLACE(new LinkedHashSet<>(Set.of(
-            USER_NOT_FOUND,
+            PROMISE_NOT_FOUND,
             INVALID_LOCATION
     ))),
 
