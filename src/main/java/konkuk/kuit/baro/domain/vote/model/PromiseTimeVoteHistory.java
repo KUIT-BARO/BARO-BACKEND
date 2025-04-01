@@ -3,6 +3,7 @@ package konkuk.kuit.baro.domain.vote.model;
 import jakarta.persistence.*;
 import konkuk.kuit.baro.domain.promise.model.PromiseAvailableTime;
 import konkuk.kuit.baro.domain.promise.model.PromiseCandidateTime;
+import konkuk.kuit.baro.domain.promise.model.PromiseMember;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -27,11 +28,16 @@ public class PromiseTimeVoteHistory extends BaseEntity {
     @JoinColumn(name = "promise_candidate_time_id", nullable = false)
     private PromiseCandidateTime promiseCandidateTime;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "promise_member_id", nullable = false)
+    private PromiseMember promiseMember;
+
     // 생성 메서드
-    public static PromiseTimeVoteHistory createPromiseTimeVoteHistory(PromiseVote promiseVote, PromiseCandidateTime promiseCandidateTime) {
+    public static PromiseTimeVoteHistory createPromiseTimeVoteHistory(PromiseVote promiseVote, PromiseCandidateTime promiseCandidateTime, PromiseMember promiseMember) {
         PromiseTimeVoteHistory promiseTimeVoteHistory = new PromiseTimeVoteHistory();
         promiseTimeVoteHistory.setPromiseVote(promiseVote);
         promiseTimeVoteHistory.setPromiseCandidateTime(promiseCandidateTime);
+        promiseTimeVoteHistory.setPromiseMember(promiseMember);
         return promiseTimeVoteHistory;
     }
 
@@ -44,6 +50,11 @@ public class PromiseTimeVoteHistory extends BaseEntity {
     private void setPromiseCandidateTime(PromiseCandidateTime promiseCandidateTime) {
         this.promiseCandidateTime = promiseCandidateTime;
         promiseCandidateTime.addPromiseTimeVoteHistory(this);
+    }
+
+    private void setPromiseMember(PromiseMember promiseMember) {
+        this.promiseMember = promiseMember;
+        promiseMember.addPromiseTimeVoteHistory(this);
     }
 
 }
