@@ -21,6 +21,7 @@ import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.response.status.BaseStatus;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import konkuk.kuit.baro.global.common.util.ColorUtil;
+import konkuk.kuit.baro.global.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -129,7 +130,7 @@ public class PromiseService {
         return new SuggestedPromiseResponseDTO(
                 promise.getId(),
                 promise.getPromiseName(),
-                calculateDday(promise.getSuggestedEndDate()),
+                DateUtil.calculateDday(promise.getSuggestedEndDate()),
                 promise.getSuggestedRegion(),
                 promise.getSuggestedStartDate(),
                 promise.getSuggestedEndDate()
@@ -140,7 +141,7 @@ public class PromiseService {
         return new VotingPromiseResponseDTO(
                 promise.getId(),
                 promise.getPromiseName(),
-                calculateDday(promise.getSuggestedEndDate()),
+                DateUtil.calculateDday(promise.getSuggestedEndDate()),
                 promise.getSuggestedRegion(),
                 promise.getSuggestedStartDate(),
                 promise.getSuggestedEndDate()
