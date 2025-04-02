@@ -31,9 +31,6 @@ public class PromiseCandidateTime extends BaseEntity {
     @Column(name = "promise_candidate_time_start_time", nullable = false)
     private LocalTime promiseCandidateTimeStartTime;
 
-    @Column(name = "promise_candidate_time_end_time", nullable = false)
-    private LocalTime promiseCandidateTimeEndTime;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "promis_vote_id", nullable = false)
     private PromiseVote promiseVote;
@@ -43,11 +40,10 @@ public class PromiseCandidateTime extends BaseEntity {
 
 
     // 생성 메서드
-    public static PromiseCandidateTime createPromiseCandidateTime(LocalDate promiseCandidateTimeDate, LocalTime promiseCandidateTimeStartTime, LocalTime promiseCandidateTimeEndTime, PromiseVote promiseVote) {
+    public static PromiseCandidateTime createPromiseCandidateTime(LocalDate promiseCandidateTimeDate, LocalTime promiseCandidateTimeStartTime, PromiseVote promiseVote) {
         PromiseCandidateTime promiseCandidateTime = new PromiseCandidateTime();
         promiseCandidateTime.promiseCandidateTimeDate = promiseCandidateTimeDate;
         promiseCandidateTime.promiseCandidateTimeStartTime = promiseCandidateTimeStartTime;
-        promiseCandidateTime.promiseCandidateTimeEndTime = promiseCandidateTimeEndTime;
         promiseCandidateTime.setPromiseVote(promiseVote);
         return promiseCandidateTime;
     }

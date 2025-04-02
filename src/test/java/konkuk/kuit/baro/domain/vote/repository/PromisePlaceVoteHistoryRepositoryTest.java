@@ -19,6 +19,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Description;
@@ -49,7 +50,7 @@ class PromisePlaceVoteHistoryRepositoryTest {
     @Autowired
     private PromiseVoteRepository promiseVoteRepository;
 
-    private static final GeometryFactory geometryFactory = new GeometryFactory();
+    private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
     @PersistenceContext
     private EntityManager em;
@@ -105,9 +106,10 @@ class PromisePlaceVoteHistoryRepositoryTest {
         // given
         PromiseSuggestedPlace promiseSuggestedPlace = promiseSuggestedPlaceRepository.findById(1L).get();
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
+        PromiseMember promiseMember = promiseMemberRepository.findById(1L).get();
 
         // when
-        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseSuggestedPlace, promiseVote);
+        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseSuggestedPlace, promiseVote, promiseMember);
 
         promisePlaceVoteHistoryRepository.save(promisePlaceVoteHistory);
 
@@ -124,8 +126,9 @@ class PromisePlaceVoteHistoryRepositoryTest {
         // given
         PromiseSuggestedPlace promiseSuggestedPlace = promiseSuggestedPlaceRepository.findById(1L).get();
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
+        PromiseMember promiseMember = promiseMemberRepository.findById(1L).get();
 
-        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseSuggestedPlace, promiseVote);
+        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseSuggestedPlace, promiseVote, promiseMember);
 
         promisePlaceVoteHistoryRepository.save(promisePlaceVoteHistory);
 
@@ -151,10 +154,11 @@ class PromisePlaceVoteHistoryRepositoryTest {
         PromiseSuggestedPlace promiseSuggestedPlace = promiseSuggestedPlaceRepository.findById(1L).get();
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
         Promise promise = promiseRepository.findById(1L).get();
+        PromiseMember promiseMember = promiseMemberRepository.findById(1L).get();
 
         promise.setPromiseVote(promiseVote);
 
-        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseSuggestedPlace, promiseVote);
+        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseSuggestedPlace, promiseVote, promiseMember);
 
         promisePlaceVoteHistoryRepository.save(promisePlaceVoteHistory);
 
@@ -171,7 +175,38 @@ class PromisePlaceVoteHistoryRepositoryTest {
         // then
         assertThat(promisePlaceVoteHistoryRepository.findById(1L).isEmpty()).isTrue();
 
-
     }
+
+    @Test
+    @DisplayName("유저 삭제 시 약속 장소 투표 내역 삭제 테스트")
+    @Description("유저를 삭제했을 때, 약속 장소 투표 내역도 삭제되는 지 테스트. 유저 삭제 -> 약속 참여자 삭제 -> 약속 장소 투표 내역 삭제")
+    void delete_User() {
+        // given
+        PromiseSuggestedPlace promiseSuggestedPlace = promiseSuggestedPlaceRepository.findById(1L).get();
+        PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
+        Promise promise = promiseRepository.findById(1L).get();
+        PromiseMember promiseMember = promiseMemberRepository.findById(1L).get();
+
+        promise.setPromiseVote(promiseVote);
+
+        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseSuggestedPlace, promiseVote, promiseMember);
+
+        promisePlaceVoteHistoryRepository.save(promisePlaceVoteHistory);
+
+        em.flush();
+        em.clear();
+
+        // when
+        User findUser = userRepository.findById(1L).get();
+        userRepository.delete(findUser);
+
+        em.flush();
+        em.clear();
+
+        // then
+        assertThat(promisePlaceVoteHistoryRepository.findById(1L).isEmpty()).isTrue();
+    }
+
+
 
 }

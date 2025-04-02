@@ -4,16 +4,14 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
-import konkuk.kuit.baro.domain.promise.model.Promise;
-import konkuk.kuit.baro.domain.promise.model.PromiseAvailableTime;
-import konkuk.kuit.baro.domain.promise.model.PromiseCandidateTime;
-import konkuk.kuit.baro.domain.promise.model.PromiseMember;
+import konkuk.kuit.baro.domain.promise.model.*;
 import konkuk.kuit.baro.domain.promise.repository.PromiseAvailableTimeRepository;
 import konkuk.kuit.baro.domain.promise.repository.PromiseCandidateTimeRepository;
 import konkuk.kuit.baro.domain.promise.repository.PromiseMemberRepository;
 import konkuk.kuit.baro.domain.promise.repository.PromiseRepository;
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
+import konkuk.kuit.baro.domain.vote.model.PromisePlaceVoteHistory;
 import konkuk.kuit.baro.domain.vote.model.PromiseTimeVoteHistory;
 import konkuk.kuit.baro.domain.vote.model.PromiseVote;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,7 +73,7 @@ class PromiseTimeVoteHistoryRepositoryTest {
 
         PromiseVote savedPromiseVote = promiseVoteRepository.save(promiseVote);
 
-        PromiseCandidateTime promiseCandidateTime = PromiseCandidateTime.createPromiseCandidateTime(LocalDate.now(), LocalTime.now(), LocalTime.now().plusHours(1), savedPromiseVote);
+        PromiseCandidateTime promiseCandidateTime = PromiseCandidateTime.createPromiseCandidateTime(LocalDate.now(), LocalTime.now(), savedPromiseVote);
 
         promiseCandidateTimeRepository.save(promiseCandidateTime);
 
@@ -90,9 +88,10 @@ class PromiseTimeVoteHistoryRepositoryTest {
         // given
         PromiseCandidateTime promiseCandidateTime = promiseCandidateTimeRepository.findById(1L).get();
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
+        PromiseMember promiseMember = promiseMemberRepository.findById(1L).get();
 
         // when
-        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseVote, promiseCandidateTime);
+        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseVote, promiseCandidateTime, promiseMember);
 
         promiseTimeVoteHistoryRepository.save(promiseTimeVoteHistory);
 
@@ -109,8 +108,9 @@ class PromiseTimeVoteHistoryRepositoryTest {
         // given
         PromiseCandidateTime promiseCandidateTime = promiseCandidateTimeRepository.findById(1L).get();
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
+        PromiseMember promiseMember = promiseMemberRepository.findById(1L).get();
 
-        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseVote, promiseCandidateTime);
+        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseVote, promiseCandidateTime, promiseMember);
 
         promiseTimeVoteHistoryRepository.save(promiseTimeVoteHistory);
 
@@ -136,10 +136,11 @@ class PromiseTimeVoteHistoryRepositoryTest {
         PromiseCandidateTime promiseCandidateTime = promiseCandidateTimeRepository.findById(1L).get();
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
         Promise promise = promiseRepository.findById(1L).get();
+        PromiseMember promiseMember = promiseMemberRepository.findById(1L).get();
 
         promise.setPromiseVote(promiseVote);
 
-        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseVote, promiseCandidateTime);
+        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseVote, promiseCandidateTime, promiseMember);
 
         promiseTimeVoteHistoryRepository.save(promiseTimeVoteHistory);
 
@@ -149,6 +150,37 @@ class PromiseTimeVoteHistoryRepositoryTest {
         // when
         Promise findPromise = promiseRepository.findById(1L).get();
         promiseRepository.delete(findPromise);
+
+        em.flush();
+        em.clear();
+
+        // then
+        assertThat(promiseTimeVoteHistoryRepository.findById(1L).isEmpty()).isTrue();
+    }
+
+    @Test
+    @DisplayName("유저 삭제 시 약속 시간 투표 내역 삭제 테스트")
+    @Description("유저를 삭제했을 때, 약속 시간 투표 내역도 삭제되는 지 테스트. 유저 삭제 -> 약속 참여자 삭제 -> 약속 시간 투표 내역 삭제")
+    void delete_User() {
+
+        // given
+        PromiseCandidateTime promiseCandidateTime = promiseCandidateTimeRepository.findById(1L).get();
+        PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
+        Promise promise = promiseRepository.findById(1L).get();
+        PromiseMember promiseMember = promiseMemberRepository.findById(1L).get();
+
+        promise.setPromiseVote(promiseVote);
+
+        PromiseTimeVoteHistory promiseTimeVoteHistory = PromiseTimeVoteHistory.createPromiseTimeVoteHistory(promiseVote, promiseCandidateTime, promiseMember);
+
+        promiseTimeVoteHistoryRepository.save(promiseTimeVoteHistory);
+
+        em.flush();
+        em.clear();
+
+        // when
+        User findUser = userRepository.findById(1L).get();
+        userRepository.delete(findUser);
 
         em.flush();
         em.clear();

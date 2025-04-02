@@ -1,6 +1,7 @@
 package konkuk.kuit.baro.domain.vote.model;
 
 import jakarta.persistence.*;
+import konkuk.kuit.baro.domain.promise.model.PromiseMember;
 import konkuk.kuit.baro.domain.promise.model.PromiseSuggestedPlace;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
 import lombok.AccessLevel;
@@ -30,12 +31,16 @@ public class PromisePlaceVoteHistory extends BaseEntity {
     @JoinColumn(name = "promise_vote_id", nullable = false)
     private PromiseVote promiseVote;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "promise_member_id", nullable = false)
+    private PromiseMember promiseMember;
+
     // 생성 메서드
-    public static PromisePlaceVoteHistory createPromisePlaceVoteHistory(PromiseSuggestedPlace promiseSuggestedPlace, PromiseVote promiseVote) {
+    public static PromisePlaceVoteHistory createPromisePlaceVoteHistory(PromiseSuggestedPlace promiseSuggestedPlace, PromiseVote promiseVote, PromiseMember promiseMember) {
         PromisePlaceVoteHistory promisePlaceVoteHistory = new PromisePlaceVoteHistory();
         promisePlaceVoteHistory.setPromiseSuggestedPlace(promiseSuggestedPlace);
         promisePlaceVoteHistory.setPromiseVote(promiseVote);
-
+        promisePlaceVoteHistory.setPromiseMember(promiseMember);
         return promisePlaceVoteHistory;
     }
 
@@ -48,5 +53,10 @@ public class PromisePlaceVoteHistory extends BaseEntity {
     private void setPromiseVote(PromiseVote promiseVote) {
         this.promiseVote = promiseVote;
         promiseVote.addPromisePlaceVoteHistory(this);
+    }
+
+    private void setPromiseMember(PromiseMember promiseMember) {
+        this.promiseMember = promiseMember;
+        promiseMember.addPromisePlaceVoteHistory(this);
     }
 }

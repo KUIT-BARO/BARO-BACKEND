@@ -2,6 +2,8 @@ package konkuk.kuit.baro.domain.promise.model;
 
 import jakarta.persistence.*;
 import konkuk.kuit.baro.domain.user.model.User;
+import konkuk.kuit.baro.domain.vote.model.PromisePlaceVoteHistory;
+import konkuk.kuit.baro.domain.vote.model.PromiseTimeVoteHistory;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
@@ -44,6 +46,14 @@ public class PromiseMember extends BaseEntity {
     @OneToMany(mappedBy = "promiseMember", orphanRemoval = true)
     private List<PromiseAvailableTime> promiseAvailableTimes = new ArrayList<>();
 
+    // 약속 시간 투표 내역 확인용
+    @OneToMany(mappedBy = "promiseMember", orphanRemoval = true)
+    private List<PromiseTimeVoteHistory> promiseTimeVoteHistories = new ArrayList<>();
+
+    // 약속 장소 투표 내역 확인용
+    @OneToMany(mappedBy = "promiseMember", orphanRemoval = true)
+    private List<PromisePlaceVoteHistory> promisePlaceVoteHistories = new ArrayList<>();
+
     // 생성 메서드
     public static PromiseMember createPromiseMember(Boolean isHost, String color, User user, Promise promise) {
         PromiseMember promiseMember = new PromiseMember();
@@ -53,6 +63,10 @@ public class PromiseMember extends BaseEntity {
         promiseMember.setPromise(promise);
 
         return promiseMember;
+    }
+
+    public String extractProfileImage() {
+        return this.getUser().getProfileImage();
     }
 
     // 연관 관계 편의 메서드
@@ -73,5 +87,14 @@ public class PromiseMember extends BaseEntity {
     public void addPromiseAvailableTime(PromiseAvailableTime promiseAvailableTime) {
         this.promiseAvailableTimes.add(promiseAvailableTime);
     }
+
+    public void addPromiseTimeVoteHistory(PromiseTimeVoteHistory promiseTimeVoteHistory) {
+        this.promiseTimeVoteHistories.add(promiseTimeVoteHistory);
+    }
+
+    public void addPromisePlaceVoteHistory(PromisePlaceVoteHistory promisePlaceVoteHistory) {
+        this.promisePlaceVoteHistories.add(promisePlaceVoteHistory);
+    }
+
 
 }
