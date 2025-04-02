@@ -69,7 +69,7 @@ public class PromiseAvailableTimeService {
     }
 
 
-    private void addPromiseMember(Long promiseId, User loginUser, Promise promise) {
+    public void addPromiseMember(Long promiseId, User loginUser, Promise promise) {
         List<Long> userIdList = promiseMemberRepository.findUserIdListByPromiseid(promiseId);
         if(!userIdList.contains(loginUser.getId())) {
             PromiseMember.createPromiseMember(false,

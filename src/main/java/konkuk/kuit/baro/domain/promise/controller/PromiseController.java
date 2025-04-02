@@ -121,6 +121,19 @@ public class PromiseController {
         return BaseResponse.ok(promiseSuggestedPlaceService.getCategorySearchPlaces(categories, latitude, longitude));
     }
 
+    @Tag(name = "Place Choice", description = "장소 선택 관련 API")
+    @Operation(summary = "약속 수락 - 장소 선택", description = "약속 장소로 제안할 장소를 선택완료합니다.")
+    @PostMapping("{promiseId}/place-choice")
+    @CustomExceptionDescription(SET_SUGGESTED_PLACE)
+    public BaseResponse<Void> setSuggestedPlaces(
+            @PathVariable Long promiseId,
+            @RequestParam List<Long> placeIds,
+            @CurrentUserId @Parameter(hidden = true) Long userId)
+    {
+        promiseSuggestedPlaceService.setPromiseSuggestedPlace(placeIds, userId, promiseId);
+        return BaseResponse.ok(null);
+    }
+
 
     @Tag(name = "약속 관리 페이지 API", description = "약속 제안 관련 API")
     @Operation(summary = "약속 관리 페이지", description = "약속 관리 페이지에 필요한 데이터를 반환합니다.")
