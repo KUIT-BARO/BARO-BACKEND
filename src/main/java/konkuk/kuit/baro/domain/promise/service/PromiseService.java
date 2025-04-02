@@ -1,5 +1,6 @@
 package konkuk.kuit.baro.domain.promise.service;
 
+import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseMemberSuggestStateDTO;
@@ -29,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static konkuk.kuit.baro.domain.promise.dto.response.SuggestionProgress.*;
@@ -169,6 +172,26 @@ public class PromiseService {
         }
 
         return new PromiseStatusVotingPromiseResponseDTO(promiseName, null, promiseMemberVoteState);
+    }
+
+    // 약속 현황 조회 - 확정
+    public PromiseStatusConfirmedPromiseResponseDTO getConfirmedPromise(Long promiseId) {
+        Promise findPromise = findPromise(promiseId);
+
+        Place fixedPlace = findPromise.getPlace();
+        LocalDate fixedDate = findPromise.getFixedDate();
+        LocalTime fixedTime = findPromise.getFixedTime();
+
+        if (fixedPlace == null || fixedDate == null || fixedTime == null) {
+            throw new CustomException(ErrorCode.PROMISE_NOT_CONFIRMED);
+        }
+
+        return new PromiseStatusConfirmedPromiseResponseDTO(
+                findPromise.getPromiseName(),
+                fixedPlace.getPlaceName(),
+                findPromise.extractFixedDateAndTime(),
+                fixedPlace.getLocation().getY(),
+                fixedPlace.getLocation().getX());
     }
 
 
