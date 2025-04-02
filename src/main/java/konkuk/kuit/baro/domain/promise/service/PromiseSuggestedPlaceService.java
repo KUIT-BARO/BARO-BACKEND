@@ -8,6 +8,7 @@ import konkuk.kuit.baro.domain.promise.dto.response.PromisePlaceResponseDTO;
 import konkuk.kuit.baro.domain.promise.model.Promise;
 import konkuk.kuit.baro.domain.promise.repository.PromiseMemberRepository;
 import konkuk.kuit.baro.domain.promise.repository.PromiseRepository;
+import konkuk.kuit.baro.domain.promise.repository.PromiseSuggestedPlaceRepository;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.util.GeometryUtil;
@@ -31,6 +32,7 @@ public class PromiseSuggestedPlaceService {
     private final PlaceRepository placeRepository;
     private final PromiseMemberRepository promiseMemberRepository;
     private final PromiseRepository promiseRepository;
+    private final PromiseSuggestedPlaceRepository promiseSuggestedPlaceRepository;
 
     public PromisePlaceResponseDTO getSuggestedPlace(Double latitude, Double longitude, Long promiseId) {
         if (!validateLocation(latitude, longitude)) {
@@ -64,5 +66,13 @@ public class PromiseSuggestedPlaceService {
         }
 
         return true;
+    }
+
+    public List<PlaceSearchResponseDTO> getCategorySearchPlaces(List<String> categories){
+        List<Place> findPlaces = placeRepository.findByCategories(categories);
+
+        return findPlaces.stream()
+                .map(place -> new PlaceSearchResponseDTO(place.getId(), place.getLocation().getY(), place.getLocation().getX()))
+                .toList();
     }
 }

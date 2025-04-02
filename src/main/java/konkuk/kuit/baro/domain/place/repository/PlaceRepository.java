@@ -42,4 +42,15 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     )
     List<Place> findByLocation(@Param("suggestedPlaceLocation") Point suggestedPlaceLocation);
 
+
+    @Query("""
+    SELECT DISTINCT p
+    FROM Place p
+    JOIN p.placeCategories pc
+    JOIN pc.category c
+    WHERE c.categoryName IN :categoryNames
+    """)
+    List<Place> findByCategories(@Param("categoryNames") List<String> categoryNames);
+
+
 }

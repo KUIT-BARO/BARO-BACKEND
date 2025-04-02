@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import konkuk.kuit.baro.domain.place.dto.response.PlaceSearchResponseDTO;
 import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
 import konkuk.kuit.baro.domain.promise.dto.request.PromisePlaceRequestDTO;
@@ -40,6 +41,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.*;
 
@@ -90,6 +93,7 @@ public class PromiseController {
              @RequestParam Double latitude, @RequestParam Double longitude) {
         return BaseResponse.ok(promiseSuggestedPlaceService.getSuggestedPlace(latitude, longitude, promiseId));
 
+    }
     @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
     @Operation(summary = "약속 상태 확인", description = "약속의 상태를 확인합니다.")
     @GetMapping("/{promiseId}/status")
@@ -107,6 +111,14 @@ public class PromiseController {
                                                                      @RequestParam("isHost") Boolean isHost) {
         return BaseResponse.ok(promiseService.getPendingPromise(promiseId, isHost));
     }
+
+    @Tag(name = "Place Choice", description = "장소 선택 관련 API")
+    @Operation(summary = "약속 수락 - 장소 카테고리 검색", description = "카테고리를 통해 장소를 찾습니다.")
+    @GetMapping("category-places")
+    public BaseResponse<List<PlaceSearchResponseDTO>> getCategoryPlaces(@RequestParam List<String> categories) {
+        return BaseResponse.ok(promiseSuggestedPlaceService.getCategorySearchPlaces(categories));
+    }
+
 
     @Tag(name = "약속 관리 페이지 API", description = "약속 제안 관련 API")
     @Operation(summary = "약속 관리 페이지", description = "약속 관리 페이지에 필요한 데이터를 반환합니다.")
