@@ -3,6 +3,7 @@ package konkuk.kuit.baro.domain.promise.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
@@ -11,21 +12,23 @@ import konkuk.kuit.baro.domain.promise.dto.request.SetPromiseAvailableTimeReques
 import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseAvailableTimeResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseStatusResponseDTO;
-import konkuk.kuit.baro.domain.promise.model.Promise;
-import konkuk.kuit.baro.domain.promise.model.PromiseAvailableTime;
-import konkuk.kuit.baro.domain.promise.model.PromiseMember;
-import konkuk.kuit.baro.domain.promise.model.PromiseSuggestedPlace;
-import konkuk.kuit.baro.domain.promise.repository.PromiseAvailableTimeRepository;
-import konkuk.kuit.baro.domain.promise.repository.PromiseMemberRepository;
-import konkuk.kuit.baro.domain.promise.repository.PromiseRepository;
-import konkuk.kuit.baro.domain.promise.repository.PromiseSuggestedPlaceRepository;
+import konkuk.kuit.baro.domain.promise.dto.response.VotingPromiseResponseDTO;
+import konkuk.kuit.baro.domain.promise.model.*;
+import konkuk.kuit.baro.domain.promise.repository.*;
 import konkuk.kuit.baro.domain.promise.service.PromiseAvailableTimeService;
 import konkuk.kuit.baro.domain.promise.service.PromiseService;
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
+import konkuk.kuit.baro.domain.vote.model.PromisePlaceVoteHistory;
+import konkuk.kuit.baro.domain.vote.model.PromiseTimeVoteHistory;
+import konkuk.kuit.baro.domain.vote.model.PromiseVote;
+import konkuk.kuit.baro.domain.vote.repository.PromisePlaceVoteHistoryRepository;
+import konkuk.kuit.baro.domain.vote.repository.PromiseTimeVoteHistoryRepository;
+import konkuk.kuit.baro.domain.vote.repository.PromiseVoteRepository;
 import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
+import konkuk.kuit.baro.global.common.response.status.BaseStatus;
 import konkuk.kuit.baro.global.common.util.GeometryUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +38,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.*;
@@ -80,9 +84,9 @@ public class PromiseController {
     @Operation(summary = "약속 상태 확인", description = "약속의 상태를 확인합니다.")
     @GetMapping("/{promiseId}/status")
     @CustomExceptionDescription(PROMISE_STATUS)
-    public BaseResponse<PromiseStatusResponseDTO> getPromiseStatus(@CurrentUserId Long userId,
+    public BaseResponse<PromiseStatusResponseDTO> getPromiseStatus(//@CurrentUserId Long userId,
                                                                    @PathVariable("promiseId") Long promiseId) {
-        return BaseResponse.ok(promiseService.getPromiseStatus(userId, promiseId));
+        return BaseResponse.ok(promiseService.getPromiseStatus(1L, promiseId));
     }
 
     @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
@@ -92,5 +96,14 @@ public class PromiseController {
     public BaseResponse<PendingPromiseResponseDTO> getPendingPromise(@PathVariable("promiseId") Long promiseId,
                                                                      @RequestParam("isHost") Boolean isHost) {
         return BaseResponse.ok(promiseService.getPendingPromise(promiseId, isHost));
+    }
+
+    @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
+    @Operation(summary = "약속 현황 - 투표중", description = "약속 상태가 '투표중'인 약속의 현황을 조회합니다.")
+    @GetMapping("/{promiseId}/voting")
+    @CustomExceptionDescription(VOTING_PROMISE_STATUS)
+    public BaseResponse<VotingPromiseResponseDTO> getVotingPromise(@PathVariable("promiseId") Long promiseId,
+                                                                   @RequestParam("isHost") Boolean isHost) {
+        return BaseResponse.ok(promiseService.getVotingPromise(promiseId, isHost));
     }
 }
