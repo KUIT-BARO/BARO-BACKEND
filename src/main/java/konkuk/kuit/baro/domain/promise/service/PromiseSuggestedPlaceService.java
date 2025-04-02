@@ -68,11 +68,18 @@ public class PromiseSuggestedPlaceService {
         return true;
     }
 
-    public List<PlaceSearchResponseDTO> getCategorySearchPlaces(List<String> categories){
-        List<Place> findPlaces = placeRepository.findByCategories(categories);
+    public List<PlaceSearchResponseDTO> getCategorySearchPlaces(List<String> categories, Double latitude, Double longitude) {
+        if (!validateLocation(latitude, longitude)) {
+            throw new CustomException(INVALID_LOCATION);
+        }
+
+        Point suggestedPlaceLocation = GeometryUtil.createPoint(latitude, longitude);
+        List<Place> findPlaces = placeRepository.findByCategoriesAndDistance(categories, suggestedPlaceLocation);
 
         return findPlaces.stream()
                 .map(place -> new PlaceSearchResponseDTO(place.getId(), place.getLocation().getY(), place.getLocation().getX()))
                 .toList();
     }
+
+
 }

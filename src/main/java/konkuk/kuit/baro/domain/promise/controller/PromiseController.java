@@ -115,8 +115,10 @@ public class PromiseController {
     @Tag(name = "Place Choice", description = "장소 선택 관련 API")
     @Operation(summary = "약속 수락 - 장소 카테고리 검색", description = "카테고리를 통해 장소를 찾습니다.")
     @GetMapping("category-places")
-    public BaseResponse<List<PlaceSearchResponseDTO>> getCategoryPlaces(@RequestParam List<String> categories) {
-        return BaseResponse.ok(promiseSuggestedPlaceService.getCategorySearchPlaces(categories));
+    @CustomExceptionDescription(PLACE_CATEGORY_SEARCH)
+    public BaseResponse<List<PlaceSearchResponseDTO>> getCategoryPlaces(@RequestParam List<String> categories,
+            @RequestParam Double latitude, @RequestParam Double longitude) {
+        return BaseResponse.ok(promiseSuggestedPlaceService.getCategorySearchPlaces(categories, latitude, longitude));
     }
 
 

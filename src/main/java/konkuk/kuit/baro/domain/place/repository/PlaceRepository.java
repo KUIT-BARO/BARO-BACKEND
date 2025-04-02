@@ -48,9 +48,10 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     FROM Place p
     JOIN p.placeCategories pc
     JOIN pc.category c
-    WHERE c.categoryName IN :categoryNames
+    WHERE c.categoryName IN :categoryNames AND ST_Contains(ST_Buffer(:suggestedLocation, 2000), p.location)
     """)
-    List<Place> findByCategories(@Param("categoryNames") List<String> categoryNames);
+    List<Place> findByCategoriesAndDistance(@Param("categoryNames") List<String> categoryNames,
+                                            @Param("suggestedLocation") Point suggestedLocation);
 
 
 }

@@ -66,6 +66,9 @@ public enum SwaggerResponseDescription {
             PROMISE_NOT_FOUND,
             INVALID_LOCATION
     ))),
+    PLACE_CATEGORY_SEARCH(new LinkedHashSet<>(Set.of(
+            INVALID_LOCATION
+    ))),
 
     //Schedule
     SCHEDULE_ADD(new LinkedHashSet<>(Set.of(
