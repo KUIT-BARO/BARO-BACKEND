@@ -10,10 +10,12 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@ParameterObject
 public class PinRequestDTO {
 
     @Schema(description = "핀 등록 장소 이름", example = "스타벅스 강남점")

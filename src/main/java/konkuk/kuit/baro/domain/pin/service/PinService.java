@@ -12,6 +12,7 @@ import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import konkuk.kuit.baro.global.common.util.GeometryUtil;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,11 +42,13 @@ public class PinService {
     public void registerPinData(PinRequestDTO request, Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow((() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
-        Place place = placeRepository.findByLocation(request.getLatitude(), request.getLongitude())
+
+        Point placePoint = GeometryUtil.createPoint(request.getLatitude(), request.getLongitude());
+        Place place = placeRepository.findPlaceByLocation(GeometryUtil.convertPointToWKT(placePoint))
                 .orElseGet(() -> {
                     Place newPlace = Place.builder()
                             .placeName(request.getPlaceName())
-                            .location(GeometryUtil.createPoint(request.getLatitude(), request.getLongitude()))
+                            .location(placePoint)
                             .placeAddress(request.getPlaceAddress())
                             .build();
                     return placeRepository.save(newPlace);

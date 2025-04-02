@@ -23,4 +23,8 @@ public class GeometryUtil {
 
         return true;
     }
+
+    public static String convertPointToWKT(Point point) {
+        return "POINT(" + point.getX() + " " + point.getY() + ")";
+    }
 }

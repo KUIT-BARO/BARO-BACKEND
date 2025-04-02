@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -92,6 +93,70 @@ class PinRepositoryTest {
         // then
         assertThat(pinRepository.findById(1L).isEmpty()).isTrue();
 
+    }
+
+    @Test
+    @DisplayName("위치 기반 핀 조회 테스트")
+    void findByLocation() {
+        // given
+        User findUser = userRepository.findById(1L).get();
+        Place findPlace = placeRepository.findById(1L).get();
+        Pin pin = Pin.createPin("아늑해요", (short) 5, findUser, findPlace);
+        pinRepository.save(pin);
+
+        em.flush();
+        em.clear();
+
+        // when (위도, 경도 값으로 근처 장소 조회)
+        String point = "POINT(37.7749295 -122.4194155)"; // 테스트용 위도, 경도
+        Optional<Place> foundPlace = placeRepository.findPlaceByLocation(point);
+
+        // then
+        assertThat(foundPlace.isPresent()).isTrue();
+        assertThat(foundPlace.get().getPlaceName()).isEqualTo("스타벅스 건대점");
+    }
+
+    @Test
+    @DisplayName("핀과 장소 연관 관계 테스트")
+    void pinAndPlaceRelation() {
+        // given
+        User findUser = userRepository.findById(1L).get();
+        Place findPlace = placeRepository.findById(1L).get();
+        Pin pin = Pin.createPin("아늑해요", (short) 5, findUser, findPlace);
+        pinRepository.save(pin);
+
+        em.flush();
+        em.clear();
+
+        // when
+        Pin findPin = pinRepository.findById(1L).get();
+        Place associatedPlace = findPin.getPlace();
+
+        // then
+        assertThat(associatedPlace.getPlaceName()).isEqualTo("스타벅스 건대점");
+        assertThat(associatedPlace.getPlaceAddress()).isEqualTo("광진구 화양동");
+        assertThat(associatedPlace.getLocation()).isEqualTo(findPlace.getLocation());
+    }
+
+    @Test
+    @DisplayName("핀 생성 시 사용자 정보가 올바르게 연관되는지 테스트")
+    void pinAndUserRelation() {
+        // given
+        User findUser = userRepository.findById(1L).get();
+        Place findPlace = placeRepository.findById(1L).get();
+        Pin pin = Pin.createPin("아늑해요", (short) 5, findUser, findPlace);
+        pinRepository.save(pin);
+
+        em.flush();
+        em.clear();
+
+        // when
+        Pin findPin = pinRepository.findById(1L).get();
+        User associatedUser = findPin.getUser();
+
+        // then
+        assertThat(associatedUser.getEmail()).isEqualTo("hong@konkuk.ac.kr");
+        assertThat(associatedUser.getName()).isEqualTo("홍길동");
     }
 
 }

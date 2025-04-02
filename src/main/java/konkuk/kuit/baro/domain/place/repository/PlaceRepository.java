@@ -22,8 +22,9 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
             @Param("currentUserLocation") Point currentUserLocation,
             @Param("placeCategoryIds") List<Long> placeCategoryIds);
 
-    @Query("SELECT p FROM Place p WHERE ST_X(p.location) = :longitude AND ST_Y(p.location) = :latitude")
-    Optional<Place> findByLocation(double latitude, double longitude);
+    @Query("SELECT p FROM Place p " +
+            "WHERE ST_Distance_Sphere(p.location, ST_GeomFromText(:point, 4326)) < 100")
+    Optional<Place> findPlaceByLocation(@Param("point") String point);
 
     @Query(value = """
         SELECT NEW
