@@ -51,7 +51,10 @@ public enum ErrorCode implements ResponseStatus {
     LOGIN_FAILED(611, BAD_REQUEST.value(), "이메일 혹은 비밀번호가 올바르지 않습니다."),
 
     // PromiseMember
-    PROMISE_MEMBER_NOT_FOUND(700, HttpStatus.NOT_FOUND.value(), "해당 약속에 참여한 사용자가 아닙니다.");
+    PROMISE_MEMBER_NOT_FOUND(700, HttpStatus.NOT_FOUND.value(), "해당 약속에 참여한 사용자가 아닙니다."),
+
+    // PromiseVote
+    PROMISE_VOTE_NOT_STARTED(800, BAD_REQUEST.value(), "아직 투표가 개설되지 않았습니다.");
 
     @Getter
     private final int code;
