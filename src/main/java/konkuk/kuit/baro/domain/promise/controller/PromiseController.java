@@ -94,4 +94,12 @@ public class PromiseController {
                                                                                 @RequestParam("isHost") Boolean isHost) {
         return BaseResponse.ok(promiseService.getVotingPromise(promiseId, isHost));
     }
+
+    @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
+    @Operation(summary = "약속 현황 - 확정", description = "약속 상태가 '확정'인 약속의 현황을 조회합니다.")
+    @GetMapping("/{promiseId}/confirmed")
+    @CustomExceptionDescription(CONFIRMED_PROMISE_STATUS)
+    public BaseResponse<PromiseStatusConfirmedPromiseResponseDTO> getConfirmedPromiseResponse(@PathVariable("promiseId") Long promiseId) {
+        return BaseResponse.ok(promiseService.getConfirmedPromise(promiseId));
+    }
 }
