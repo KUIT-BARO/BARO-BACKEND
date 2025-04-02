@@ -20,6 +20,7 @@ import konkuk.kuit.baro.domain.promise.repository.PromiseMemberRepository;
 import konkuk.kuit.baro.domain.promise.repository.PromiseRepository;
 import konkuk.kuit.baro.domain.promise.repository.PromiseSuggestedPlaceRepository;
 import konkuk.kuit.baro.domain.promise.service.PromiseAvailableTimeService;
+import konkuk.kuit.baro.domain.promise.dto.response.PromiseManagementResponseDTO;
 import konkuk.kuit.baro.domain.promise.service.PromiseService;
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
@@ -32,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Coordinate;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -92,5 +94,15 @@ public class PromiseController {
     public BaseResponse<PendingPromiseResponseDTO> getPendingPromise(@PathVariable("promiseId") Long promiseId,
                                                                      @RequestParam("isHost") Boolean isHost) {
         return BaseResponse.ok(promiseService.getPendingPromise(promiseId, isHost));
+    }
+
+    @Tag(name = "약속 관리 페이지 API", description = "약속 제안 관련 API")
+    @Operation(summary = "약속 관리 페이지", description = "약속 관리 페이지에 필요한 데이터를 반환합니다.")
+    @GetMapping("/management")
+    @CustomExceptionDescription(PROMISE_MANAGING_PAGE)
+    public BaseResponse<PromiseManagementResponseDTO> getPromiseManagementPage(
+            @RequestParam(value = "isHost", required = true) boolean isHost
+    ) {
+        return BaseResponse.ok(promiseService.getPromiseManagementData(3L, isHost));
     }
 }

@@ -1,6 +1,7 @@
 package konkuk.kuit.baro.domain.promise.repository;
 
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseMemberDTO;
+import konkuk.kuit.baro.domain.promise.model.Promise;
 import konkuk.kuit.baro.domain.promise.model.PromiseMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PromiseMemberRepository extends JpaRepository<PromiseMember, Long> {
@@ -27,6 +29,9 @@ public interface PromiseMemberRepository extends JpaRepository<PromiseMember, Lo
 
     @Query("SELECT pm.color FROM PromiseMember pm WHERE pm.id = :promiseId")
     List<String> findColorsByPromiseId(Long promiseId);
+
+    @Query("SELECT pm.user.name FROM PromiseMember pm WHERE pm.promise.id = :promiseId")
+    Optional<List<String>> findMemberNamesByPromiseId(@Param("promiseId") Long promiseId);
 
     @Query("SELECT new konkuk.kuit.baro.domain.promise.dto.response." +
            "PromiseMemberDTO(pm.user.id,pm.user.profileImage) " +

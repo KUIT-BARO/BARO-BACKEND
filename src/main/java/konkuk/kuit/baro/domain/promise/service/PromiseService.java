@@ -4,7 +4,10 @@ import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseMemberSuggestStateDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseStatusResponseDTO;
-import konkuk.kuit.baro.domain.promise.dto.response.SuggestionProgress;
+import konkuk.kuit.baro.domain.promise.dto.response.ConfirmedPromiseResponseDTO;
+import konkuk.kuit.baro.domain.promise.dto.response.PromiseManagementResponseDTO;
+import konkuk.kuit.baro.domain.promise.dto.response.SuggestedPromiseResponseDTO;
+import konkuk.kuit.baro.domain.promise.dto.response.VotingPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.model.Promise;
 import konkuk.kuit.baro.domain.promise.model.PromiseMember;
 import konkuk.kuit.baro.domain.promise.repository.PromiseAvailableTimeRepository;
@@ -16,11 +19,14 @@ import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import konkuk.kuit.baro.global.common.util.ColorUtil;
+import konkuk.kuit.baro.global.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static konkuk.kuit.baro.domain.promise.dto.response.SuggestionProgress.*;
@@ -89,6 +95,61 @@ public class PromiseService {
         return new PendingPromiseResponseDTO(promiseName, null, promiseMembersSuggestState);
     }
 
+    @Transactional
+    public PromiseManagementResponseDTO getPromiseManagementData(Long loginUserId, boolean isHost) {
+        User loginUser = findLoginUser(loginUserId);
+        List<Promise> myPromiseList = promiseRepository.findByUserIdAndHost(loginUser.getId(), isHost)
+                .orElse(new ArrayList<>());
+
+        List<SuggestedPromiseResponseDTO> suggestedPromises = new ArrayList<>();
+        List<VotingPromiseResponseDTO> votingPromises = new ArrayList<>();
+        List<ConfirmedPromiseResponseDTO> confirmedPromises = new ArrayList<>();
+
+        for (Promise promise : myPromiseList) {
+            switch (promise.getStatus()) {
+                case PENDING -> suggestedPromises.add(mapToSuggestedPromiseDTO(promise));
+                case VOTING -> votingPromises.add(mapToVotingPromiseDTO(promise));
+                case CONFIRMED -> confirmedPromises.add(mapToConfirmedPromiseDTO(promise));
+                case ACTIVE -> {}
+                default -> throw new IllegalArgumentException();
+            }
+        }
+
+        return new PromiseManagementResponseDTO(suggestedPromises, votingPromises, confirmedPromises);
+    }
+
+    private SuggestedPromiseResponseDTO mapToSuggestedPromiseDTO(Promise promise) {
+        return new SuggestedPromiseResponseDTO(
+                promise.getId(),
+                promise.getPromiseName(),
+                DateUtil.calculateDday(promise.getSuggestedEndDate()),
+                promise.getSuggestedRegion(),
+                promise.getSuggestedStartDate(),
+                promise.getSuggestedEndDate()
+        );
+    }
+
+    private VotingPromiseResponseDTO mapToVotingPromiseDTO(Promise promise) {
+        return new VotingPromiseResponseDTO(
+                promise.getId(),
+                promise.getPromiseName(),
+                DateUtil.calculateDday(promise.getSuggestedEndDate()),
+                promise.getSuggestedRegion(),
+                promise.getSuggestedStartDate(),
+                promise.getSuggestedEndDate()
+        );
+    }
+
+    private ConfirmedPromiseResponseDTO mapToConfirmedPromiseDTO(Promise promise) {
+        return new ConfirmedPromiseResponseDTO(
+                promise.getId(),
+                promise.getPromiseName(),
+                getPromiseMembersName(promise.getId()),
+                promise.getPlace().getPlaceName(),
+                promise.getFixedDate()
+        );
+    }
+
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -125,7 +186,6 @@ public class PromiseService {
 
         return promiseMemberRepository.findAllByPromiseId(promiseId);
     }
-
 
     private boolean userIsExist(Long userId) {
         return userRepository.existsById(userId);
@@ -188,4 +248,8 @@ public class PromiseService {
                 ).toList();
     }
 
+    private List<String> getPromiseMembersName(Long promiseId) {
+        return promiseMemberRepository.findMemberNamesByPromiseId(promiseId)
+                .orElseGet(Collections::emptyList);
+    }
 }
