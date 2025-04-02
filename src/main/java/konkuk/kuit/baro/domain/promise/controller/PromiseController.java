@@ -133,4 +133,12 @@ public class PromiseController {
     public BaseResponse<PromiseSuggestRemainingTimeResponseDTO> getPromiseSuggestRemainingTimeResponse(@PathVariable("promiseId") Long promiseId) {
         return BaseResponse.ok(promiseService.getPromiseSuggestRemainingTime(promiseId));
     }
+
+    @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
+    @Operation(summary = "투표 남은 시간 조회", description = "투표 만료까지 남은 시간을 조회합니다. 24시간 이상 남을 경우 D-N 형식, 24시간 미만으로 남을 경우 OO시 OO분 OO초 형식")
+    @GetMapping("/{promiseId}/vote-remaining-time")
+    @CustomExceptionDescription(PROMISE_VOTE_REMAINING_TIME)
+    public BaseResponse<PromiseVoteRemainingTimeResponseDTO> getPromiseVoteRemainingTimeResponse(@PathVariable("promiseId") Long promiseId) {
+        return BaseResponse.ok(promiseService.getPromiseVoteRemainingTime(promiseId));
+    }
 }
