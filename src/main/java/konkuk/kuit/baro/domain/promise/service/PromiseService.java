@@ -222,7 +222,15 @@ public class PromiseService {
 
         LocalDate suggestedEndDate = findPromise.getSuggestedEndDate();
 
-        return new PromiseSuggestRemainingTimeResponseDTO(getRemainingTimeUntilEndDate(suggestedEndDate));
+        return new PromiseSuggestRemainingTimeResponseDTO(getRemainingTimeUntilEndDate(suggestedEndDate.plusDays(1).atTime(LocalTime.MIDNIGHT)));
+    }
+
+    // 투표 남은 시간 조회
+    public PromiseVoteRemainingTimeResponseDTO getPromiseVoteRemainingTime(Long promiseId) {
+        Promise findPromise = findPromise(promiseId);
+        PromiseVote findPromiseVote = findPromiseVote(findPromise);
+
+        return new PromiseVoteRemainingTimeResponseDTO(getRemainingTimeUntilEndDate(findPromiseVote.getVoteEndTime()));
     }
 
 
@@ -370,14 +378,13 @@ public class PromiseService {
                 )).toList();
     }
 
-    // 제안 종료일까지 남은 시간 반환
+    // 특정 만료 시점까지 남은 시간 반환
     // DateUtil 이 생기면 거기에 추가해도 될 듯
-    private String getRemainingTimeUntilEndDate(LocalDate suggestedEndDate) {
+    private String getRemainingTimeUntilEndDate(LocalDateTime endDateTime) {
         LocalDateTime now = LocalDateTime.now(); // 현재 시간
-        LocalDateTime endDateTime = suggestedEndDate.plusDays(1).atTime(LocalTime.MIDNIGHT);
 
         if (now.isAfter(endDateTime)) {
-            throw new CustomException(ErrorCode.PROMISE_SUGGEST_EXPIRED);
+            throw new CustomException(ErrorCode.TIME_EXCEED);
         }
 
         // DateUtil 생기면 calculateDday 메서드 가져다가 적용해도 될 듯
@@ -405,5 +412,6 @@ public class PromiseService {
 
         return time.toString().trim();
     }
+
 
 }
