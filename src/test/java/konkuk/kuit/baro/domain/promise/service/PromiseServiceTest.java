@@ -107,4 +107,47 @@ class PromiseServiceTest {
                 .hasMessage(ErrorCode.PROMISE_NOT_CONFIRMED.getMessage());
     }
 
+    @Test
+    @DisplayName("약속 제안 남은 시간 조회 테스트")
+    void promiseSuggestRemainingTime() {
+        // given
+        Promise promise = Promise.builder()
+                .promiseName("컴퓨터 공학부 개강파티")
+                .suggestedRegion("지그재그")
+                .suggestedStartDate(LocalDate.now().minusDays(1))
+                .suggestedEndDate(LocalDate.now().plusDays(1))
+                .build();
+
+        Promise savedPromise = promiseRepository.save(promise);
+
+        em.flush();
+        em.clear();
+
+        // when & then
+        assertThat(promiseService.getPromiseSuggestRemainingTime(savedPromise.getId()).getPromiseSuggestRemainingTime()).isEqualTo("D-1");
+    }
+
+    @Test
+    @DisplayName("약속 제안 남은 시간 조회 예외 테스트")
+    void promiseSuggestRemainingTimeException() {
+        // given
+        Promise promise = Promise.builder()
+                .promiseName("컴퓨터 공학부 개강파티")
+                .suggestedRegion("지그재그")
+                .suggestedStartDate(LocalDate.now().minusDays(1))
+                .suggestedEndDate(LocalDate.now().minusDays(2))
+                .build();
+
+        Promise savedPromise = promiseRepository.save(promise);
+
+        em.flush();
+        em.clear();
+
+        // when & then
+        assertThatThrownBy(() -> promiseService.getPromiseSuggestRemainingTime(savedPromise.getId()))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.PROMISE_SUGGEST_EXPIRED.getMessage());
+
+    }
+
 }
