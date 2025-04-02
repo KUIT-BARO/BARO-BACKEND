@@ -41,12 +41,8 @@ public class Promise extends BaseEntity {
     private LocalDate fixedDate;
 
     @Setter
-    @Column(name = "fixed_start_time")
-    private LocalTime fixedStartTime;
-
-    @Setter
-    @Column(name = "fixed_end_time")
-    private LocalTime fixedEndTime;
+    @Column(name = "fixed_time")
+    private LocalTime fixedTime;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
