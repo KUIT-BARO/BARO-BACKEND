@@ -10,8 +10,11 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Entity
 @Table(name = "promise")
@@ -65,6 +68,19 @@ public class Promise extends BaseEntity {
         this.suggestedStartDate = suggestedStartDate;
         this.suggestedEndDate = suggestedEndDate;
         this.setStatus(BaseStatus.PENDING);
+    }
+
+    public String extractFixedDateAndTime() {
+        // 날짜 형식 변환
+        String datePart = fixedDate.format(DateTimeFormatter.ofPattern("M/d"));
+
+        // 요일 변환 (한글 요일)
+        String dayOfWeek = fixedDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+
+        // 시간 변환 (h시)
+        String timePart = fixedTime.format(DateTimeFormatter.ofPattern("h시"));
+
+        return datePart + "(" + dayOfWeek + ") " + timePart;
     }
 
     // 연관 관계 편의 메서드
