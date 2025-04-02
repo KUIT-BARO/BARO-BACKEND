@@ -108,6 +108,11 @@ public enum SwaggerResponseDescription {
     CONFIRMED_PROMISE_STATUS(new LinkedHashSet<>(Set.of(
             PROMISE_NOT_FOUND,
             PROMISE_NOT_CONFIRMED
+    ))),
+
+    PROMISE_SUGGEST_REMAINING_TIME(new LinkedHashSet<>(Set.of(
+            PROMISE_NOT_FOUND,
+            PROMISE_SUGGEST_EXPIRED
     )));
 
     private final Set<ErrorCode> errorCodeList;
