@@ -8,20 +8,22 @@ import konkuk.kuit.baro.domain.promise.dto.response.ConfirmedPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseManagementResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.SuggestedPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.VotingPromiseResponseDTO;
+import konkuk.kuit.baro.domain.promise.dto.response.*;
 import konkuk.kuit.baro.domain.promise.model.Promise;
 import konkuk.kuit.baro.domain.promise.model.PromiseMember;
-import konkuk.kuit.baro.domain.promise.repository.PromiseAvailableTimeRepository;
-import konkuk.kuit.baro.domain.promise.repository.PromiseMemberRepository;
-import konkuk.kuit.baro.domain.promise.repository.PromiseRepository;
-import konkuk.kuit.baro.domain.promise.repository.PromiseSuggestedPlaceRepository;
+import konkuk.kuit.baro.domain.promise.repository.*;
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
+import konkuk.kuit.baro.domain.vote.model.PromiseTimeVoteHistory;
+import konkuk.kuit.baro.domain.vote.model.PromiseVote;
+import konkuk.kuit.baro.domain.vote.repository.PromiseTimeVoteHistoryRepository;
 import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import konkuk.kuit.baro.global.common.util.ColorUtil;
 import konkuk.kuit.baro.global.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +44,7 @@ public class PromiseService {
     private final UserRepository userRepository;
     private final PromiseAvailableTimeRepository promiseAvailableTimeRepository;
     private final PromiseSuggestedPlaceRepository promiseSuggestedPlaceRepository;
+    private final PromiseTimeVoteHistoryRepository promiseTimeVoteHistoryRepository;
 
     private final ColorUtil colorUtil;
 
@@ -150,6 +153,24 @@ public class PromiseService {
         );
     }
 
+    // 약속 현황 조회 - 투표중
+    public PromiseStatusVotingPromiseResponseDTO getVotingPromise(Long promiseId, Boolean isHost) {
+        Promise findPromise = findPromise(promiseId);
+
+        String promiseName = findPromise.getPromiseName();
+
+        PromiseVote findPromiseVote = findPromiseVote(findPromise);
+
+        // 한 명의 유저라도 투표를 했으면 됨. 이 때 시간, 장소 투표는 한 번에 수행되기 때문에, 약속 시간 투표내역, 약속 장소 투표내역 둘 중 하나라도 존재하면 종료 가능
+        List<PromiseMemberVoteStateDTO> promiseMemberVoteState = getPromiseMemberVoteStateList(promiseId, findPromiseVote);
+
+        if (isHost) {
+            return new PromiseStatusVotingPromiseResponseDTO(promiseName, canCloseVoting(findPromiseVote.getId()), promiseMemberVoteState);
+        }
+
+        return new PromiseStatusVotingPromiseResponseDTO(promiseName, null, promiseMemberVoteState);
+    }
+
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -187,12 +208,27 @@ public class PromiseService {
         return promiseMemberRepository.findAllByPromiseId(promiseId);
     }
 
+    private PromiseVote findPromiseVote(Promise promise) {
+        PromiseVote findPromiseVote = promise.getPromiseVote();
+
+        if (findPromiseVote == null) {
+            throw new CustomException(ErrorCode.PROMISE_VOTE_NOT_STARTED);
+        }
+
+        return findPromiseVote;
+    }
+
+
     private boolean userIsExist(Long userId) {
         return userRepository.existsById(userId);
     }
 
     private boolean promiseIsExist(Long promiseId) {
         return promiseRepository.existsById(promiseId);
+    }
+
+    private boolean voteHistoryIsExist(Long promiseVoteId) {
+        return promiseTimeVoteHistoryRepository.existsByPromiseVoteId(promiseVoteId);
     }
 
     // 투표를 수행할 준비가 되었는지 체크
@@ -203,6 +239,16 @@ public class PromiseService {
 
         return false;
     }
+
+    // 투표를 종료할 수 있는지 체크
+    private boolean canCloseVoting(Long promiseVoteId) {
+        if (voteHistoryIsExist(promiseVoteId)) {  // 투표 내역이 존재
+            return true;
+        }
+
+        return false;
+    }
+
 
     // 특정 약속에 대해 약속 가능 시간 표시 내역이 존재하는지 체크
     private boolean checkPromiseAvailableTimeIsExist(Long promiseId) {
@@ -240,6 +286,12 @@ public class PromiseService {
         return HALF.getValue();
     }
 
+    // 특정 약속 참여자가 투표에 참여했는지를 체크
+    private boolean extractHasVoted(PromiseVote promiseVote, PromiseMember promiseMember) {
+        return promiseTimeVoteHistoryRepository.existsByPromiseVoteAndPromiseMember(promiseVote, promiseMember);
+    }
+
+    // 약속 참여자들의 제안 여부 조회
     private List<PromiseMemberSuggestStateDTO> getPromiseMembersSuggestStateList(Long promiseId) {
         return findAllPromiseMembers(promiseId).stream()
                 .map(promiseMember -> new PromiseMemberSuggestStateDTO(
@@ -252,4 +304,15 @@ public class PromiseService {
         return promiseMemberRepository.findMemberNamesByPromiseId(promiseId)
                 .orElseGet(Collections::emptyList);
     }
+
+    // 약속 참여자들의 투표 여부 조회
+    private List<PromiseMemberVoteStateDTO> getPromiseMemberVoteStateList(Long promiseId, PromiseVote promiseVote) {
+        return findAllPromiseMembers(promiseId).stream()
+                .map(promiseMember -> new PromiseMemberVoteStateDTO(
+                        extractHasVoted(promiseVote, promiseMember),
+                        promiseMember.getIsHost(),
+                        promiseMember.extractProfileImage()
+                )).toList();
+    }
+
 }
