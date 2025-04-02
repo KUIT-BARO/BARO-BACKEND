@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PromiseMemberRepository extends JpaRepository<PromiseMember, Long> {
@@ -30,7 +31,7 @@ public interface PromiseMemberRepository extends JpaRepository<PromiseMember, Lo
     List<String> findColorsByPromiseId(Long promiseId);
 
     @Query("SELECT pm.user.name FROM PromiseMember pm WHERE pm.promise.id = :promiseId")
-    List<String> findMemberNamesByPromiseId(@Param("promiseId") Long promiseId);
+    Optional<List<String>> findMemberNamesByPromiseId(@Param("promiseId") Long promiseId);
 
     @Query("SELECT new konkuk.kuit.baro.domain.promise.dto.response." +
            "PromiseMemberDTO(pm.user.id,pm.user.profileImage) " +

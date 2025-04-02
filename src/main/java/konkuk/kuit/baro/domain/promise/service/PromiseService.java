@@ -31,6 +31,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static konkuk.kuit.baro.domain.promise.dto.response.SuggestionProgress.*;
@@ -104,8 +105,8 @@ public class PromiseService {
     @Transactional
     public PromiseManagementResponseDTO getPromiseManagementData(Long loginUserId, boolean isHost) {
         User loginUser = findLoginUser(loginUserId);
-        List<Promise> myPromiseList = promiseRepository.findByUserIdAndHost(loginUser.getId(), isHost);
-        if( myPromiseList == null){myPromiseList = new ArrayList<>();}  // null일 경우 빈 리스트 반환
+        List<Promise> myPromiseList = promiseRepository.findByUserIdAndHost(loginUser.getId(), isHost)
+                .orElse(new ArrayList<>());
 
         List<SuggestedPromiseResponseDTO> suggestedPromises = new ArrayList<>();
         List<VotingPromiseResponseDTO> votingPromises = new ArrayList<>();
@@ -261,7 +262,7 @@ public class PromiseService {
     }
 
     private List<String> getPromiseMembersName(Long promiseId) {
-        List<String> memberNames = promiseMemberRepository.findMemberNamesByPromiseId(promiseId);
-        return memberNames != null ? memberNames : new ArrayList<>();  // null일 경우 빈 리스트 반환
+        return promiseMemberRepository.findMemberNamesByPromiseId(promiseId)
+                .orElseGet(Collections::emptyList);
     }
 }
