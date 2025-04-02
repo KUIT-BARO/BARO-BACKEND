@@ -2,7 +2,6 @@ package konkuk.kuit.baro.domain.promise.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-
 import java.time.LocalDate;
 
 @Getter
