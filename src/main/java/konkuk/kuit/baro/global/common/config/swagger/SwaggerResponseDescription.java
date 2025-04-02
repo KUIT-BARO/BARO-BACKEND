@@ -103,6 +103,11 @@ public enum SwaggerResponseDescription {
     VOTING_PROMISE_STATUS(new LinkedHashSet<>(Set.of(
             PROMISE_NOT_FOUND,
             PROMISE_VOTE_NOT_STARTED
+    ))),
+
+    CONFIRMED_PROMISE_STATUS(new LinkedHashSet<>(Set.of(
+            PROMISE_NOT_FOUND,
+            PROMISE_NOT_CONFIRMED
     )));
 
     private final Set<ErrorCode> errorCodeList;
