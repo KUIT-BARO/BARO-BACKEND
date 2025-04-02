@@ -171,6 +171,7 @@ public class PromiseService {
         return new PromiseStatusVotingPromiseResponseDTO(promiseName, null, promiseMemberVoteState);
     }
 
+
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
