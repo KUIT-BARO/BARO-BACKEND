@@ -4,7 +4,6 @@ import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseMemberSuggestStateDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseStatusResponseDTO;
-import konkuk.kuit.baro.domain.promise.dto.response.SuggestionProgress;
 import konkuk.kuit.baro.domain.promise.dto.response.ConfirmedPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseManagementResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.SuggestedPromiseResponseDTO;
@@ -18,7 +17,6 @@ import konkuk.kuit.baro.domain.promise.repository.PromiseSuggestedPlaceRepositor
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.global.common.exception.CustomException;
-import konkuk.kuit.baro.global.common.response.status.BaseStatus;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import konkuk.kuit.baro.global.common.util.ColorUtil;
 import konkuk.kuit.baro.global.common.util.DateUtil;
@@ -27,13 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static konkuk.kuit.baro.domain.promise.dto.response.SuggestionProgress.*;
 
@@ -101,8 +95,6 @@ public class PromiseService {
         return new PendingPromiseResponseDTO(promiseName, null, promiseMembersSuggestState);
     }
 
-    private User findLoginUser(Long userId) {
-        return userRepository.findById(userId)
     @Transactional
     public PromiseManagementResponseDTO getPromiseManagementData(Long loginUserId, boolean isHost) {
         User loginUser = findLoginUser(loginUserId);
@@ -158,8 +150,8 @@ public class PromiseService {
         );
     }
 
-    private User findLoginUser(Long loginUserId) {
-        return userRepository.findById(loginUserId)
+    private User findLoginUser(Long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
@@ -194,7 +186,6 @@ public class PromiseService {
 
         return promiseMemberRepository.findAllByPromiseId(promiseId);
     }
-
 
     private boolean userIsExist(Long userId) {
         return userRepository.existsById(userId);
@@ -255,11 +246,6 @@ public class PromiseService {
                         extractSuggestionProgress(promiseMember.getId()),
                         promiseMember.getIsHost(), promiseMember.extractProfileImage())
                 ).toList();
-    }
-
-
-    private int calculateDday(LocalDate endDate) {
-        return (int) ChronoUnit.DAYS.between(LocalDate.now(), endDate);
     }
 
     private List<String> getPromiseMembersName(Long promiseId) {
