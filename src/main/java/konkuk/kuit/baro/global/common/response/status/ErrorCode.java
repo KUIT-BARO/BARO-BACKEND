@@ -36,7 +36,6 @@ public enum ErrorCode implements ResponseStatus {
     //Promise
     PROMISE_NOT_FOUND(500, HttpStatus.NOT_FOUND.value(),"존재하지 않는 약속입니다."),
     PROMISE_NOT_CONFIRMED(501, BAD_REQUEST.value(), "확정되지 않은 약속입니다."),
-    PROMISE_SUGGEST_EXPIRED(502, BAD_REQUEST.value(), "약속 제안이 만료되었습니다."),
 
     //인증, 인가
     SECURITY_UNAUTHORIZED(600,HttpStatus.UNAUTHORIZED.value(), "인증 정보가 유효하지 않습니다"),
@@ -56,7 +55,11 @@ public enum ErrorCode implements ResponseStatus {
     PROMISE_MEMBER_NOT_FOUND(700, HttpStatus.NOT_FOUND.value(), "해당 약속에 참여한 사용자가 아닙니다."),
 
     // PromiseVote
-    PROMISE_VOTE_NOT_STARTED(800, BAD_REQUEST.value(), "아직 투표가 개설되지 않았습니다.");
+    PROMISE_VOTE_NOT_STARTED(800, BAD_REQUEST.value(), "아직 투표가 개설되지 않았습니다."),
+
+    // Time
+    TIME_EXCEED(900, BAD_REQUEST.value(), "만료시간이 지났습니다");
+
 
     @Getter
     private final int code;

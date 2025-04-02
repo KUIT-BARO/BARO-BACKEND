@@ -112,7 +112,13 @@ public enum SwaggerResponseDescription {
 
     PROMISE_SUGGEST_REMAINING_TIME(new LinkedHashSet<>(Set.of(
             PROMISE_NOT_FOUND,
-            PROMISE_SUGGEST_EXPIRED
+            TIME_EXCEED
+    ))),
+
+    PROMISE_VOTE_REMAINING_TIME(new LinkedHashSet<>(Set.of(
+            PROMISE_NOT_FOUND,
+            PROMISE_VOTE_NOT_STARTED,
+            TIME_EXCEED
     )));
 
     private final Set<ErrorCode> errorCodeList;
