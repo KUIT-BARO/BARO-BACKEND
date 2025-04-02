@@ -12,4 +12,15 @@ public class GeometryUtil {
     public static Point createPoint(Double latitude, Double longitude) {
         return geometryFactory.createPoint(new Coordinate(longitude, latitude));
     }
+    public static Boolean validateLocation(Double latitude, Double longitude) {
+        if (latitude > 90 || latitude < -90) {
+            return false;
+        }
+
+        if (longitude > 180 || longitude < -180) {
+            return false;
+        }
+
+        return true;
+    }
 }

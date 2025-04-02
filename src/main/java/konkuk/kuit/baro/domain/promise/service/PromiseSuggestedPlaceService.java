@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static konkuk.kuit.baro.global.common.response.status.ErrorCode.*;
+import static konkuk.kuit.baro.global.common.util.GeometryUtil.validateLocation;
 
 @Service
 @RequiredArgsConstructor
@@ -59,17 +60,6 @@ public class PromiseSuggestedPlaceService {
         return new PromisePlaceResponseDTO(promise.getSuggestedRegion(), places, promiseMemberDTOs);
     }
 
-    private Boolean validateLocation(Double latitude, Double longitude) {
-        if (latitude > 90 || latitude < -90) {
-            return false;
-        }
-
-        if (longitude > 180 || longitude < -180) {
-            return false;
-        }
-
-        return true;
-    }
 
     public List<PlaceSearchResponseDTO> getCategorySearchPlaces(List<String> categories, Double latitude, Double longitude) {
         if (!validateLocation(latitude, longitude)) {
