@@ -14,6 +14,10 @@ import java.util.List;
 public class PromisePlaceResponseDTO {
     @Schema(description = "호스트가 제안한 지역", example = "건대입구")
     private String suggestedRegion;
+
+    @Schema(description = "중심좌표 기준 2km 내에 등록된 장소")
     List<PlaceSearchResponseDTO> places;
+
+    @Schema(description = "약속 참여자의 프로필")
     List<PromiseMemberDTO> members;
 }
