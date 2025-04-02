@@ -7,6 +7,8 @@ import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
 import konkuk.kuit.baro.domain.promise.dto.response.ConfirmedPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.model.Promise;
 import konkuk.kuit.baro.domain.promise.repository.PromiseRepository;
+import konkuk.kuit.baro.domain.vote.model.PromiseVote;
+import konkuk.kuit.baro.domain.vote.repository.PromiseVoteRepository;
 import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import konkuk.kuit.baro.global.common.util.GeometryUtil;
@@ -20,6 +22,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.*;
@@ -35,6 +38,7 @@ class PromiseServiceTest {
     private PlaceRepository placeRepository;
 
     @Autowired private PromiseService promiseService;
+    @Autowired private PromiseVoteRepository promiseVoteRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -123,7 +127,7 @@ class PromiseServiceTest {
         em.flush();
         em.clear();
 
-        // when & then
+
         assertThat(promiseService.getPromiseSuggestRemainingTime(savedPromise.getId()).getPromiseSuggestRemainingTime()).isEqualTo("D-1");
     }
 
@@ -146,8 +150,76 @@ class PromiseServiceTest {
         // when & then
         assertThatThrownBy(() -> promiseService.getPromiseSuggestRemainingTime(savedPromise.getId()))
                 .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorCode.PROMISE_SUGGEST_EXPIRED.getMessage());
+                .hasMessage(ErrorCode.TIME_EXCEED.getMessage());
 
+    }
+
+    @Test
+    @DisplayName("투표 만료까지 남은 시간 조회 테스트")
+    void getPromiseVoteRemainingTime() {
+        // given
+        Promise promise = Promise.builder()
+                .promiseName("컴퓨터 공학부 개강파티")
+                .suggestedRegion("지그재그")
+                .suggestedStartDate(LocalDate.now().minusDays(1))
+                .suggestedEndDate(LocalDate.now().plusDays(2))
+                .build();
+
+        promiseRepository.save(promise);
+
+        PromiseVote promiseVote = PromiseVote.builder()
+                .voteEndTime(LocalDateTime.now().plusDays(2).plusHours(2).plusMinutes(30).plusSeconds(10))
+                .build();
+
+        promiseVoteRepository.save(promiseVote);
+
+        em.flush();
+        em.clear();
+
+        Promise findPromise = promiseRepository.findById(1L).get();
+        PromiseVote findPromiseVote = promiseVoteRepository.findById(1L).get();
+
+        findPromise.setPromiseVote(findPromiseVote);
+
+        em.flush();
+        em.clear();
+
+        assertThat(promiseService.getPromiseVoteRemainingTime(1L).getPromiseVoteRemainingTime()).isEqualTo("D-2");
+    }
+
+    @Test
+    @DisplayName("투표 만료까지 남은 시간 조회 예외 테스트")
+    void getPromiseVoteRemainingTimeException() {
+        // given
+        Promise promise = Promise.builder()
+                .promiseName("컴퓨터 공학부 개강파티")
+                .suggestedRegion("지그재그")
+                .suggestedStartDate(LocalDate.now().minusDays(1))
+                .suggestedEndDate(LocalDate.now().plusDays(2))
+                .build();
+
+        promiseRepository.save(promise);
+
+        PromiseVote promiseVote = PromiseVote.builder()
+                .voteEndTime(LocalDateTime.now().minusDays(3))
+                .build();
+
+        promiseVoteRepository.save(promiseVote);
+
+        em.flush();
+        em.clear();
+
+        Promise findPromise = promiseRepository.findById(1L).get();
+        PromiseVote findPromiseVote = promiseVoteRepository.findById(1L).get();
+
+        findPromise.setPromiseVote(findPromiseVote);
+
+        em.flush();
+        em.clear();
+
+        assertThatThrownBy(() -> promiseService.getPromiseVoteRemainingTime(1L).getPromiseVoteRemainingTime())
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.TIME_EXCEED.getMessage());
     }
 
 }
