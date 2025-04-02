@@ -72,11 +72,12 @@ public class PromiseAvailableTimeService {
     public void addPromiseMember(Long promiseId, User loginUser, Promise promise) {
         List<Long> userIdList = promiseMemberRepository.findUserIdListByPromiseid(promiseId);
         if(!userIdList.contains(loginUser.getId())) {
-            PromiseMember.createPromiseMember(false,
+            PromiseMember promiseMember = PromiseMember.createPromiseMember(false,
                     colorUtil.generateRandomHexColor(promiseId),
                     loginUser,
                     promise);
-        } // 약속 수락이 안 된 경우, PromiseMember 엔티티 추가
+            promiseMemberRepository.save(promiseMember);
+        }// 약속 수락이 안 된 경우, PromiseMember 엔티티 추가
     }
 
 
