@@ -7,18 +7,9 @@ import jakarta.validation.Valid;
 import konkuk.kuit.baro.domain.place.dto.response.PlaceSearchResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.request.SetPromiseAvailableTimeRequestDTO;
-import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.*;
-import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
-import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
-import konkuk.kuit.baro.domain.promise.dto.response.PromiseAvailableTimeResponseDTO;
-import konkuk.kuit.baro.domain.promise.dto.response.PromisePlaceResponseDTO;
-import konkuk.kuit.baro.domain.promise.dto.response.PromiseStatusResponseDTO;
 import konkuk.kuit.baro.domain.promise.service.PromiseAvailableTimeService;
 import konkuk.kuit.baro.domain.promise.service.PromiseService;
-import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
-import konkuk.kuit.baro.domain.promise.service.PromiseSuggestedPlaceService;
-import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
 import konkuk.kuit.baro.domain.promise.service.PromiseSuggestedPlaceService;
 import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
@@ -70,7 +61,7 @@ public class PromiseController {
         return BaseResponse.ok(null);
     }
 
-    @Tag(name = "Place Choice", description = "장소 선택 관련 API")
+    @Tag(name = "Promise Acceptance", description = "약속 수락 관련 API")
     @Operation(summary = "약속 수락 - 장소 선택 초기", description = "장소 선택 초기 화면입니다.")
     @GetMapping("{promiseId}/place-choice")
     @CustomExceptionDescription(GET_SUGGESTED_PLACE)
@@ -98,7 +89,7 @@ public class PromiseController {
         return BaseResponse.ok(promiseService.getPendingPromise(promiseId, isHost));
     }
 
-    @Tag(name = "Place Choice", description = "장소 선택 관련 API")
+    @Tag(name = "Promise Acceptance", description = "약속 수락 관련 API")
     @Operation(summary = "약속 수락 - 장소 카테고리 검색", description = "카테고리를 통해 장소를 찾습니다.")
     @GetMapping("category-places")
     @CustomExceptionDescription(PLACE_CATEGORY_SEARCH)
@@ -107,7 +98,7 @@ public class PromiseController {
         return BaseResponse.ok(promiseSuggestedPlaceService.getCategorySearchPlaces(categories, latitude, longitude));
     }
 
-    @Tag(name = "Place Choice", description = "장소 선택 관련 API")
+    @Tag(name = "Promise Acceptance", description = "약속 수락 관련 API")
     @Operation(summary = "약속 수락 - 장소 선택", description = "약속 장소로 제안할 장소를 선택완료합니다.")
     @PostMapping("{promiseId}/place-choice")
     @CustomExceptionDescription(SET_SUGGESTED_PLACE)
