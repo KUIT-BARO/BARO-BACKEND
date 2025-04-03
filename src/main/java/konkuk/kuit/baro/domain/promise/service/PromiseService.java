@@ -213,6 +213,15 @@ public class PromiseService {
         return new PromiseVoteRemainingTimeResponseDTO(DateUtil.getRemainingTimeUntilEndDate(findPromiseVote.getVoteEndTime()));
     }
 
+    // 특정 약속 참여자의 투표 참여 여부 반환
+    public HasVotedResponseDTO getHasVoted(Long userId, Long promiseId) {
+        Promise findPromise = findPromise(promiseId);
+        PromiseMember findPromiseMember = findPromiseMember(userId, promiseId);
+        PromiseVote findPromiseVote = findPromiseVote(findPromise);
+
+        return new HasVotedResponseDTO(extractHasVoted(findPromiseVote, findPromiseMember));
+    }
+
 
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
