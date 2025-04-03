@@ -42,7 +42,12 @@ public class PromiseAvailableTimeService {
             availableTimes.add(new PromiseMemberAvailableTimeDTO(promiseMember.getId(),
                     promiseAvailableTimeRepository.findAllByPromiseMemberId(promiseMember.getId())));
         }
-        return new PromiseAvailableTimeResponseDTO(promiseMemberRepository.findPromiseMemberDTOByPromiseId(promiseId), availableTimes);
+        Promise promise = promiseRepository.findById(promiseId).orElseThrow(() -> new CustomException(PROMISE_NOT_FOUND));
+        return new PromiseAvailableTimeResponseDTO(
+                promise.getSuggestedStartDate(),
+                promise.getSuggestedEndDate(),
+                promiseMemberRepository.findPromiseMemberDTOByPromiseId(promiseId),
+                availableTimes);
     }
 
     @Transactional
