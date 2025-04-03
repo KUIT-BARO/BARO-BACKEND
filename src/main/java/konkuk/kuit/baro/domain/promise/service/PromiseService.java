@@ -194,6 +194,26 @@ public class PromiseService {
                 fixedPlace.getLocation().getX());
     }
 
+    // 약속 현황 조회 - 확정
+    public ConfirmedPromiseResponseDTO getConfirmedPromise(Long promiseId) {
+        Promise findPromise = findPromise(promiseId);
+
+        Place fixedPlace = findPromise.getPlace();
+        LocalDate fixedDate = findPromise.getFixedDate();
+        LocalTime fixedTime = findPromise.getFixedTime();
+
+        if (fixedPlace == null || fixedDate == null || fixedTime == null) {
+            throw new CustomException(ErrorCode.PROMISE_NOT_CONFIRMED);
+        }
+
+        return new ConfirmedPromiseResponseDTO(
+                findPromise.getPromiseName(),
+                fixedPlace.getPlaceName(),
+                findPromise.extractFixedDateAndTime(),
+                fixedPlace.getLocation().getY(),
+                fixedPlace.getLocation().getX());
+    }
+
 
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
