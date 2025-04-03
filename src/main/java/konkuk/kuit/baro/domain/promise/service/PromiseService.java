@@ -31,7 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static konkuk.kuit.baro.domain.promise.dto.response.SuggestionProgress.*;
@@ -214,6 +216,15 @@ public class PromiseService {
                 fixedPlace.getLocation().getX());
     }
 
+    // 약속 제안 남은 시간 조회
+    public PromiseSuggestRemainingTimeResponseDTO getPromiseSuggestRemainingTime(Long promiseId) {
+        Promise findPromise = findPromise(promiseId);
+
+        LocalDate suggestedEndDate = findPromise.getSuggestedEndDate();
+
+        return new PromiseSuggestRemainingTimeResponseDTO(getRemainingTimeUntilEndDate(suggestedEndDate));
+    }
+
 
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
@@ -357,6 +368,42 @@ public class PromiseService {
                         promiseMember.getIsHost(),
                         promiseMember.extractProfileImage()
                 )).toList();
+    }
+
+    // 제안 종료일까지 남은 시간 반환
+    // DateUtil 이 생기면 거기에 추가해도 될 듯
+    private String getRemainingTimeUntilEndDate(LocalDate suggestedEndDate) {
+        LocalDateTime now = LocalDateTime.now(); // 현재 시간
+        LocalDateTime endDateTime = suggestedEndDate.plusDays(1).atTime(LocalTime.MIDNIGHT);
+
+        if (now.isAfter(endDateTime)) {
+            throw new CustomException(ErrorCode.PROMISE_SUGGEST_EXPIRED);
+        }
+
+        // DateUtil 생기면 calculateDday 메서드 가져다가 적용해도 될 듯
+        long days = ChronoUnit.DAYS.between(now, endDateTime);
+        if (days > 0) {
+            return "D-" + days;
+        }
+
+        long hours = ChronoUnit.HOURS.between(now, endDateTime);
+        long minutes = ChronoUnit.MINUTES.between(now, endDateTime) % 60;
+        long seconds = ChronoUnit.SECONDS.between(now, endDateTime) % 60;
+
+        StringBuilder time = new StringBuilder();
+        if (hours > 0) {
+            time.append(hours).append("시간 ");
+        }
+
+        if (minutes > 0) {
+            time.append(minutes).append("분 ");
+        }
+
+        if (seconds > 0 || time.isEmpty()) {
+            time.append(seconds).append("초");
+        }
+
+        return time.toString().trim();
     }
 
 }
