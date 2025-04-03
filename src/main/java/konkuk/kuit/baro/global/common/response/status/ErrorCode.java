@@ -55,7 +55,11 @@ public enum ErrorCode implements ResponseStatus {
     PROMISE_MEMBER_NOT_FOUND(700, HttpStatus.NOT_FOUND.value(), "해당 약속에 참여한 사용자가 아닙니다."),
 
     // PromiseVote
-    PROMISE_VOTE_NOT_STARTED(800, BAD_REQUEST.value(), "아직 투표가 개설되지 않았습니다.");
+    PROMISE_VOTE_NOT_STARTED(800, BAD_REQUEST.value(), "아직 투표가 개설되지 않았습니다."),
+
+    // Time
+    TIME_EXCEED(900, BAD_REQUEST.value(), "만료시간이 지났습니다");
+
 
     @Getter
     private final int code;

@@ -31,7 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static konkuk.kuit.baro.domain.promise.dto.response.SuggestionProgress.*;
@@ -194,6 +196,23 @@ public class PromiseService {
                 fixedPlace.getLocation().getX());
     }
 
+    // 약속 제안 남은 시간 조회
+    public PromiseSuggestRemainingTimeResponseDTO getPromiseSuggestRemainingTime(Long promiseId) {
+        Promise findPromise = findPromise(promiseId);
+
+        LocalDate suggestedEndDate = findPromise.getSuggestedEndDate();
+
+        return new PromiseSuggestRemainingTimeResponseDTO(DateUtil.getRemainingTimeUntilEndDate(suggestedEndDate.plusDays(1).atTime(LocalTime.MIDNIGHT)));
+    }
+
+    // 투표 남은 시간 조회
+    public PromiseVoteRemainingTimeResponseDTO getPromiseVoteRemainingTime(Long promiseId) {
+        Promise findPromise = findPromise(promiseId);
+        PromiseVote findPromiseVote = findPromiseVote(findPromise);
+
+        return new PromiseVoteRemainingTimeResponseDTO(DateUtil.getRemainingTimeUntilEndDate(findPromiseVote.getVoteEndTime()));
+    }
+
 
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
@@ -338,5 +357,7 @@ public class PromiseService {
                         promiseMember.extractProfileImage()
                 )).toList();
     }
+
+
 
 }
