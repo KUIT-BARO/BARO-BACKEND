@@ -118,4 +118,12 @@ public class PromiseController {
     public BaseResponse<PromiseVoteRemainingTimeResponseDTO> getPromiseVoteRemainingTimeResponse(@PathVariable("promiseId") Long promiseId) {
         return BaseResponse.ok(promiseService.getPromiseVoteRemainingTime(promiseId));
     }
+
+    @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
+    @Operation(summary = "투표 참여 여부 조회", description = "현재 로그인한 유저가 특정 약속에 대해 투표에 참여했는지 여부를 조회합니다.")
+    @GetMapping("/{promiseId}/voting-status")
+    public BaseResponse<HasVotedResponseDTO> getHasVoted(@CurrentUserId Long userId,
+                                                         @PathVariable("promiseId") Long promiseId) {
+        return BaseResponse.ok(promiseService.getHasVoted(userId, promiseId));
+    }
 }
