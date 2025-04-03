@@ -3,6 +3,7 @@ package konkuk.kuit.baro.domain.place.model;
 import jakarta.persistence.*;
 import konkuk.kuit.baro.domain.category.model.PlaceCategory;
 import konkuk.kuit.baro.domain.pin.model.Pin;
+import konkuk.kuit.baro.domain.promise.model.PromiseCandidatePlace;
 import konkuk.kuit.baro.domain.promise.model.PromiseSuggestedPlace;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
 import lombok.*;
@@ -46,6 +47,10 @@ public class Place extends BaseEntity {
     @OneToMany(mappedBy = "place", orphanRemoval = true)
     private List<PromiseSuggestedPlace> promiseSuggestedPlaces = new ArrayList<>();
 
+    // 장소 삭제시 약속 후보 장소도 '삭제'하기 위한 양방향 연관 관계
+    @OneToMany(mappedBy = "place", orphanRemoval = true)
+    private List<PromiseCandidatePlace> promiseCandidatePlaces = new ArrayList<>();
+
     @Builder
     public Place(String placeName, Point location, String placeAddress) {
         this.placeName = placeName;
@@ -60,5 +65,9 @@ public class Place extends BaseEntity {
 
     public void addPromiseSuggestedPlace(PromiseSuggestedPlace promiseSuggestedPlace) {
         this.promiseSuggestedPlaces.add(promiseSuggestedPlace);
+    }
+
+    public void addPromiseCandidatePlace(PromiseCandidatePlace promiseCandidatePlace) {
+        this.promiseCandidatePlaces.add(promiseCandidatePlace);
     }
 }

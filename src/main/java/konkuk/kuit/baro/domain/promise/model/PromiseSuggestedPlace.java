@@ -2,7 +2,6 @@ package konkuk.kuit.baro.domain.promise.model;
 
 import jakarta.persistence.*;
 import konkuk.kuit.baro.domain.place.model.Place;
-import konkuk.kuit.baro.domain.vote.model.PromisePlaceVoteHistory;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -33,11 +32,6 @@ public class PromiseSuggestedPlace extends BaseEntity {
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 
-    // 제안된 약속 장소 삭제시, 약속 장소 투표 내역도 사라지도록 하기 위한 양방향 연관 관계
-    @OneToMany(mappedBy = "promiseSuggestedPlace", orphanRemoval = true)
-    private List<PromisePlaceVoteHistory> promisePlaceVoteHistories = new ArrayList<>();
-
-
     // 생성 메서드
     public static PromiseSuggestedPlace createPromiseSuggestedPlace(PromiseMember promiseMember, Place place) {
         PromiseSuggestedPlace promiseSuggestedPlace = new PromiseSuggestedPlace();
@@ -56,9 +50,5 @@ public class PromiseSuggestedPlace extends BaseEntity {
     private void setPlace(Place place) {
         this.place = place;
         place.addPromiseSuggestedPlace(this);
-    }
-
-    public void addPromisePlaceVoteHistory(PromisePlaceVoteHistory promisePlaceVoteHistory) {
-        this.promisePlaceVoteHistories.add(promisePlaceVoteHistory);
     }
 }
