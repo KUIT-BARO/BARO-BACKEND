@@ -5,6 +5,8 @@ import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 
@@ -46,6 +48,17 @@ public class DateUtil {
         }
 
         return time.toString().trim();
+    }
+
+    // 날짜를 "yyyy년 M월 D일" 형식으로 변환
+    public static String formatDate(LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M월 d일");
+        return date.format(formatter);
+    }
+
+    public static String formatTime(LocalTime time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        return time.format(formatter);
     }
 }
 
