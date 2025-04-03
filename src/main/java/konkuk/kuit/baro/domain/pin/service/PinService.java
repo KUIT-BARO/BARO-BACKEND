@@ -44,7 +44,7 @@ public class PinService {
                 .orElseThrow((() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
 
         Point placePoint = GeometryUtil.createPoint(request.getLatitude(), request.getLongitude());
-        Place place = placeRepository.findPlaceByLocation(GeometryUtil.convertPointToWKT(placePoint))
+        Place place = placeRepository.findPlaceByLocation(placePoint)
                 .orElseGet(() -> {
                     Place newPlace = Place.builder()
                             .placeName(request.getPlaceName())

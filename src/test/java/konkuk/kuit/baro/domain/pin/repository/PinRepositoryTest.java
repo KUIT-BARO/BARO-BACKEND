@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,8 +100,8 @@ class PinRepositoryTest {
     @DisplayName("위치 기반 핀 조회 테스트")
     void findByLocation() {
         // given
-        User findUser = userRepository.findById(1L).get();
-        Place findPlace = placeRepository.findById(1L).get();
+        User findUser = userRepository.findById(1L).orElseThrow();
+        Place findPlace = placeRepository.findById(1L).orElseThrow();
         Pin pin = Pin.createPin("아늑해요", (short) 5, findUser, findPlace);
         pinRepository.save(pin);
 
@@ -108,11 +109,12 @@ class PinRepositoryTest {
         em.clear();
 
         // when (위도, 경도 값으로 근처 장소 조회)
-        String point = "POINT(37.7749295 -122.4194155)"; // 테스트용 위도, 경도
+        Point point = geometryFactory.createPoint(new Coordinate(-122.4194155, 37.7749295)); // 위도, 경도 좌표 생성
+
         Optional<Place> foundPlace = placeRepository.findPlaceByLocation(point);
 
         // then
-        assertThat(foundPlace.isPresent()).isTrue();
+        assertThat(foundPlace).isPresent();
         assertThat(foundPlace.get().getPlaceName()).isEqualTo("스타벅스 건대점");
     }
 

@@ -22,9 +22,9 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
             @Param("currentUserLocation") Point currentUserLocation,
             @Param("placeCategoryIds") List<Long> placeCategoryIds);
 
-    @Query("SELECT p FROM Place p " +
-            "WHERE ST_Distance_Sphere(p.location, ST_GeomFromText(:point, 4326)) < 100")
-    Optional<Place> findPlaceByLocation(@Param("point") String point);
+    @Query("SELECT DISTINCT p FROM Place p " +
+            "WHERE ST_Contains(ST_Buffer(:point, 100), p.location)")
+    Optional<Place> findPlaceByLocation(@Param("point") Point point);
 
     @Query(value = """
         SELECT NEW
