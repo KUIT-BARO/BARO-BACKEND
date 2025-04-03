@@ -5,8 +5,10 @@ import jakarta.persistence.PersistenceContext;
 import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
 import konkuk.kuit.baro.domain.promise.model.Promise;
+import konkuk.kuit.baro.domain.promise.model.PromiseCandidatePlace;
 import konkuk.kuit.baro.domain.promise.model.PromiseMember;
 import konkuk.kuit.baro.domain.promise.model.PromiseSuggestedPlace;
+import konkuk.kuit.baro.domain.promise.repository.PromiseCandidatePlaceRepository;
 import konkuk.kuit.baro.domain.promise.repository.PromiseMemberRepository;
 import konkuk.kuit.baro.domain.promise.repository.PromiseRepository;
 import konkuk.kuit.baro.domain.promise.repository.PromiseSuggestedPlaceRepository;
@@ -54,6 +56,8 @@ class PromisePlaceVoteHistoryRepositoryTest {
 
     @PersistenceContext
     private EntityManager em;
+    @Autowired
+    private PromiseCandidatePlaceRepository promiseCandidatePlaceRepository;
 
     @BeforeEach
     void init() {
@@ -96,20 +100,21 @@ class PromisePlaceVoteHistoryRepositoryTest {
 
         promiseVoteRepository.save(promiseVote);
 
-        em.flush();
-        em.clear();
+        PromiseCandidatePlace promiseCandidatePlace = PromiseCandidatePlace.createPromiseCandidatePlace(promiseVote, place);
+
+        promiseCandidatePlaceRepository.save(promiseCandidatePlace);
     }
 
     @Test
     @DisplayName("약속 장소 투표 내역 저장 테스트")
     void save() {
         // given
-        PromiseSuggestedPlace promiseSuggestedPlace = promiseSuggestedPlaceRepository.findById(1L).get();
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
         PromiseMember promiseMember = promiseMemberRepository.findById(1L).get();
+        PromiseCandidatePlace promiseCandidatePlace = promiseCandidatePlaceRepository.findById(1L).get();
 
         // when
-        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseSuggestedPlace, promiseVote, promiseMember);
+        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseCandidatePlace, promiseVote, promiseMember);
 
         promisePlaceVoteHistoryRepository.save(promisePlaceVoteHistory);
 
@@ -124,11 +129,11 @@ class PromisePlaceVoteHistoryRepositoryTest {
     @DisplayName("약속 장소 투표 내역 삭제 테스트")
     void delete() {
         // given
-        PromiseSuggestedPlace promiseSuggestedPlace = promiseSuggestedPlaceRepository.findById(1L).get();
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
         PromiseMember promiseMember = promiseMemberRepository.findById(1L).get();
+        PromiseCandidatePlace promiseCandidatePlace = promiseCandidatePlaceRepository.findById(1L).get();
 
-        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseSuggestedPlace, promiseVote, promiseMember);
+        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseCandidatePlace, promiseVote, promiseMember);
 
         promisePlaceVoteHistoryRepository.save(promisePlaceVoteHistory);
 
@@ -148,17 +153,17 @@ class PromisePlaceVoteHistoryRepositoryTest {
 
     @Test
     @DisplayName("약속 장소 투표 내역 삭제 테스트")
-    @Description("약속을 삭제했을 때, 약속 장소 투표 내역도 삭제되는 지 테스트. 약속 삭제 -> 약속 투표 삭제 -> 약속 장소 투표 내역 삭제")
+    @Description("약속을 삭제했을 때, 약속 장소 투표 내역도 삭제되는 지 테스트. 약속 삭제 -> 약속 투표 삭제 -> 약속 후보 장소 삭제 -> 약속 장소 투표 내역 삭제")
     void delete_promise() {
         // given
-        PromiseSuggestedPlace promiseSuggestedPlace = promiseSuggestedPlaceRepository.findById(1L).get();
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
         Promise promise = promiseRepository.findById(1L).get();
         PromiseMember promiseMember = promiseMemberRepository.findById(1L).get();
+        PromiseCandidatePlace promiseCandidatePlace = promiseCandidatePlaceRepository.findById(1L).get();
 
         promise.setPromiseVote(promiseVote);
 
-        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseSuggestedPlace, promiseVote, promiseMember);
+        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseCandidatePlace, promiseVote, promiseMember);
 
         promisePlaceVoteHistoryRepository.save(promisePlaceVoteHistory);
 
@@ -182,14 +187,14 @@ class PromisePlaceVoteHistoryRepositoryTest {
     @Description("유저를 삭제했을 때, 약속 장소 투표 내역도 삭제되는 지 테스트. 유저 삭제 -> 약속 참여자 삭제 -> 약속 장소 투표 내역 삭제")
     void delete_User() {
         // given
-        PromiseSuggestedPlace promiseSuggestedPlace = promiseSuggestedPlaceRepository.findById(1L).get();
         PromiseVote promiseVote = promiseVoteRepository.findById(1L).get();
         Promise promise = promiseRepository.findById(1L).get();
         PromiseMember promiseMember = promiseMemberRepository.findById(1L).get();
+        PromiseCandidatePlace promiseCandidatePlace = promiseCandidatePlaceRepository.findById(1L).get();
 
         promise.setPromiseVote(promiseVote);
 
-        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseSuggestedPlace, promiseVote, promiseMember);
+        PromisePlaceVoteHistory promisePlaceVoteHistory = PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseCandidatePlace, promiseVote, promiseMember);
 
         promisePlaceVoteHistoryRepository.save(promisePlaceVoteHistory);
 
