@@ -14,33 +14,10 @@ import konkuk.kuit.baro.domain.promise.service.PromiseService;
 import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
-import konkuk.kuit.baro.domain.promise.dto.response.VotingPromiseResponseDTO;
-import konkuk.kuit.baro.domain.promise.model.*;
-import konkuk.kuit.baro.domain.promise.repository.*;
-import konkuk.kuit.baro.domain.promise.service.PromiseAvailableTimeService;
-import konkuk.kuit.baro.domain.promise.service.PromiseService;
-import konkuk.kuit.baro.domain.user.model.User;
-import konkuk.kuit.baro.domain.user.repository.UserRepository;
-import konkuk.kuit.baro.domain.vote.model.PromisePlaceVoteHistory;
-import konkuk.kuit.baro.domain.vote.model.PromiseTimeVoteHistory;
-import konkuk.kuit.baro.domain.vote.model.PromiseVote;
-import konkuk.kuit.baro.domain.vote.repository.PromisePlaceVoteHistoryRepository;
-import konkuk.kuit.baro.domain.vote.repository.PromiseTimeVoteHistoryRepository;
-import konkuk.kuit.baro.domain.vote.repository.PromiseVoteRepository;
-import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
-import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
-import konkuk.kuit.baro.global.common.response.BaseResponse;
-import konkuk.kuit.baro.global.common.response.status.BaseStatus;
-import konkuk.kuit.baro.global.common.util.GeometryUtil;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.*;
 

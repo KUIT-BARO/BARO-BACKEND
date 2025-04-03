@@ -5,6 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
 import konkuk.kuit.baro.domain.promise.dto.response.ConfirmedPromiseResponseDTO;
+import konkuk.kuit.baro.domain.promise.dto.response.PromiseStatusConfirmedPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.model.Promise;
 import konkuk.kuit.baro.domain.promise.repository.PromiseRepository;
 import konkuk.kuit.baro.domain.vote.model.PromiseVote;
@@ -81,7 +82,7 @@ class PromiseServiceTest {
         em.clear();
 
         // then
-        ConfirmedPromiseResponseDTO confirmedPromise = promiseService.getConfirmedPromise(findPromise.getId());
+        PromiseStatusConfirmedPromiseResponseDTO confirmedPromise = promiseService.getConfirmedPromise(findPromise.getId());
 
         assertThat(confirmedPromise.getPromiseName()).isEqualTo("컴퓨터 공학부 개강파티");
         assertThat(confirmedPromise.getConfirmedPlace()).isEqualTo("스타벅스 건대점");
@@ -217,7 +218,7 @@ class PromiseServiceTest {
         em.flush();
         em.clear();
 
-        assertThatThrownBy(() -> promiseService.getPromiseVoteRemainingTime(1L).getPromiseVoteRemainingTime())
+        assertThatThrownBy(() -> promiseService.getPromiseVoteRemainingTime(1L))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.TIME_EXCEED.getMessage());
     }

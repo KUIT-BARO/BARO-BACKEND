@@ -202,7 +202,7 @@ public class PromiseService {
 
         LocalDate suggestedEndDate = findPromise.getSuggestedEndDate();
 
-        return new PromiseSuggestRemainingTimeResponseDTO(getRemainingTimeUntilEndDate(suggestedEndDate.plusDays(1).atTime(LocalTime.MIDNIGHT)));
+        return new PromiseSuggestRemainingTimeResponseDTO(DateUtil.getRemainingTimeUntilEndDate(suggestedEndDate.plusDays(1).atTime(LocalTime.MIDNIGHT)));
     }
 
     // 투표 남은 시간 조회
@@ -210,7 +210,7 @@ public class PromiseService {
         Promise findPromise = findPromise(promiseId);
         PromiseVote findPromiseVote = findPromiseVote(findPromise);
 
-        return new PromiseVoteRemainingTimeResponseDTO(getRemainingTimeUntilEndDate(findPromiseVote.getVoteEndTime()));
+        return new PromiseVoteRemainingTimeResponseDTO(DateUtil.getRemainingTimeUntilEndDate(findPromiseVote.getVoteEndTime()));
     }
 
 
@@ -358,40 +358,6 @@ public class PromiseService {
                 )).toList();
     }
 
-    // 특정 만료 시점까지 남은 시간 반환
-    // DateUtil 이 생기면 거기에 추가해도 될 듯
-    private String getRemainingTimeUntilEndDate(LocalDateTime endDateTime) {
-        LocalDateTime now = LocalDateTime.now(); // 현재 시간
-
-        if (now.isAfter(endDateTime)) {
-            throw new CustomException(ErrorCode.TIME_EXCEED);
-        }
-
-        // DateUtil 생기면 calculateDday 메서드 가져다가 적용해도 될 듯
-        long days = ChronoUnit.DAYS.between(now, endDateTime);
-        if (days > 0) {
-            return "D-" + days;
-        }
-
-        long hours = ChronoUnit.HOURS.between(now, endDateTime);
-        long minutes = ChronoUnit.MINUTES.between(now, endDateTime) % 60;
-        long seconds = ChronoUnit.SECONDS.between(now, endDateTime) % 60;
-
-        StringBuilder time = new StringBuilder();
-        if (hours > 0) {
-            time.append(hours).append("시간 ");
-        }
-
-        if (minutes > 0) {
-            time.append(minutes).append("분 ");
-        }
-
-        if (seconds > 0 || time.isEmpty()) {
-            time.append(seconds).append("초");
-        }
-
-        return time.toString().trim();
-    }
 
 
 }
