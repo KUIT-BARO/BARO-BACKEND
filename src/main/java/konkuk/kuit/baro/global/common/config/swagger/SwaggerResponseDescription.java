@@ -126,6 +126,13 @@ public enum SwaggerResponseDescription {
             PROMISE_NOT_FOUND,
             PROMISE_MEMBER_NOT_FOUND,
             PROMISE_VOTE_NOT_STARTED
+    ))),
+
+    VOTE_CANDIDATE_LIST(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND,
+            PROMISE_NOT_FOUND,
+            PROMISE_MEMBER_NOT_FOUND,
+            PROMISE_VOTE_NOT_STARTED
     )));
 
     private final Set<ErrorCode> errorCodeList;
