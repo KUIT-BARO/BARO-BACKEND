@@ -29,7 +29,7 @@ public class PinController {
     @Operation(summary = "핀 등록", description = "새로운 핀을 등록합니다.")
     @PostMapping
     // @CustomExceptionDescription(PIN_REGISTER)
-    public BaseResponse<Void> registerPin(@ModelAttribute @Valid PinRequestDTO request,
+    public BaseResponse<Void> registerPin(@RequestBody @Valid PinRequestDTO request,
                                           @CurrentUserId Long userId) {
         pinService.registerPinData(request, userId);
         return BaseResponse.ok(null);

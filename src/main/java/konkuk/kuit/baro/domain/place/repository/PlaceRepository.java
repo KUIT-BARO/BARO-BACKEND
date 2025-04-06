@@ -22,8 +22,7 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
             @Param("currentUserLocation") Point currentUserLocation,
             @Param("placeCategoryIds") List<Long> placeCategoryIds);
 
-    @Query("SELECT DISTINCT p FROM Place p " +
-            "WHERE ST_Contains(ST_Buffer(:point, 100), p.location)")
+    @Query(value = "SELECT * FROM place p WHERE ST_Distance_Sphere(:point, p.location) <= 100 LIMIT 1", nativeQuery = true)
     Optional<Place> findPlaceByLocation(@Param("point") Point point);
 
     @Query(value = """
