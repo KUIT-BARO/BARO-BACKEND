@@ -1,5 +1,6 @@
 package konkuk.kuit.baro.domain.promise.controller;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -158,6 +159,15 @@ public class PromiseController {
                                    @PathVariable("promiseId") Long promiseId,
                                    @RequestBody @Valid PromiseVoteRequestDTO promiseVoteRequestDTO) {
         promiseService.vote(userId, promiseId, promiseVoteRequestDTO);
+        return BaseResponse.ok(null);
+    }
+
+    @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
+    @Operation(summary = "투표 종료하기", description = "투표를 종료하며, 투표 내역을 확인하여 약속 시간, 장소를 확정합니다.")
+    @PostMapping("/{promiseId}/close-vote")
+    @CustomExceptionDescription(CLOSE_VOTE)
+    public BaseResponse<Void> closeVote(@PathVariable("promiseId") Long promiseId) {
+        promiseService.closeVote(promiseId);
         return BaseResponse.ok(null);
     }
 
