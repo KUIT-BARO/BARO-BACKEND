@@ -14,7 +14,6 @@ import konkuk.kuit.baro.domain.promise.service.PromiseService;
 import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -139,4 +138,16 @@ public class PromiseController {
                                                                            @RequestParam("hasVoted") boolean hasVoted) {
         return BaseResponse.ok(promiseService.getVoteCandidateList(userId, promiseId, hasVoted));
     }
+
+
+    @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
+    @Operation(summary = "투표 시작(개설)하기", description = "약속 가능 시간, 약속 제안 장소 데이터를 바탕으로 투표 목록을 생성, 및 투표를 시작(개설)합니다.")
+    @PostMapping("/{promiseId}/init-vote")
+    @CustomExceptionDescription(VOTE_INIT)
+    public BaseResponse<Void> initVote(@PathVariable("promiseId") Long promiseId) {
+        promiseService.initVote(promiseId);
+        return BaseResponse.ok(null);
+    }
+
+
 }
