@@ -285,6 +285,7 @@ public class PromiseService {
     }
 
 
+    // 투표하기
     @Transactional
     public void vote(Long userId, Long promiseId, PromiseVoteRequestDTO promiseVoteRequestDTO) {
         Promise findPromise = findPromise(promiseId);
@@ -300,26 +301,11 @@ public class PromiseService {
         promiseTimeVoteHistoryRepository.deleteAllByPromiseMember(findPromiseMember);
         promisePlaceVoteHistoryRepository.deleteAllByPromiseMember(findPromiseMember);
 
-
         // 시간 투표 내역 저장
-        promiseVoteRequestDTO.getPromiseCandidateTimeIds()
-                .stream()
-                .map(promiseCandidateTimeId -> promiseCandidateTimeRepository.findById(promiseCandidateTimeId).orElseThrow(
-                        () -> new CustomException(PROMISE_CANDIDATE_TIME_NOT_FOUND)
-                ))
-                .map(promiseCandidateTime -> PromiseTimeVoteHistory.createPromiseTimeVoteHistory(findPromiseVote, promiseCandidateTime, findPromiseMember))
-                .forEach(promiseTimeVoteHistoryRepository::save);
-
+        saveTimeVoteHistory(promiseVoteRequestDTO.getPromiseCandidateTimeIds(), findPromiseVote, findPromiseMember);
 
         // 장소 투표 내역 저장
-        promiseVoteRequestDTO.getPromiseCandidatePlaceIds()
-                .stream()
-                .map(promiseCandidatePlaceId -> promiseCandidatePlaceRepository.findById(promiseCandidatePlaceId).orElseThrow(
-                        () -> new CustomException(PROMISE_CANDIDATE_PLACE_NOT_FOUND)
-                ))
-                .map(promiseCandidatePlace -> PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseCandidatePlace, findPromiseVote, findPromiseMember))
-                .forEach(promisePlaceVoteHistoryRepository::save);
-
+        savePlaceVoteHistory(promiseVoteRequestDTO.getPromiseCandidatePlaceIds(), findPromiseVote, findPromiseMember);
     }
 
 
@@ -544,6 +530,29 @@ public class PromiseService {
             PromiseCandidatePlace candidatePlace = PromiseCandidatePlace.createPromiseCandidatePlace(savedVote, place);
             promiseCandidatePlaceRepository.save(candidatePlace);
         });
+    }
+
+    // 시간 투표 내역 저장
+    private void saveTimeVoteHistory(List<Long> promiseCandidateTimeIds, PromiseVote findPromiseVote, PromiseMember findPromiseMember) {
+        promiseCandidateTimeIds
+                .stream()
+                .map(promiseCandidateTimeId -> promiseCandidateTimeRepository.findById(promiseCandidateTimeId).orElseThrow(
+                        () -> new CustomException(PROMISE_CANDIDATE_TIME_NOT_FOUND)
+                ))
+                .map(promiseCandidateTime -> PromiseTimeVoteHistory.createPromiseTimeVoteHistory(findPromiseVote, promiseCandidateTime, findPromiseMember))
+
+                .forEach(promiseTimeVoteHistoryRepository::save);
+    }
+
+    // 장소 투표 내역 저장
+    private void savePlaceVoteHistory(List<Long> promiseCandidatePlaceIds, PromiseVote findPromiseVote, PromiseMember findPromiseMember) {
+        promiseCandidatePlaceIds
+                .stream()
+                .map(promiseCandidatePlaceId -> promiseCandidatePlaceRepository.findById(promiseCandidatePlaceId).orElseThrow(
+                        () -> new CustomException(PROMISE_CANDIDATE_PLACE_NOT_FOUND)
+                ))
+                .map(promiseCandidatePlace -> PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseCandidatePlace, findPromiseVote, findPromiseMember))
+                .forEach(promisePlaceVoteHistoryRepository::save);
     }
 
 
