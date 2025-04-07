@@ -12,4 +12,6 @@ public interface PromiseTimeVoteHistoryRepository extends JpaRepository<PromiseT
     boolean existsByPromiseVoteId(Long promiseVoteId);
 
     boolean existsByPromiseVoteAndPromiseMember(PromiseVote promiseVote, PromiseMember promiseMember);
+
+    void deleteAllByPromiseMember(PromiseMember promiseMember);
 }
