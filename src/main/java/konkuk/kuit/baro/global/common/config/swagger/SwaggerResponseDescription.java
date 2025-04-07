@@ -148,6 +148,13 @@ public enum SwaggerResponseDescription {
             PROMISE_VOTE_NOT_IN_PROGRESS,
             PROMISE_CANDIDATE_TIME_NOT_FOUND,
             PROMISE_CANDIDATE_PLACE_NOT_FOUND
+    ))),
+
+    CLOSE_VOTE(new LinkedHashSet<>(Set.of(
+            PROMISE_NOT_FOUND,
+            PROMISE_VOTE_NOT_IN_PROGRESS,
+            PROMISE_TIME_NOT_CONFIRMED,
+            PROMISE_PLACE_NOT_CONFIRMED
     )));
 
     private final Set<ErrorCode> errorCodeList;

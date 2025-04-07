@@ -60,6 +60,8 @@ public enum ErrorCode implements ResponseStatus {
     PROMISE_SUGGESTED_PLACE_NOT_FOUND(802, HttpStatus.NOT_FOUND.value(), "약속 제안 장소가 존재하지 않습니다."),
     PROMISE_CANDIDATE_TIME_NOT_FOUND(803, HttpStatus.NOT_FOUND.value(), "해당 약속 후보 시간이 존재하지 않습니다."),
     PROMISE_CANDIDATE_PLACE_NOT_FOUND(804, HttpStatus.NOT_FOUND.value(), "해당 약속 후보 장소가 존재하지 않습니다."),
+    PROMISE_TIME_NOT_CONFIRMED(805, BAD_REQUEST.value(), "약속 시간이 확정되지 않았습니다."),
+    PROMISE_PLACE_NOT_CONFIRMED(806, BAD_REQUEST.value(), "약속 장소가 확정되지 않았습니다."),
 
     // Time
     TIME_EXCEED(900, BAD_REQUEST.value(), "만료시간이 지났습니다");
