@@ -133,6 +133,12 @@ public enum SwaggerResponseDescription {
             PROMISE_NOT_FOUND,
             PROMISE_MEMBER_NOT_FOUND,
             PROMISE_VOTE_NOT_STARTED
+    ))),
+
+    VOTE_INIT(new LinkedHashSet<>(Set.of(
+            PROMISE_NOT_FOUND,
+            PROMISE_AVAILABLE_TIME_NOT_FOUND,
+            PROMISE_SUGGESTED_PLACE_NOT_FOUND
     )));
 
     private final Set<ErrorCode> errorCodeList;
