@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
+import konkuk.kuit.baro.domain.promise.dto.request.PromiseVoteRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.request.SetPromiseAvailableTimeRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.*;
 import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
@@ -146,6 +147,17 @@ public class PromiseController {
     @CustomExceptionDescription(VOTE_INIT)
     public BaseResponse<Void> initVote(@PathVariable("promiseId") Long promiseId) {
         promiseService.initVote(promiseId);
+        return BaseResponse.ok(null);
+    }
+
+    @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
+    @Operation(summary = "투표하기", description = "실제로 원하는 시간, 장소에 투표합니다.")
+    @PostMapping("/{promiseId}/vote")
+    @CustomExceptionDescription(VOTE)
+    public BaseResponse<Void> vote(@CurrentUserId Long userId,
+                                   @PathVariable("promiseId") Long promiseId,
+                                   @RequestBody @Valid PromiseVoteRequestDTO promiseVoteRequestDTO) {
+        promiseService.vote(userId, promiseId, promiseVoteRequestDTO);
         return BaseResponse.ok(null);
     }
 
