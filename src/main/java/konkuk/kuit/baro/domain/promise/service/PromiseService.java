@@ -308,6 +308,26 @@ public class PromiseService {
         savePlaceVoteHistory(promiseVoteRequestDTO.getPromiseCandidatePlaceIds(), findPromiseVote, findPromiseMember);
     }
 
+    // 투표 종료하기
+    @Transactional
+    public void closeVote(Long promiseId) {
+        Promise findPromise = findPromise(promiseId);
+
+        if (!findPromise.getStatus().equals(VOTING)) {
+            throw new CustomException(PROMISE_VOTE_NOT_IN_PROGRESS);
+        }
+
+        findPromise.setStatus(CONFIRMED);
+
+        // 투표 내역을 확인하여 가장 많이 투표된 시간, 장소를 고름.
+        PromiseCandidateTime mostVotedTime = getMostVotedTime(findPromise.getPromiseVote().getId());
+        findPromise.setFixedDate(mostVotedTime.getPromiseCandidateTimeDate());
+        findPromise.setFixedTime(mostVotedTime.getPromiseCandidateTimeStartTime());
+
+        PromiseCandidatePlace mostVotedPlace = getMostVotedPlace(findPromise.getPromiseVote().getId());
+        findPromise.setPlace(mostVotedPlace.getPlace());
+    }
+
 
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
@@ -553,6 +573,28 @@ public class PromiseService {
                 ))
                 .map(promiseCandidatePlace -> PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseCandidatePlace, findPromiseVote, findPromiseMember))
                 .forEach(promisePlaceVoteHistoryRepository::save);
+    }
+
+    // 가장 많이 투표된 약속 후보 시간 반환
+    private PromiseCandidateTime getMostVotedTime(Long promiseVoteId) {
+        List<PromiseCandidateTime> topVoted = promiseTimeVoteHistoryRepository.findMostVotedCandidateTime(promiseVoteId, PageRequest.of(0, 1));
+
+        if (topVoted.isEmpty()) {
+            throw new CustomException(PROMISE_TIME_NOT_CONFIRMED);
+        }
+
+        return topVoted.get(0);
+    }
+
+    // 가장 많이 투표된 약속 후보 장소 반환
+    private PromiseCandidatePlace getMostVotedPlace(Long promiseVoteId) {
+        List<PromiseCandidatePlace> topVoted = promisePlaceVoteHistoryRepository.findMostVotedCandidatePlace(promiseVoteId, PageRequest.of(0, 1));
+
+        if (topVoted.isEmpty()) {
+            throw new CustomException(PROMISE_PLACE_NOT_CONFIRMED);
+        }
+
+        return topVoted.get(0);
     }
 
 
