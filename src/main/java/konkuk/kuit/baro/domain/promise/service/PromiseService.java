@@ -1,6 +1,7 @@
 package konkuk.kuit.baro.domain.promise.service;
 
 import konkuk.kuit.baro.domain.place.model.Place;
+import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseMemberSuggestStateDTO;
@@ -28,13 +29,10 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
+import java.util.stream.Collectors;
 
 import static konkuk.kuit.baro.domain.promise.dto.response.SuggestionProgress.*;
 
@@ -50,6 +48,7 @@ public class PromiseService {
     private final PromiseAvailableTimeRepository promiseAvailableTimeRepository;
     private final PromiseSuggestedPlaceRepository promiseSuggestedPlaceRepository;
     private final PromiseTimeVoteHistoryRepository promiseTimeVoteHistoryRepository;
+    private final PlaceRepository placeRepository;
 
     private final ColorUtil colorUtil;
 
@@ -118,7 +117,8 @@ public class PromiseService {
                 case PENDING -> suggestedPromises.add(mapToSuggestedPromiseDTO(promise));
                 case VOTING -> votingPromises.add(mapToVotingPromiseDTO(promise));
                 case CONFIRMED -> confirmedPromises.add(mapToConfirmedPromiseDTO(promise));
-                case ACTIVE -> {}
+                case ACTIVE -> {
+                }
                 default -> throw new IllegalArgumentException();
             }
         }
@@ -213,6 +213,42 @@ public class PromiseService {
         return new PromiseVoteRemainingTimeResponseDTO(DateUtil.getRemainingTimeUntilEndDate(findPromiseVote.getVoteEndTime()));
     }
 
+    // 특정 약속 참여자의 투표 참여 여부 반환
+    public HasVotedResponseDTO getHasVoted(Long userId, Long promiseId) {
+        Promise findPromise = findPromise(promiseId);
+        PromiseMember findPromiseMember = findPromiseMember(userId, promiseId);
+        PromiseVote findPromiseVote = findPromiseVote(findPromise);
+
+        return new HasVotedResponseDTO(extractHasVoted(findPromiseVote, findPromiseMember));
+    }
+
+    // 투표 후보 목록 조회
+    public VoteCandidateListResponseDTO getVoteCandidateList(Long userId, Long promiseId, boolean hasVoted) {
+        Promise findPromise = findPromise(promiseId);
+        PromiseVote findPromiseVote = findPromiseVote(findPromise);
+        PromiseMember findPromiseMember = findPromiseMember(userId, promiseId);
+
+        // 투표한 경우, 사용자가 선택한 약속 후보 시간 및 약속 후보 장소 ID 가져오기
+        final Set<Long> selectedTimeIds = hasVoted
+                ? findPromiseMember.getPromiseTimeVoteHistories().stream()
+                .map(voteHistory -> voteHistory.getPromiseCandidateTime().getId())
+                .collect(Collectors.toSet())
+                : Collections.emptySet();
+
+        final Set<Long> selectedPlaceIds = hasVoted
+                ? findPromiseMember.getPromisePlaceVoteHistories().stream()
+                .map(voteHistory -> voteHistory.getPromiseCandidatePlace().getId())
+                .collect(Collectors.toSet())
+                : Collections.emptySet();
+
+        // 모든 후보 시간 리스트 생성 (투표 여부 반영)
+        List<CandidateTimesDTO> candidateTimes = getCandidateTimesList(hasVoted, findPromiseVote, selectedTimeIds);
+
+        // 모든 후보 장소 리스트 생성 (투표 여부 반영)
+        List<CandidatePlacesDTO> candidatePlaces = getCandidatePlacesList(hasVoted, findPromiseVote, selectedPlaceIds);
+
+        return new VoteCandidateListResponseDTO(candidateTimes, candidatePlaces);
+    }
 
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
@@ -358,6 +394,30 @@ public class PromiseService {
                 )).toList();
     }
 
+    // 투표 후보 장소 목록 반환
+    private List<CandidatePlacesDTO> getCandidatePlacesList(boolean hasVoted, PromiseVote findPromiseVote, Set<Long> selectedPlaceIds) {
+        return findPromiseVote.getPromiseCandidatePlaces()
+                .stream()
+                .map(promiseCandidatePlace -> new CandidatePlacesDTO(
+                        promiseCandidatePlace.getId(),
+                        promiseCandidatePlace.getPlace().getPlaceName(),
+                        hasVoted && selectedPlaceIds.contains(promiseCandidatePlace.getId()) // 투표했으면 true
+                ))
+                .toList();
+    }
+
+    // 투표 후보 시간 목록 반환
+    private List<CandidateTimesDTO> getCandidateTimesList(boolean hasVoted, PromiseVote findPromiseVote, Set<Long> selectedTimeIds) {
+        return findPromiseVote.getPromiseCandidateTimes()
+                .stream()
+                .map(promiseCandidateTime -> new CandidateTimesDTO(
+                        promiseCandidateTime.getId(),
+                        DateUtil.formatDate(promiseCandidateTime.getPromiseCandidateTimeDate()),
+                        DateUtil.formatTime(promiseCandidateTime.getPromiseCandidateTimeStartTime()),
+                        hasVoted && selectedTimeIds.contains(promiseCandidateTime.getId()) // 투표했으면 true
+                ))
+                .toList();
+    }
 
 
 }

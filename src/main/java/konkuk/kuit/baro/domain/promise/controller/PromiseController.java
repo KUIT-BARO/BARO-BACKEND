@@ -14,6 +14,7 @@ import konkuk.kuit.baro.domain.promise.service.PromiseService;
 import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -117,5 +118,25 @@ public class PromiseController {
     @CustomExceptionDescription(PROMISE_VOTE_REMAINING_TIME)
     public BaseResponse<PromiseVoteRemainingTimeResponseDTO> getPromiseVoteRemainingTimeResponse(@PathVariable("promiseId") Long promiseId) {
         return BaseResponse.ok(promiseService.getPromiseVoteRemainingTime(promiseId));
+    }
+
+    @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
+    @Operation(summary = "투표 참여 여부 조회", description = "현재 로그인한 유저가 특정 약속에 대해 투표에 참여했는지 여부를 조회합니다.")
+    @GetMapping("/{promiseId}/voting-status")
+    @CustomExceptionDescription(PROMISE_MEMBER_HAS_VOTED)
+    public BaseResponse<HasVotedResponseDTO> getHasVoted(@CurrentUserId Long userId,
+                                                         @PathVariable("promiseId") Long promiseId) {
+        return BaseResponse.ok(promiseService.getHasVoted(userId, promiseId));
+    }
+
+
+    @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
+    @Operation(summary = "투표 후보 목록 조회", description = "투표의 후보 목록을 조회합니다. 만약 투표를 하기 이전이라면 그냥 목록만 보이고, 투표를 한 이후 투표 확인, 혹은 수정을 하기 위해 진입한 경우 기존에 어떤 후보에 투표했었는지에 관한 정보를 함께 반환합니다.")
+    @GetMapping("/{promiseId}/vote-candidate-list")
+    @CustomExceptionDescription(VOTE_CANDIDATE_LIST)
+    public BaseResponse<VoteCandidateListResponseDTO> getVoteCandidateList(@CurrentUserId Long userId,
+                                                                           @PathVariable("promiseId") Long promiseId,
+                                                                           @RequestParam("hasVoted") boolean hasVoted) {
+        return BaseResponse.ok(promiseService.getVoteCandidateList(userId, promiseId, hasVoted));
     }
 }

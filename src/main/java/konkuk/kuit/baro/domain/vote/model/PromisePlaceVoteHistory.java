@@ -1,6 +1,8 @@
 package konkuk.kuit.baro.domain.vote.model;
 
 import jakarta.persistence.*;
+import konkuk.kuit.baro.domain.promise.model.PromiseCandidatePlace;
+import konkuk.kuit.baro.domain.promise.model.PromiseCandidateTime;
 import konkuk.kuit.baro.domain.promise.model.PromiseMember;
 import konkuk.kuit.baro.domain.promise.model.PromiseSuggestedPlace;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
@@ -24,8 +26,8 @@ public class PromisePlaceVoteHistory extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "promise_suggested_place_id", nullable = false)
-    private PromiseSuggestedPlace promiseSuggestedPlace;
+    @JoinColumn(name = "promise_candidate_place_id", nullable = false)
+    private PromiseCandidatePlace promiseCandidatePlace;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "promise_vote_id", nullable = false)
@@ -36,18 +38,17 @@ public class PromisePlaceVoteHistory extends BaseEntity {
     private PromiseMember promiseMember;
 
     // 생성 메서드
-    public static PromisePlaceVoteHistory createPromisePlaceVoteHistory(PromiseSuggestedPlace promiseSuggestedPlace, PromiseVote promiseVote, PromiseMember promiseMember) {
+    public static PromisePlaceVoteHistory createPromisePlaceVoteHistory(PromiseCandidatePlace promiseCandidatePlace, PromiseVote promiseVote, PromiseMember promiseMember) {
         PromisePlaceVoteHistory promisePlaceVoteHistory = new PromisePlaceVoteHistory();
-        promisePlaceVoteHistory.setPromiseSuggestedPlace(promiseSuggestedPlace);
+        promisePlaceVoteHistory.setPromiseCandidatePlace(promiseCandidatePlace);
         promisePlaceVoteHistory.setPromiseVote(promiseVote);
         promisePlaceVoteHistory.setPromiseMember(promiseMember);
         return promisePlaceVoteHistory;
     }
 
-    // 연관 관계 편의 메서드
-    private void setPromiseSuggestedPlace(PromiseSuggestedPlace promiseSuggestedPlace) {
-        this.promiseSuggestedPlace = promiseSuggestedPlace;
-        promiseSuggestedPlace.addPromisePlaceVoteHistory(this);
+    private void setPromiseCandidatePlace(PromiseCandidatePlace promiseCandidatePlace) {
+        this.promiseCandidatePlace = promiseCandidatePlace;
+        promiseCandidatePlace.addPromisePlaceVoteHistory(this);
     }
 
     private void setPromiseVote(PromiseVote promiseVote) {
