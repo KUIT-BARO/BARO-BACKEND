@@ -3,6 +3,7 @@ package konkuk.kuit.baro.domain.promise.service;
 import jakarta.persistence.EntityManager;
 import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
+import konkuk.kuit.baro.domain.promise.dto.request.PromiseVoteRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseMemberSuggestStateDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseStatusResponseDTO;
@@ -15,18 +16,18 @@ import konkuk.kuit.baro.domain.promise.model.*;
 import konkuk.kuit.baro.domain.promise.repository.*;
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
+import konkuk.kuit.baro.domain.vote.model.PromisePlaceVoteHistory;
+import konkuk.kuit.baro.domain.vote.model.PromiseTimeVoteHistory;
 import konkuk.kuit.baro.domain.vote.model.PromiseVote;
+import konkuk.kuit.baro.domain.vote.repository.PromisePlaceVoteHistoryRepository;
 import konkuk.kuit.baro.domain.vote.repository.PromiseTimeVoteHistoryRepository;
 import konkuk.kuit.baro.domain.vote.repository.PromiseVoteRepository;
 import konkuk.kuit.baro.global.common.exception.CustomException;
-import konkuk.kuit.baro.global.common.response.status.BaseStatus;
-import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import konkuk.kuit.baro.global.common.util.ColorUtil;
 import konkuk.kuit.baro.global.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +61,7 @@ public class PromiseService {
     private final EntityManager em;
 
     private final ColorUtil colorUtil;
+    private final PromisePlaceVoteHistoryRepository promisePlaceVoteHistoryRepository;
 
     @Transactional
     public void promiseSuggest(PromiseSuggestRequestDTO request, Long loginUserId) {
@@ -283,6 +285,44 @@ public class PromiseService {
     }
 
 
+    @Transactional
+    public void vote(Long userId, Long promiseId, PromiseVoteRequestDTO promiseVoteRequestDTO) {
+        Promise findPromise = findPromise(promiseId);
+
+        if (!findPromise.getStatus().equals(VOTING)) {
+            throw new CustomException(PROMISE_VOTE_NOT_IN_PROGRESS);
+        }
+
+        PromiseMember findPromiseMember = findPromiseMember(userId, promiseId);
+        PromiseVote findPromiseVote = findPromiseVote(findPromise);
+
+        // 특정 유저의 기존 시간, 장소 투표 내역은 리셋
+        promiseTimeVoteHistoryRepository.deleteAllByPromiseMember(findPromiseMember);
+        promisePlaceVoteHistoryRepository.deleteAllByPromiseMember(findPromiseMember);
+
+
+        // 시간 투표 내역 저장
+        promiseVoteRequestDTO.getPromiseCandidateTimeIds()
+                .stream()
+                .map(promiseCandidateTimeId -> promiseCandidateTimeRepository.findById(promiseCandidateTimeId).orElseThrow(
+                        () -> new CustomException(PROMISE_CANDIDATE_TIME_NOT_FOUND)
+                ))
+                .map(promiseCandidateTime -> PromiseTimeVoteHistory.createPromiseTimeVoteHistory(findPromiseVote, promiseCandidateTime, findPromiseMember))
+                .forEach(promiseTimeVoteHistoryRepository::save);
+
+
+        // 장소 투표 내역 저장
+        promiseVoteRequestDTO.getPromiseCandidatePlaceIds()
+                .stream()
+                .map(promiseCandidatePlaceId -> promiseCandidatePlaceRepository.findById(promiseCandidatePlaceId).orElseThrow(
+                        () -> new CustomException(PROMISE_CANDIDATE_PLACE_NOT_FOUND)
+                ))
+                .map(promiseCandidatePlace -> PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseCandidatePlace, findPromiseVote, findPromiseMember))
+                .forEach(promisePlaceVoteHistoryRepository::save);
+
+    }
+
+
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
@@ -324,7 +364,7 @@ public class PromiseService {
         PromiseVote findPromiseVote = promise.getPromiseVote();
 
         if (findPromiseVote == null) {
-            throw new CustomException(PROMISE_VOTE_NOT_STARTED);
+            throw new CustomException(PROMISE_VOTE_NOT_IN_PROGRESS);
         }
 
         return findPromiseVote;
@@ -463,7 +503,7 @@ public class PromiseService {
     private void saveTop3CandidateTimes(Long promiseId, PromiseVote savedVote) {
         List<PromiseAvailableTime> allAvailableTimes = promiseAvailableTimeRepository.findAllByPromiseId(promiseId);
 
-        if(allAvailableTimes.isEmpty()) {
+        if (allAvailableTimes.isEmpty()) {
             throw new CustomException(PROMISE_AVAILABLE_TIME_NOT_FOUND);
         }
 
@@ -496,7 +536,7 @@ public class PromiseService {
     private void saveTop3CandidatePlaces(Long promiseId, PromiseVote savedVote) {
         List<Place> top3PromiseSuggestedPlaces = promiseSuggestedPlaceRepository.findTopPlacesByPromiseId(promiseId, PageRequest.of(0, 3));
 
-        if(top3PromiseSuggestedPlaces.isEmpty()) {
+        if (top3PromiseSuggestedPlaces.isEmpty()) {
             throw new CustomException(PROMISE_SUGGESTED_PLACE_NOT_FOUND);
         }
 
