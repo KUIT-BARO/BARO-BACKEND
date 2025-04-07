@@ -102,7 +102,7 @@ public enum SwaggerResponseDescription {
 
     VOTING_PROMISE_STATUS(new LinkedHashSet<>(Set.of(
             PROMISE_NOT_FOUND,
-            PROMISE_VOTE_NOT_STARTED
+            PROMISE_VOTE_NOT_IN_PROGRESS
     ))),
 
     CONFIRMED_PROMISE_STATUS(new LinkedHashSet<>(Set.of(
@@ -117,7 +117,7 @@ public enum SwaggerResponseDescription {
 
     PROMISE_VOTE_REMAINING_TIME(new LinkedHashSet<>(Set.of(
             PROMISE_NOT_FOUND,
-            PROMISE_VOTE_NOT_STARTED,
+            PROMISE_VOTE_NOT_IN_PROGRESS,
             TIME_EXCEED
     ))),
 
@@ -125,20 +125,29 @@ public enum SwaggerResponseDescription {
             USER_NOT_FOUND,
             PROMISE_NOT_FOUND,
             PROMISE_MEMBER_NOT_FOUND,
-            PROMISE_VOTE_NOT_STARTED
+            PROMISE_VOTE_NOT_IN_PROGRESS
     ))),
 
     VOTE_CANDIDATE_LIST(new LinkedHashSet<>(Set.of(
             USER_NOT_FOUND,
             PROMISE_NOT_FOUND,
             PROMISE_MEMBER_NOT_FOUND,
-            PROMISE_VOTE_NOT_STARTED
+            PROMISE_VOTE_NOT_IN_PROGRESS
     ))),
 
     VOTE_INIT(new LinkedHashSet<>(Set.of(
             PROMISE_NOT_FOUND,
             PROMISE_AVAILABLE_TIME_NOT_FOUND,
             PROMISE_SUGGESTED_PLACE_NOT_FOUND
+    ))),
+
+    VOTE(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND,
+            PROMISE_NOT_FOUND,
+            PROMISE_MEMBER_NOT_FOUND,
+            PROMISE_VOTE_NOT_IN_PROGRESS,
+            PROMISE_CANDIDATE_TIME_NOT_FOUND,
+            PROMISE_CANDIDATE_PLACE_NOT_FOUND
     )));
 
     private final Set<ErrorCode> errorCodeList;
