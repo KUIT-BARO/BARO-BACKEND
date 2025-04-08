@@ -8,15 +8,19 @@ import konkuk.kuit.baro.domain.promise.model.PromiseSuggestedPlace;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Entity
 @Table(name = "place")
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction("status IN ('ACTIVE', 'PENDING', 'VOTING', 'CONFIRMED')")
 public class Place extends BaseEntity {
@@ -69,5 +73,16 @@ public class Place extends BaseEntity {
 
     public void addPromiseCandidatePlace(PromiseCandidatePlace promiseCandidatePlace) {
         this.promiseCandidatePlaces.add(promiseCandidatePlace);
+    }
+
+    public static Place addPlace(Double latitude, Double longitude, String placeName, String placeAddress){
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        Point location = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+
+        return Place.builder()
+                .placeName(placeName)
+                .placeAddress(placeAddress)
+                .location(location)
+                .build();
     }
 }

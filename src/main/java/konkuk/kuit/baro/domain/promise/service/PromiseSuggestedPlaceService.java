@@ -3,6 +3,7 @@ package konkuk.kuit.baro.domain.promise.service;
 import konkuk.kuit.baro.domain.place.dto.response.PlaceSearchResponseDTO;
 import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
+import konkuk.kuit.baro.domain.promise.dto.request.SetPromiseSuggestedPlaceRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseMemberDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromisePlaceResponseDTO;
 import konkuk.kuit.baro.domain.promise.model.Promise;
@@ -75,20 +76,22 @@ public class PromiseSuggestedPlaceService {
     }
 
     @Transactional
-    public void setPromiseSuggestedPlace(List<Long> placeIds, Long userId, Long promiseId){
+    public void setPromiseSuggestedPlace(SetPromiseSuggestedPlaceRequestDTO req, Long userId){
 
         User loginUser = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-        Promise promise = promiseRepository.findById(promiseId).orElseThrow(() -> new CustomException(PROMISE_NOT_FOUND));
-        promiseAvailableTimeService.addPromiseMember(promiseId, loginUser, promise);
+        Promise promise = promiseRepository.findById(req.getPromiseId()).orElseThrow(() -> new CustomException(PROMISE_NOT_FOUND));
+        promiseAvailableTimeService.addPromiseMember(req.getPromiseId(), loginUser, promise);
 
-        PromiseMember promiseMember = promiseMemberRepository.findByUserIdAndPromiseId(userId, promiseId);
+        PromiseMember promiseMember = promiseMemberRepository.findByUserIdAndPromiseId(userId, req.getPromiseId());
 
-        for (Long placeId : placeIds) {
-            Place place = placeRepository.findById(placeId).orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
-            PromiseSuggestedPlace suggestedPlace = PromiseSuggestedPlace.createPromiseSuggestedPlace(promiseMember, place);
-            promiseSuggestedPlaceRepository.save(suggestedPlace);
+        if(req.getPlaceId() == -1){
+            Place place = Place.addPlace(req.getLatitude(), req.getLongitude(), req.getPlaceName(), req.getAddress());
+            placeRepository.save(place);
         }
 
+        Place place = placeRepository.findById(req.getPlaceId()).orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
+        PromiseSuggestedPlace suggestedPlace = PromiseSuggestedPlace.createPromiseSuggestedPlace(promiseMember, place);
+        promiseSuggestedPlaceRepository.save(suggestedPlace);
     }
 
 }

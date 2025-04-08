@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import konkuk.kuit.baro.domain.place.dto.response.PlaceSearchResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.request.SetPromiseAvailableTimeRequestDTO;
+import konkuk.kuit.baro.domain.promise.dto.request.SetPromiseSuggestedPlaceRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.*;
 import konkuk.kuit.baro.domain.promise.service.PromiseAvailableTimeService;
 import konkuk.kuit.baro.domain.promise.service.PromiseService;
@@ -14,7 +15,6 @@ import konkuk.kuit.baro.domain.promise.service.PromiseSuggestedPlaceService;
 import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -104,11 +104,10 @@ public class PromiseController {
     @PostMapping("{promiseId}/place-choice")
     @CustomExceptionDescription(SET_SUGGESTED_PLACE)
     public BaseResponse<Void> setSuggestedPlaces(
-            @PathVariable Long promiseId,
-            @RequestParam List<Long> placeIds,
+            @Validated @RequestBody SetPromiseSuggestedPlaceRequestDTO req,
             @CurrentUserId @Parameter(hidden = true) Long userId)
     {
-        promiseSuggestedPlaceService.setPromiseSuggestedPlace(placeIds, userId, promiseId);
+        promiseSuggestedPlaceService.setPromiseSuggestedPlace(req, userId);
         return BaseResponse.ok(null);
     }
 
