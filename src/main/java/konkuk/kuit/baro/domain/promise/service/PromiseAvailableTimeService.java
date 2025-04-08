@@ -37,11 +37,17 @@ public class PromiseAvailableTimeService {
 
     public PromiseAvailableTimeResponseDTO getPromiseAvailableTime(Long promiseId) {
         List<PromiseMember> promiseMembers = promiseMemberRepository.findAllByPromiseId(promiseId);
-        List<List<PromiseMemberAvailableTimeDTO>> availableTimes = new ArrayList<>();
+        List<PromiseMemberAvailableTimeDTO> availableTimes = new ArrayList<>();
         for (PromiseMember promiseMember : promiseMembers) {
-            availableTimes.add(promiseAvailableTimeRepository.findAllByPromiseMemberId(promiseMember.getId()));
+            availableTimes.add(new PromiseMemberAvailableTimeDTO(promiseMember.getId(),
+                    promiseAvailableTimeRepository.findAllByPromiseMemberId(promiseMember.getId())));
         }
-        return new PromiseAvailableTimeResponseDTO(promiseMemberRepository.findPromiseMemberDTOByPromiseId(promiseId), availableTimes);
+        Promise promise = promiseRepository.findById(promiseId).orElseThrow(() -> new CustomException(PROMISE_NOT_FOUND));
+        return new PromiseAvailableTimeResponseDTO(
+                promise.getSuggestedStartDate(),
+                promise.getSuggestedEndDate(),
+                promiseMemberRepository.findPromiseMemberDTOByPromiseId(promiseId),
+                availableTimes);
     }
 
     @Transactional
@@ -68,14 +74,15 @@ public class PromiseAvailableTimeService {
     }
 
 
-    private void addPromiseMember(Long promiseId, User loginUser, Promise promise) {
+    public void addPromiseMember(Long promiseId, User loginUser, Promise promise) {
         List<Long> userIdList = promiseMemberRepository.findUserIdListByPromiseid(promiseId);
         if(!userIdList.contains(loginUser.getId())) {
-            PromiseMember.createPromiseMember(false,
+            PromiseMember promiseMember = PromiseMember.createPromiseMember(false,
                     colorUtil.generateRandomHexColor(promiseId),
                     loginUser,
                     promise);
-        } // 약속 수락이 안 된 경우, PromiseMember 엔티티 추가
+            promiseMemberRepository.save(promiseMember);
+        }// 약속 수락이 안 된 경우, PromiseMember 엔티티 추가
     }
 
 

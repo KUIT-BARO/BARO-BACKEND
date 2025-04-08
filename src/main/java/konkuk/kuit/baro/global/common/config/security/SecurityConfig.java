@@ -1,8 +1,7 @@
 package konkuk.kuit.baro.global.common.config.security;
 
-import jakarta.servlet.http.HttpServletRequest;
-import konkuk.kuit.baro.domain.user.repository.UserRepository;
 import konkuk.kuit.baro.global.auth.entrypoint.CustomAuthenticationEntryPoint;
+import konkuk.kuit.baro.global.auth.jwt.filter.ExceptionHandlerFilter;
 import konkuk.kuit.baro.global.auth.jwt.filter.JwtAuthenticationFilter;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
 import konkuk.kuit.baro.global.common.redis.RedisService;
@@ -12,17 +11,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import konkuk.kuit.baro.global.auth.jwt.filter.ExceptionHandlerFilter;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @RequiredArgsConstructor
@@ -33,6 +29,11 @@ public class SecurityConfig {
     private final RedisService redisService;
     private final CorsConfigurationSource corsConfigurationSource;
     private final JwtUtil jwtUtil;
+    private final String[] PERMITTED_URLS = {
+            "/h2-console/**", "/actuator/**", "/swagger-ui/**",
+            "/v3/api-docs/**", "/users/signup/**", "/auth/login/**",
+            "/auth/mail/**","/auth/reissue/**"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -47,10 +48,9 @@ public class SecurityConfig {
                         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/h2-console/**", "/actuator/**", "/swagger-ui/**",
-                                "/v3/api-docs/**", "/users/signup/**", "/auth/login/**",
-                                "/auth/mail/**","/auth/reissue/**").permitAll()
-                        .requestMatchers("/**").authenticated())
+//                        .requestMatchers(PERMITTED_URLS).permitAll()
+//                        .requestMatchers("/**").authenticated())
+                          .anyRequest().permitAll())
                 .exceptionHandling(customizer -> customizer
                         .authenticationEntryPoint(customAuthenticationEntryPoint()))
                 .addFilterAfter(jwtAuthenticationFilter(), LogoutFilter.class)

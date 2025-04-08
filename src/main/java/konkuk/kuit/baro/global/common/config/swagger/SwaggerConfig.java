@@ -10,13 +10,15 @@ import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseErrorResponse;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.ErrorResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.method.HandlerMethod;
 
 import java.util.LinkedHashMap;
@@ -35,11 +37,33 @@ import static java.util.stream.Collectors.groupingBy;
 )
 @Configuration
 public class SwaggerConfig {
+        private final String securitySchemaName = "JWT";
+
         @Bean
         public OpenAPI openAPI() {
                 return new OpenAPI()
-                        .components(new Components());
+                        .components(setComponents())
+                        .addSecurityItem(setSecurityItems());
         }
+        private Components setComponents() {
+            return new Components()
+                    .addSecuritySchemes(securitySchemaName, bearerAuth());
+        }
+
+        private SecurityScheme bearerAuth() {
+            return new SecurityScheme()
+                    .type(SecurityScheme.Type.HTTP)
+                    .scheme("Bearer")
+                    .bearerFormat("JWT")
+                    .in(SecurityScheme.In.HEADER)
+                    .name(HttpHeaders.AUTHORIZATION);
+        }
+
+        private SecurityRequirement setSecurityItems() {
+            return new SecurityRequirement()
+                    .addList(securitySchemaName);
+        }
+
         @Bean
         public OperationCustomizer customize() {
                 return (Operation operation, HandlerMethod handlerMethod) -> {

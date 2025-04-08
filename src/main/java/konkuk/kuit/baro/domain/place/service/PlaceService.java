@@ -11,16 +11,17 @@ import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
 import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
-import konkuk.kuit.baro.global.common.util.GeometryUtil;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static konkuk.kuit.baro.global.common.response.status.ErrorCode.*;
+import static konkuk.kuit.baro.global.common.response.status.ErrorCode.INVALID_LOCATION;
+import static konkuk.kuit.baro.global.common.response.status.ErrorCode.PLACE_NOT_FOUND;
+import static konkuk.kuit.baro.global.common.util.GeometryUtil.createPoint;
+import static konkuk.kuit.baro.global.common.util.GeometryUtil.validateLocation;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +38,7 @@ public class PlaceService {
             throw new CustomException(INVALID_LOCATION);
         }
 
-        Point currentUserLocation = GeometryUtil.createPoint(request.getLatitude(), request.getLongitude());
+        Point currentUserLocation = createPoint(request.getLatitude(), request.getLongitude());
 
         List<Place> places = placeRepository.findByDistanceAndPlaceCategories(currentUserLocation, request.getPlaceCategoryIds());
 
@@ -79,15 +80,4 @@ public class PlaceService {
         return pin.getUser().getName();
     }
 
-    private Boolean validateLocation(Double latitude, Double longitude) {
-        if (latitude > 90 || latitude < -90) {
-            return false;
-        }
-
-        if (longitude > 180 || longitude < -180) {
-            return false;
-        }
-
-        return true;
-    }
 }

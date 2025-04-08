@@ -1,16 +1,16 @@
 package konkuk.kuit.baro.domain.promise.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import konkuk.kuit.baro.domain.place.dto.response.PlaceSearchResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.request.SetPromiseAvailableTimeRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.*;
-import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
-import konkuk.kuit.baro.domain.promise.dto.response.PromiseAvailableTimeResponseDTO;
-import konkuk.kuit.baro.domain.promise.dto.response.PromiseStatusResponseDTO;
 import konkuk.kuit.baro.domain.promise.service.PromiseAvailableTimeService;
 import konkuk.kuit.baro.domain.promise.service.PromiseService;
+import konkuk.kuit.baro.domain.promise.service.PromiseSuggestedPlaceService;
 import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.*;
 
@@ -30,6 +32,7 @@ public class PromiseController {
 
     private final PromiseService promiseService;
     private final PromiseAvailableTimeService promiseAvailableTimeService;
+    private final PromiseSuggestedPlaceService promiseSuggestedPlaceService;
 
     @Tag(name = "약속 제안 API", description = "약속 제안 관련 API")
     @Operation(summary = "약속 제안", description = "약속 이름, 날짜, 장소등을 입력하여 약속을 제안합니다.")
@@ -53,19 +56,29 @@ public class PromiseController {
     @Operation(summary = "약속 수락 - 시간 선택", description = "약속 참여자가 가능한 시간대를 선택합니다.")
     @PostMapping("{promiseId}/time-choice")
     @CustomExceptionDescription(SET_AVAILALBLE_TIME)
-    public BaseResponse<Void> setPromiseAvailableTime(@PathVariable Long promiseId, Long userId,
-                                                      @Validated @RequestBody SetPromiseAvailableTimeRequestDTO req) {
+    public BaseResponse<Void> setPromiseAvailableTime(@PathVariable Long promiseId, @CurrentUserId @Parameter(hidden = true) Long userId,
+                                                      @Validated @RequestBody SetPromiseAvailableTimeRequestDTO req){
         promiseAvailableTimeService.setPromiseAvailableTime(req, userId, promiseId);
         return BaseResponse.ok(null);
     }
 
+    @Tag(name = "Promise Acceptance", description = "약속 수락 관련 API")
+    @Operation(summary = "약속 수락 - 장소 선택 초기", description = "장소 선택 초기 화면입니다.")
+    @GetMapping("{promiseId}/place-choice")
+    @CustomExceptionDescription(GET_SUGGESTED_PLACE)
+    public BaseResponse<PromisePlaceResponseDTO> getSuggestedPlace
+            (@PathVariable Long promiseId,
+             @RequestParam Double latitude, @RequestParam Double longitude) {
+        return BaseResponse.ok(promiseSuggestedPlaceService.getSuggestedPlace(latitude, longitude, promiseId));
+
+    }
     @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
     @Operation(summary = "약속 상태 확인", description = "약속의 상태를 확인합니다.")
     @GetMapping("/{promiseId}/status")
     @CustomExceptionDescription(PROMISE_STATUS)
-    public BaseResponse<PromiseStatusResponseDTO> getPromiseStatus(//@CurrentUserId Long userId,
+    public BaseResponse<PromiseStatusResponseDTO> getPromiseStatus(@CurrentUserId Long userId,
                                                                    @PathVariable("promiseId") Long promiseId) {
-        return BaseResponse.ok(promiseService.getPromiseStatus(1L, promiseId));
+        return BaseResponse.ok(promiseService.getPromiseStatus(userId, promiseId));
     }
 
     @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
@@ -76,6 +89,29 @@ public class PromiseController {
                                                                      @RequestParam("isHost") Boolean isHost) {
         return BaseResponse.ok(promiseService.getPendingPromise(promiseId, isHost));
     }
+
+    @Tag(name = "Promise Acceptance", description = "약속 수락 관련 API")
+    @Operation(summary = "약속 수락 - 장소 카테고리 검색", description = "카테고리를 통해 장소를 찾습니다.")
+    @GetMapping("category-places")
+    @CustomExceptionDescription(PLACE_CATEGORY_SEARCH)
+    public BaseResponse<List<PlaceSearchResponseDTO>> getCategoryPlaces(@RequestParam List<String> categories,
+            @RequestParam Double latitude, @RequestParam Double longitude) {
+        return BaseResponse.ok(promiseSuggestedPlaceService.getCategorySearchPlaces(categories, latitude, longitude));
+    }
+
+    @Tag(name = "Promise Acceptance", description = "약속 수락 관련 API")
+    @Operation(summary = "약속 수락 - 장소 선택", description = "약속 장소로 제안할 장소를 선택완료합니다.")
+    @PostMapping("{promiseId}/place-choice")
+    @CustomExceptionDescription(SET_SUGGESTED_PLACE)
+    public BaseResponse<Void> setSuggestedPlaces(
+            @PathVariable Long promiseId,
+            @RequestParam List<Long> placeIds,
+            @CurrentUserId @Parameter(hidden = true) Long userId)
+    {
+        promiseSuggestedPlaceService.setPromiseSuggestedPlace(placeIds, userId, promiseId);
+        return BaseResponse.ok(null);
+    }
+
 
     @Tag(name = "약속 관리 페이지 API", description = "약속 제안 관련 API")
     @Operation(summary = "약속 관리 페이지", description = "약속 관리 페이지에 필요한 데이터를 반환합니다.")
