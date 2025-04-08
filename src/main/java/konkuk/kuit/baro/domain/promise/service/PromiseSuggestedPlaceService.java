@@ -80,6 +80,9 @@ public class PromiseSuggestedPlaceService {
 
         User loginUser = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         Promise promise = promiseRepository.findById(req.getPromiseId()).orElseThrow(() -> new CustomException(PROMISE_NOT_FOUND));
+        if(promiseSuggestedPlaceRepository.existsByPlaceIdAndPromiseId(req.getPlaceId(), req.getPromiseId())) {
+            throw new CustomException(PLACE_ALREADY_CHOSEN);
+        }
         promiseAvailableTimeService.addPromiseMember(req.getPromiseId(), loginUser, promise);
 
         PromiseMember promiseMember = promiseMemberRepository.findByUserIdAndPromiseId(userId, req.getPromiseId());

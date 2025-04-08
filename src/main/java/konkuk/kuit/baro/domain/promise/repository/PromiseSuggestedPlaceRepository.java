@@ -23,4 +23,11 @@ public interface PromiseSuggestedPlaceRepository extends JpaRepository<PromiseSu
             "THEN TRUE ELSE FALSE END")
     boolean existsPromiseSuggestedPlaceByPromiseMemberId(@Param("promiseMemberId") Long promiseMemberId);
 
+    @Query("SELECT CASE WHEN EXISTS (" +
+           "SELECT 1 FROM PromiseSuggestedPlace psp " +
+           "WHERE psp.promiseMember.promise.id = :promiseId " +
+           "AND psp.place.id = :placeId) " +
+           "THEN TRUE ELSE FALSE END")
+    boolean existsByPlaceIdAndPromiseId(@Param("placeId") Long placeId, @Param("promiseId") Long promiseId);
+
 }

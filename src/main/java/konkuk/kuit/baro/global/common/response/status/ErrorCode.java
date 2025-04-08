@@ -36,6 +36,7 @@ public enum ErrorCode implements ResponseStatus {
     //Promise
     PROMISE_NOT_FOUND(500, HttpStatus.NOT_FOUND.value(),"존재하지 않는 약속입니다."),
     PROMISE_NOT_CONFIRMED(501, BAD_REQUEST.value(), "확정되지 않은 약속입니다."),
+    PLACE_ALREADY_CHOSEN(502, BAD_REQUEST.value(), "이미 선택된 장소입니다."),
 
     //인증, 인가
     SECURITY_UNAUTHORIZED(600,HttpStatus.UNAUTHORIZED.value(), "인증 정보가 유효하지 않습니다"),
