@@ -16,11 +16,9 @@ import org.locationtech.jts.geom.PrecisionModel;
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder
 @Entity
 @Table(name = "place")
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction("status IN ('ACTIVE', 'PENDING', 'VOTING', 'CONFIRMED')")
 public class Place extends BaseEntity {
@@ -79,10 +77,16 @@ public class Place extends BaseEntity {
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         Point location = geometryFactory.createPoint(new Coordinate(longitude, latitude));
 
-        return Place.builder()
-                .placeName(placeName)
-                .placeAddress(placeAddress)
-                .location(location)
-                .build();
+        Place place = new Place();
+        place.placeName = placeName;
+        place.placeAddress = placeAddress;
+        place.location = location;
+        place.pins = new ArrayList<>();
+        place.placeCategories = new ArrayList<>();
+        place.promiseSuggestedPlaces = new ArrayList<>();
+        place.promiseCandidatePlaces = new ArrayList<>();
+
+        return place;
     }
+
 }

@@ -85,12 +85,15 @@ public class PromiseSuggestedPlaceService {
         PromiseMember promiseMember = promiseMemberRepository.findByUserIdAndPromiseId(userId, req.getPromiseId());
 
         if(req.getPlaceId() == -1){
-            Place place = Place.addPlace(req.getLatitude(), req.getLongitude(), req.getPlaceName(), req.getAddress());
-            placeRepository.save(place);
+            Place newPlace = Place.addPlace(req.getLatitude(), req.getLongitude(), req.getPlaceName(), req.getAddress());
+            placeRepository.save(newPlace);
+            PromiseSuggestedPlace suggestedPlace = PromiseSuggestedPlace.createPromiseSuggestedPlace(promiseMember, newPlace);
+            promiseSuggestedPlaceRepository.save(suggestedPlace);
+            return;
         }
 
-        Place place = placeRepository.findById(req.getPlaceId()).orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
-        PromiseSuggestedPlace suggestedPlace = PromiseSuggestedPlace.createPromiseSuggestedPlace(promiseMember, place);
+        Place findPlace = placeRepository.findById(req.getPlaceId()).orElseThrow(() -> new CustomException(PLACE_NOT_FOUND));
+        PromiseSuggestedPlace suggestedPlace = PromiseSuggestedPlace.createPromiseSuggestedPlace(promiseMember, findPlace);
         promiseSuggestedPlaceRepository.save(suggestedPlace);
     }
 
