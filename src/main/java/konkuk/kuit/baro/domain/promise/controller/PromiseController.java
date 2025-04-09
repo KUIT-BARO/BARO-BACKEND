@@ -1,11 +1,13 @@
 package konkuk.kuit.baro.domain.promise.controller;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import konkuk.kuit.baro.domain.place.dto.response.PlaceSearchResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
+import konkuk.kuit.baro.domain.promise.dto.request.PromiseVoteRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.request.SetPromiseAvailableTimeRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.*;
 import konkuk.kuit.baro.domain.promise.service.PromiseAvailableTimeService;
@@ -14,7 +16,6 @@ import konkuk.kuit.baro.domain.promise.service.PromiseSuggestedPlaceService;
 import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -175,4 +176,36 @@ public class PromiseController {
                                                                            @RequestParam("hasVoted") boolean hasVoted) {
         return BaseResponse.ok(promiseService.getVoteCandidateList(userId, promiseId, hasVoted));
     }
+
+
+    @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
+    @Operation(summary = "투표 시작(개설)하기", description = "약속 가능 시간, 약속 제안 장소 데이터를 바탕으로 투표 목록을 생성, 및 투표를 시작(개설)합니다.")
+    @PostMapping("/{promiseId}/init-vote")
+    @CustomExceptionDescription(VOTE_INIT)
+    public BaseResponse<Void> initVote(@PathVariable("promiseId") Long promiseId) {
+        promiseService.initVote(promiseId);
+        return BaseResponse.ok(null);
+    }
+
+    @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
+    @Operation(summary = "투표하기", description = "실제로 원하는 시간, 장소에 투표합니다.")
+    @PostMapping("/{promiseId}/vote")
+    @CustomExceptionDescription(VOTE)
+    public BaseResponse<Void> vote(@CurrentUserId Long userId,
+                                   @PathVariable("promiseId") Long promiseId,
+                                   @RequestBody @Valid PromiseVoteRequestDTO promiseVoteRequestDTO) {
+        promiseService.vote(userId, promiseId, promiseVoteRequestDTO);
+        return BaseResponse.ok(null);
+    }
+
+    @Tag(name = "약속 현황 API", description = "약속 현황 관련 API")
+    @Operation(summary = "투표 종료하기", description = "투표를 종료하며, 투표 내역을 확인하여 약속 시간, 장소를 확정합니다.")
+    @PostMapping("/{promiseId}/close-vote")
+    @CustomExceptionDescription(CLOSE_VOTE)
+    public BaseResponse<Void> closeVote(@PathVariable("promiseId") Long promiseId) {
+        promiseService.closeVote(promiseId);
+        return BaseResponse.ok(null);
+    }
+
+
 }
