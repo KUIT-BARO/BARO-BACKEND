@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class PinService {
 
     private final PinRepository pinRepository;
@@ -48,6 +48,7 @@ public class PinService {
                 pin.getPlace().getPlaceName());
     }
 
+    @Transactional
     public void registerPinData(PinRequestDTO request, Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow((() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
