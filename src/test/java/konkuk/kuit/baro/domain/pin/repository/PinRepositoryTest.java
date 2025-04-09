@@ -49,7 +49,7 @@ class PinRepositoryTest {
 
         Place place = Place.builder()
                 .placeName("스타벅스 건대점")
-                .location(geometryFactory.createPoint(new Coordinate(-122.4194155,37.7749295)))
+                .location(geometryFactory.createPoint(new Coordinate(37.7749295, -122.4194155)))
                 .placeAddress("광진구 화양동")
                 .build();
 
