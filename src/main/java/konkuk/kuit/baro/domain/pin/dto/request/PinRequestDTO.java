@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -46,5 +48,8 @@ public class PinRequestDTO {
     @JsonProperty("score")
     @NotNull(message = "평점은 비어있을 수 없습니다.")
     private Short score;
+
+    @JsonProperty("categories")
+    private List<String> categoryNames;
 }
 

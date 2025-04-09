@@ -65,8 +65,7 @@ public class PinService {
 
         // 카테고리 이름 리스트로 Category 조회
         List<String> categoryNames = request.getCategoryNames();
-        List<Category> categories = categoryRepository.findAllByCategoryNameIn(categoryNames)
-                .orElseGet(Collections::emptyList);
+        List<Category> categories = categoryRepository.findAllByCategoryNameIn(categoryNames);
 
         // Pin 생성
         Pin pin = Pin.createPin(
