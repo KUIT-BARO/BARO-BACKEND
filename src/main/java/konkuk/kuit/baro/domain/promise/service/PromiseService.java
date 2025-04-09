@@ -501,8 +501,8 @@ public class PromiseService {
     // 두 약속 가능 시간이 겹치는지 확인
     private boolean isOverlapping(PromiseAvailableTime base, PromiseAvailableTime other) {
         return base.getAvailableDate().isEqual(other.getAvailableDate()) &&
-                !base.getAvailableEndTime().isBefore(other.getAvailableStartTime()) &&
-                !base.getAvailableStartTime().isAfter(other.getAvailableEndTime());
+                base.getAvailableEndTime().isAfter(other.getAvailableStartTime()) &&
+                base.getAvailableStartTime().isBefore(other.getAvailableEndTime());
     }
 
     // 상위 3개의 약속 가능 시간를 찾아서 약속 후보 시간으로 설정
