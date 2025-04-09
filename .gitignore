@@ -41,8 +41,5 @@ application-secret.yml
 
 src/test/resources/application.yml
 
-src/test/resources/application.yml
-src/test/resources/application-secret.yml
-
 # DS_Store 파일 무시
 .DS_Store
