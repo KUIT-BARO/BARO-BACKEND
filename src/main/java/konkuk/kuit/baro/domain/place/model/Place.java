@@ -6,12 +6,13 @@ import konkuk.kuit.baro.domain.pin.model.Pin;
 import konkuk.kuit.baro.domain.promise.model.PromiseCandidatePlace;
 import konkuk.kuit.baro.domain.promise.model.PromiseSuggestedPlace;
 import konkuk.kuit.baro.global.common.model.BaseEntity;
-import lombok.*;
+import konkuk.kuit.baro.global.common.util.GeometryUtil;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLRestriction;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,6 @@ public class Place extends BaseEntity {
 
     @Column(name = "location", nullable = false, columnDefinition = "POINT SRID 4326")
     private Point location; // Point (경도, 위도)
-
 
     @Column(name = "place_address", length = 50, nullable = false)
     private String placeAddress;
@@ -74,8 +74,7 @@ public class Place extends BaseEntity {
     }
 
     public static Place addPlace(Double latitude, Double longitude, String placeName, String placeAddress){
-        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
-        Point location = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+        Point location = GeometryUtil.createPoint(latitude,longitude);
 
         Place place = new Place();
         place.placeName = placeName;
