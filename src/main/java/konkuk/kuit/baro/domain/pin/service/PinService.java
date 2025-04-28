@@ -53,21 +53,24 @@ public class PinService {
         User user = userRepository.findById(userId)
                 .orElseThrow((() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
 
-        Place place = placeRepository.findPlaceById(request.getPlaceId())
-                .orElseGet(() -> {
-                    Place newPlace = Place.builder()
-                            .placeName(place.getPlaceName())
-                            .location(placePoint)
-                            .placeAddress(request.getPlaceAddress())
-                            .build();
-                    return placeRepository.save(newPlace);
-                });
+        Place place;
+        if (request.getPlaceId() == -1) {
+            Point placePoint = GeometryUtil.createPoint(request.getLatitude(), request.getLongitude());
+            place = Place.builder()
+                    .placeName(request.getPlaceName())
+                    .location(placePoint)
+                    .placeAddress(request.getPlaceAddress())
+                    .build();
+            placeRepository.save(place);
+        } else {
+            place = placeRepository.findPlaceById(request.getPlaceId())
+                    .orElseThrow((() -> new CustomException(ErrorCode.PLACE_NOT_FOUND)));
+        }
 
         // 카테고리 이름 리스트로 Category 조회
         List<String> categoryNames = request.getCategoryNames();
         List<Category> categories = categoryRepository.findAllByCategoryNameIn(categoryNames);
 
-        // Pin 생성
         Pin pin = Pin.createPin(
                 request.getReview(),
                 request.getScore(),
