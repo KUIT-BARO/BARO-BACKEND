@@ -5,6 +5,7 @@ import konkuk.kuit.baro.domain.category.model.PinCategory;
 import konkuk.kuit.baro.domain.category.repository.CategoryRepository;
 import konkuk.kuit.baro.domain.category.repository.PinCategoryRepository;
 import konkuk.kuit.baro.domain.pin.dto.request.PinRequestDTO;
+import konkuk.kuit.baro.domain.pin.dto.response.PinPageResponseDTO;
 import konkuk.kuit.baro.domain.pin.dto.response.PinResponseDTO;
 import konkuk.kuit.baro.domain.pin.model.Pin;
 import konkuk.kuit.baro.domain.pin.repository.PinRepository;
