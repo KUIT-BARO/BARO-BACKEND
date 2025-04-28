@@ -16,14 +16,11 @@ import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import konkuk.kuit.baro.global.common.util.GeometryUtil;
 import lombok.RequiredArgsConstructor;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
