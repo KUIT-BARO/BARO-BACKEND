@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import konkuk.kuit.baro.domain.pin.dto.request.PinRequestDTO;
+import konkuk.kuit.baro.domain.pin.dto.response.PinPageResponseDTO;
 import konkuk.kuit.baro.domain.pin.dto.response.PinResponseDTO;
 import konkuk.kuit.baro.domain.pin.service.PinService;
 import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
