@@ -53,11 +53,10 @@ public class PinService {
         User user = userRepository.findById(userId)
                 .orElseThrow((() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
 
-        Point placePoint = GeometryUtil.createPoint(request.getLatitude(), request.getLongitude());
-        Place place = placeRepository.findPlaceByLocation(placePoint)
+        Place place = placeRepository.findPlaceById(request.getPlaceId())
                 .orElseGet(() -> {
                     Place newPlace = Place.builder()
-                            .placeName(request.getPlaceName())
+                            .placeName(place.getPlaceName())
                             .location(placePoint)
                             .placeAddress(request.getPlaceAddress())
                             .build();

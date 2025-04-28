@@ -25,6 +25,22 @@ public class PinRequestDTO {
     @NotNull(message = "핀 등록 장소는 비어있을 수 없습니다.")
     private long placeId;
 
+    @JsonProperty("PlaceName")
+    private String placeName;
+
+    @JsonProperty("PlaceAddress")
+    private String placeAddress;
+
+    @JsonProperty("latitude")
+    @Min(value = -90, message = "latitude는 -90 이상이어야합니다.")
+    @Max(value = 90, message = "latitude는 90 이하여야합니다.")
+    private Double latitude;
+
+    @JsonProperty("longitude")
+    @Min(value = -180, message = "longitude는 -180 이상이어야합니다.")
+    @Max(value = 180, message = "longitude는 180 이하여야합니다.")
+    private Double longitude;
+
     @JsonProperty("review")
     @NotBlank(message = "리뷰 내용은 비어있을 수 없습니다.")
     private String review;
