@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +32,16 @@ public class PinService {
     private final UserRepository userRepository;
     private final PlaceRepository placeRepository;
     private final CategoryRepository categoryRepository;
+
+    public PinPageResponseDTO getPinPageData(){
+        List<Category> categories = categoryRepository.findAll();
+
+        List<CategoryDTO> categoriesList = categories.stream()
+                .map(category -> new CategoryDTO(category.getId(), category.getCategoryName()))
+                .collect(Collectors.toList());
+
+        return new PinPageResponseDTO(categoriesList);
+    }
 
     public PinResponseDTO getPinData(Long pinId){
         Pin pin = pinRepository.findById(pinId)
