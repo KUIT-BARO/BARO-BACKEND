@@ -50,6 +50,6 @@ public class PinRequestDTO {
     private Short score;
 
     @JsonProperty("categories")
-    private List<String> categoryNames;
+    private List<Long> categoryIds;
 }
 

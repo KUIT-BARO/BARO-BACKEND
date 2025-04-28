@@ -27,7 +27,6 @@ public class PinController {
 
     @Operation(summary = "핀 등록 페이지", description = "핀 등록 페이지를 열람합니다.")
     @GetMapping("/page")
-    @CustomExceptionDescription(PIN_PAGE)
     public BaseResponse<PinPageResponseDTO> getPinPage() {
         return BaseResponse.ok(pinService.getPinPageData());
     }

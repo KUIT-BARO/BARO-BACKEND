@@ -76,19 +76,14 @@ public class PinService {
             place = placeRepository.findPlaceById(request.getPlaceId())
                     .orElseThrow((() -> new CustomException(ErrorCode.PLACE_NOT_FOUND)));
         }
-
-        // 카테고리 이름 리스트로 Category 조회
-        List<String> categoryNames = request.getCategoryNames();
-        List<Category> categories = categoryRepository.findAllByCategoryNameIn(categoryNames);
-
-        Pin pin = Pin.createPin(
+          Pin pin = Pin.createPin(
                 request.getReview(),
                 request.getScore(),
                 user,
                 place
         );
 
-        // PinCategory를 만들어서 연결
+        List<Category> categories = categoryRepository.findAllById(request.getCategoryIds());
         for (Category category : categories) {
             PinCategory pinCategory = PinCategory.createPinCategory(pin, category);
             pin.addPinCategory(pinCategory);
