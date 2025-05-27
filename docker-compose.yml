@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   app:
+    build: .
     image: "${DOCKER_USERNAME}/${DOCKER_IMAGE}"
     container_name: BARO_CONTAINER
     ports:
