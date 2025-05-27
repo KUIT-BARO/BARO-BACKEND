@@ -85,6 +85,8 @@ jobs:
               "echo \"REDIS_PORT=${{ secrets.REDIS_PORT }}\" >> .env",
               "echo \"MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}\" >> .env",
               "echo \"MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}\" >> .env",
+              "mkdir -p src/main/resources",
+              "echo \"${{ secrets.OCCUPY_SECRET }}\" | base64 --decode > src/main/resources/application-secret.yml",
               "sudo docker-compose -f docker-compose.yml --env-file .env pull",
               "sudo docker-compose -f docker-compose.yml --env-file .env down || true",
               "sudo docker-compose -f docker-compose.yml --env-file .env up -d",
