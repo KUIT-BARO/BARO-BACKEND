@@ -167,8 +167,13 @@ public enum SwaggerResponseDescription {
             PROMISE_VOTE_NOT_IN_PROGRESS,
             PROMISE_TIME_NOT_CONFIRMED,
             PROMISE_PLACE_NOT_CONFIRMED
+    ))),
+    PIN_VIEW(new LinkedHashSet<>(Set.of(
+            PIN_NOT_FOUND
+    ))),
+    PIN_REGISTER(new LinkedHashSet<>(Set.of(
+            USER_NOT_FOUND
     )));
-
     private final Set<ErrorCode> errorCodeList;
     SwaggerResponseDescription(Set<ErrorCode> errorCodeList) {
         // 공통 에러

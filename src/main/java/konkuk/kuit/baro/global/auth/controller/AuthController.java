@@ -22,7 +22,7 @@ import java.util.Optional;
 
 import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescription.*;
 
-@Tag(name = "Auth", description = "Auth 관련 API")
+@Tag(name = "Auth API", description = "Auth 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")

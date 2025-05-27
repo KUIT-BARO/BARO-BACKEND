@@ -22,6 +22,11 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
             @Param("currentUserLocation") Point currentUserLocation,
             @Param("placeCategoryIds") List<Long> placeCategoryIds);
 
+    @Query(value = "SELECT * FROM place p WHERE ST_Distance_Sphere(:point, p.location) <= 100 LIMIT 1", nativeQuery = true)
+    Optional<Place> findPlaceByLocation(@Param("point") Point point);
+
+    Optional<Place> findPlaceById(Long id);
+
     @Query(value = """
         SELECT NEW
         konkuk.kuit.baro.domain.place.dto.response.PlaceSummaryInfoResponseDTO(

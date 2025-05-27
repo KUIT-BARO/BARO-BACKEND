@@ -12,11 +12,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -28,7 +31,8 @@ class PinRepositoryTest {
     @Autowired private UserRepository userRepository;
     @Autowired private PlaceRepository placeRepository;
 
-    private static final GeometryFactory geometryFactory = new GeometryFactory();
+    private static final  GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326); // SRID 4326 설정
+
 
     @PersistenceContext private EntityManager em;
 

@@ -79,5 +79,5 @@ jobs:
               "sudo docker-compose -f docker-compose.yml --env-file .env down || true",
               "sudo docker-compose -f docker-compose.yml --env-file .env up -d",
               "sudo docker image prune -f"
-            ]' \
+            ]' 
             --output text
