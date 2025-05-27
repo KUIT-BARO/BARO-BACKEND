@@ -82,8 +82,8 @@ jobs:
               "echo \"PROD_DATASOURCE_PASSWORD=${{ secrets.PROD_DATASOURCE_PASSWORD }}\" >> .env",
               "echo \"REDIS_HOST=${{ secrets.REDIS_HOST }}\" >> .env",
               "echo \"REDIS_PORT=${{ secrets.REDIS_PORT }}\" >> .env",
-              "sudo docker compose -f docker-compose.yml --env-file .env pull",
-              "sudo docker compose -f docker-compose.yml --env-file .env down || true",
-              "sudo docker compose -f docker-compose.yml --env-file .env up -d",
+              "sudo docker-compose -f docker-compose.yml --env-file .env pull",
+              "sudo docker-compose -f docker-compose.yml --env-file .env down || true",
+              "sudo docker-compose -f docker-compose.yml --env-file .env up -d",
               "sudo docker image prune -f"
             ]' --output text
