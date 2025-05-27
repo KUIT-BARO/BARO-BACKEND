@@ -1,8 +1,9 @@
 package konkuk.kuit.baro.domain.promise.service;
 
+import jakarta.persistence.EntityManager;
 import konkuk.kuit.baro.domain.place.model.Place;
-import konkuk.kuit.baro.domain.place.repository.PlaceRepository;
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
+import konkuk.kuit.baro.domain.promise.dto.request.PromiseVoteRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PendingPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseMemberSuggestStateDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.PromiseStatusResponseDTO;
@@ -11,36 +12,42 @@ import konkuk.kuit.baro.domain.promise.dto.response.PromiseManagementResponseDTO
 import konkuk.kuit.baro.domain.promise.dto.response.SuggestedPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.VotingPromiseResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.*;
-import konkuk.kuit.baro.domain.promise.model.Promise;
-import konkuk.kuit.baro.domain.promise.model.PromiseMember;
+import konkuk.kuit.baro.domain.promise.model.*;
 import konkuk.kuit.baro.domain.promise.repository.*;
 import konkuk.kuit.baro.domain.user.model.User;
 import konkuk.kuit.baro.domain.user.repository.UserRepository;
+import konkuk.kuit.baro.domain.vote.model.PromisePlaceVoteHistory;
 import konkuk.kuit.baro.domain.vote.model.PromiseTimeVoteHistory;
 import konkuk.kuit.baro.domain.vote.model.PromiseVote;
+import konkuk.kuit.baro.domain.vote.repository.PromisePlaceVoteHistoryRepository;
 import konkuk.kuit.baro.domain.vote.repository.PromiseTimeVoteHistoryRepository;
+import konkuk.kuit.baro.domain.vote.repository.PromiseVoteRepository;
 import konkuk.kuit.baro.global.common.exception.CustomException;
-import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import konkuk.kuit.baro.global.common.util.ColorUtil;
 import konkuk.kuit.baro.global.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.parameters.P;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static konkuk.kuit.baro.domain.promise.dto.response.SuggestionProgress.*;
+import static konkuk.kuit.baro.global.common.response.status.BaseStatus.*;
+import static konkuk.kuit.baro.global.common.response.status.ErrorCode.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PromiseService {
+    private final PromiseVoteRepository promiseVoteRepository;
 
     private final PromiseRepository promiseRepository;
     private final PromiseMemberRepository promiseMemberRepository;
@@ -48,9 +55,13 @@ public class PromiseService {
     private final PromiseAvailableTimeRepository promiseAvailableTimeRepository;
     private final PromiseSuggestedPlaceRepository promiseSuggestedPlaceRepository;
     private final PromiseTimeVoteHistoryRepository promiseTimeVoteHistoryRepository;
-    private final PlaceRepository placeRepository;
+    private final PromiseCandidateTimeRepository promiseCandidateTimeRepository;
+    private final PromiseCandidatePlaceRepository promiseCandidatePlaceRepository;
+
+    private final EntityManager em;
 
     private final ColorUtil colorUtil;
+    private final PromisePlaceVoteHistoryRepository promisePlaceVoteHistoryRepository;
 
     @Transactional
     public void promiseSuggest(PromiseSuggestRequestDTO request, Long loginUserId) {
@@ -185,7 +196,7 @@ public class PromiseService {
         LocalTime fixedTime = findPromise.getFixedTime();
 
         if (fixedPlace == null || fixedDate == null || fixedTime == null) {
-            throw new CustomException(ErrorCode.PROMISE_NOT_CONFIRMED);
+            throw new CustomException(PROMISE_NOT_CONFIRMED);
         }
 
         return new PromiseStatusConfirmedPromiseResponseDTO(
@@ -250,30 +261,98 @@ public class PromiseService {
         return new VoteCandidateListResponseDTO(candidateTimes, candidatePlaces);
     }
 
+
+    // 투표 시작(개설)하기
+    @Transactional
+    public void initVote(Long promiseId) {
+        // 투표 생성
+        PromiseVote promiseVote = PromiseVote.builder()
+                .voteEndTime(LocalDateTime.now().plusDays(3))
+                .build();
+
+        PromiseVote savedVote = promiseVoteRepository.save(promiseVote);
+
+        // 약속 정보 업데이트
+        Promise findPromise = findPromise(promiseId);
+        findPromise.setPromiseVote(savedVote);
+        findPromise.setStatus(VOTING);
+
+        // 약속 후보 시간 추출 - 약속 제안 시간에서 빈도수 기준 상위 3개 가져오기
+        saveTop3CandidateTimes(promiseId, savedVote);
+
+        // 약속 후보 장소 추출 - 약속 제안 장소에서 빈도수 기준 상위 3개 가져오기
+        saveTop3CandidatePlaces(promiseId, savedVote);
+    }
+
+
+    // 투표하기
+    @Transactional
+    public void vote(Long userId, Long promiseId, PromiseVoteRequestDTO promiseVoteRequestDTO) {
+        Promise findPromise = findPromise(promiseId);
+
+        if (!findPromise.getStatus().equals(VOTING)) {
+            throw new CustomException(PROMISE_VOTE_NOT_IN_PROGRESS);
+        }
+
+        PromiseMember findPromiseMember = findPromiseMember(userId, promiseId);
+        PromiseVote findPromiseVote = findPromiseVote(findPromise);
+
+        // 특정 유저의 기존 시간, 장소 투표 내역은 리셋
+        promiseTimeVoteHistoryRepository.deleteAllByPromiseMember(findPromiseMember);
+        promisePlaceVoteHistoryRepository.deleteAllByPromiseMember(findPromiseMember);
+
+        // 시간 투표 내역 저장
+        saveTimeVoteHistory(promiseVoteRequestDTO.getPromiseCandidateTimeIds(), findPromiseVote, findPromiseMember);
+
+        // 장소 투표 내역 저장
+        savePlaceVoteHistory(promiseVoteRequestDTO.getPromiseCandidatePlaceIds(), findPromiseVote, findPromiseMember);
+    }
+
+    // 투표 종료하기
+    @Transactional
+    public void closeVote(Long promiseId) {
+        Promise findPromise = findPromise(promiseId);
+
+        if (!findPromise.getStatus().equals(VOTING)) {
+            throw new CustomException(PROMISE_VOTE_NOT_IN_PROGRESS);
+        }
+
+        findPromise.setStatus(CONFIRMED);
+
+        // 투표 내역을 확인하여 가장 많이 투표된 시간, 장소를 고름.
+        PromiseCandidateTime mostVotedTime = getMostVotedTime(findPromise.getPromiseVote().getId());
+        findPromise.setFixedDate(mostVotedTime.getPromiseCandidateTimeDate());
+        findPromise.setFixedTime(mostVotedTime.getPromiseCandidateTimeStartTime());
+
+        PromiseCandidatePlace mostVotedPlace = getMostVotedPlace(findPromise.getPromiseVote().getId());
+        findPromise.setPlace(mostVotedPlace.getPlace());
+    }
+
+
     private User findLoginUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
     }
 
     private Promise findPromise(Long promiseId) {
         return promiseRepository.findById(promiseId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PROMISE_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(PROMISE_NOT_FOUND));
     }
 
     private PromiseMember findPromiseMember(Long userId, Long promiseId) {
 
         if (!userIsExist(userId)) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+            throw new CustomException(USER_NOT_FOUND);
         }
 
         if (!promiseIsExist(promiseId)) {
-            throw new CustomException(ErrorCode.PROMISE_NOT_FOUND);
+            throw new CustomException(PROMISE_NOT_FOUND);
         }
 
         PromiseMember findPromiseMember = promiseMemberRepository.findByUserIdAndPromiseId(userId, promiseId);
 
         if (findPromiseMember == null) {
-            throw new CustomException(ErrorCode.PROMISE_MEMBER_NOT_FOUND);
+            throw new CustomException(PROMISE_MEMBER_NOT_FOUND);
         }
 
         return findPromiseMember;
@@ -281,7 +360,7 @@ public class PromiseService {
 
     private List<PromiseMember> findAllPromiseMembers(Long promiseId) {
         if (!promiseIsExist(promiseId)) {
-            throw new CustomException(ErrorCode.PROMISE_NOT_FOUND);
+            throw new CustomException(PROMISE_NOT_FOUND);
         }
 
         return promiseMemberRepository.findAllByPromiseId(promiseId);
@@ -291,7 +370,7 @@ public class PromiseService {
         PromiseVote findPromiseVote = promise.getPromiseVote();
 
         if (findPromiseVote == null) {
-            throw new CustomException(ErrorCode.PROMISE_VOTE_NOT_STARTED);
+            throw new CustomException(PROMISE_VOTE_NOT_IN_PROGRESS);
         }
 
         return findPromiseVote;
@@ -417,6 +496,105 @@ public class PromiseService {
                         hasVoted && selectedTimeIds.contains(promiseCandidateTime.getId()) // 투표했으면 true
                 ))
                 .toList();
+    }
+
+    // 두 약속 가능 시간이 겹치는지 확인
+    private boolean isOverlapping(PromiseAvailableTime base, PromiseAvailableTime other) {
+        return base.getAvailableDate().isEqual(other.getAvailableDate()) &&
+                base.getAvailableEndTime().isAfter(other.getAvailableStartTime()) &&
+                base.getAvailableStartTime().isBefore(other.getAvailableEndTime());
+    }
+
+    // 상위 3개의 약속 가능 시간를 찾아서 약속 후보 시간으로 설정
+    private void saveTop3CandidateTimes(Long promiseId, PromiseVote savedVote) {
+        List<PromiseAvailableTime> allAvailableTimes = promiseAvailableTimeRepository.findAllByPromiseId(promiseId);
+
+        if (allAvailableTimes.isEmpty()) {
+            throw new CustomException(PROMISE_AVAILABLE_TIME_NOT_FOUND);
+        }
+
+        Map<PromiseAvailableTime, Integer> overlapCountMap = new ConcurrentHashMap<>();
+
+        for (PromiseAvailableTime base : allAvailableTimes) {
+            int count = 0;
+            for (PromiseAvailableTime other : allAvailableTimes) {
+                if (base == other) continue;
+                if (isOverlapping(base, other)) {
+                    count++;
+                }
+            }
+            overlapCountMap.put(base, count);
+        }
+
+        overlapCountMap.entrySet().stream()
+                .sorted((e1, e2) -> e2.getValue() - e1.getValue())
+                .limit(3)
+                .map(Map.Entry::getKey)
+                .map(pat -> PromiseCandidateTime.createPromiseCandidateTime(
+                        pat.getAvailableDate(),
+                        pat.getAvailableStartTime(),
+                        savedVote
+                ))
+                .forEach(promiseCandidateTimeRepository::save);
+    }
+
+    // 상위 3개의 약속 제안 장소를 찾아서 약속 후보 장소로 설정
+    private void saveTop3CandidatePlaces(Long promiseId, PromiseVote savedVote) {
+        List<Place> top3PromiseSuggestedPlaces = promiseSuggestedPlaceRepository.findTopPlacesByPromiseId(promiseId, PageRequest.of(0, 3));
+
+        if (top3PromiseSuggestedPlaces.isEmpty()) {
+            throw new CustomException(PROMISE_SUGGESTED_PLACE_NOT_FOUND);
+        }
+
+        top3PromiseSuggestedPlaces.forEach(place -> {
+            PromiseCandidatePlace candidatePlace = PromiseCandidatePlace.createPromiseCandidatePlace(savedVote, place);
+            promiseCandidatePlaceRepository.save(candidatePlace);
+        });
+    }
+
+    // 시간 투표 내역 저장
+    private void saveTimeVoteHistory(List<Long> promiseCandidateTimeIds, PromiseVote findPromiseVote, PromiseMember findPromiseMember) {
+        promiseCandidateTimeIds
+                .stream()
+                .map(promiseCandidateTimeId -> promiseCandidateTimeRepository.findById(promiseCandidateTimeId).orElseThrow(
+                        () -> new CustomException(PROMISE_CANDIDATE_TIME_NOT_FOUND)
+                ))
+                .map(promiseCandidateTime -> PromiseTimeVoteHistory.createPromiseTimeVoteHistory(findPromiseVote, promiseCandidateTime, findPromiseMember))
+
+                .forEach(promiseTimeVoteHistoryRepository::save);
+    }
+
+    // 장소 투표 내역 저장
+    private void savePlaceVoteHistory(List<Long> promiseCandidatePlaceIds, PromiseVote findPromiseVote, PromiseMember findPromiseMember) {
+        promiseCandidatePlaceIds
+                .stream()
+                .map(promiseCandidatePlaceId -> promiseCandidatePlaceRepository.findById(promiseCandidatePlaceId).orElseThrow(
+                        () -> new CustomException(PROMISE_CANDIDATE_PLACE_NOT_FOUND)
+                ))
+                .map(promiseCandidatePlace -> PromisePlaceVoteHistory.createPromisePlaceVoteHistory(promiseCandidatePlace, findPromiseVote, findPromiseMember))
+                .forEach(promisePlaceVoteHistoryRepository::save);
+    }
+
+    // 가장 많이 투표된 약속 후보 시간 반환
+    private PromiseCandidateTime getMostVotedTime(Long promiseVoteId) {
+        List<PromiseCandidateTime> topVoted = promiseTimeVoteHistoryRepository.findMostVotedCandidateTime(promiseVoteId, PageRequest.of(0, 1));
+
+        if (topVoted.isEmpty()) {
+            throw new CustomException(PROMISE_TIME_NOT_CONFIRMED);
+        }
+
+        return topVoted.get(0);
+    }
+
+    // 가장 많이 투표된 약속 후보 장소 반환
+    private PromiseCandidatePlace getMostVotedPlace(Long promiseVoteId) {
+        List<PromiseCandidatePlace> topVoted = promisePlaceVoteHistoryRepository.findMostVotedCandidatePlace(promiseVoteId, PageRequest.of(0, 1));
+
+        if (topVoted.isEmpty()) {
+            throw new CustomException(PROMISE_PLACE_NOT_CONFIRMED);
+        }
+
+        return topVoted.get(0);
     }
 
 

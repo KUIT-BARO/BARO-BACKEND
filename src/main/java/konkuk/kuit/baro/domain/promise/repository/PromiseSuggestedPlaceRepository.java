@@ -1,10 +1,14 @@
 package konkuk.kuit.baro.domain.promise.repository;
 
+import konkuk.kuit.baro.domain.place.model.Place;
 import konkuk.kuit.baro.domain.promise.model.PromiseSuggestedPlace;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface PromiseSuggestedPlaceRepository extends JpaRepository<PromiseSuggestedPlace, Long> {
@@ -30,4 +34,13 @@ public interface PromiseSuggestedPlaceRepository extends JpaRepository<PromiseSu
            "THEN TRUE ELSE FALSE END")
     boolean existsByPlaceIdAndPromiseId(@Param("placeId") Long placeId, @Param("promiseId") Long promiseId);
 
+
+    @Query("""
+            SELECT p.place
+            FROM PromiseSuggestedPlace p
+            WHERE p.promiseMember.promise.id = :promiseId
+            GROUP BY p.place
+            ORDER BY COUNT(p.place) DESC
+            """)
+    List<Place> findTopPlacesByPromiseId(@Param("promiseId") Long promiseId, Pageable pageable);
 }

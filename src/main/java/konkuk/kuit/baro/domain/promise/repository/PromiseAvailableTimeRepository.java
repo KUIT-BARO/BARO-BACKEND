@@ -32,4 +32,11 @@ public interface PromiseAvailableTimeRepository extends JpaRepository<PromiseAva
             "THEN TRUE ELSE FALSE END")
     boolean existsPromiseAvailableTimeByPromiseMemberId(@Param("promiseMemberId") Long promiseMemberId);
 
+    // 특정 약속에 대한 모든 약속 가능 시간 조회
+    @Query("SELECT pat FROM PromiseAvailableTime pat " +
+            "JOIN pat.promiseMember pm " +
+            "JOIN pm.promise p " +
+            "WHERE p.id = :promiseId")
+    List<PromiseAvailableTime> findAllByPromiseId(@Param("promiseId") Long promiseId);
+
 }
