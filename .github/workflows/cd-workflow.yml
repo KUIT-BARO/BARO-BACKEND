@@ -56,8 +56,8 @@ jobs:
 
       - name: "🐳 Docker build & push"
         run: |
-          docker compose -f docker-compose.yml --env-file .env build
-          docker compose -f docker-compose.yml --env-file .env push
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}:latest
 
       - name: ✅ AWS configure credentials
         uses: aws-actions/configure-aws-credentials@v1
