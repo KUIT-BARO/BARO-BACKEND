@@ -1,7 +1,7 @@
 spring:
   application:
     name: baro
-  profiles:
+  profiles: prod
     group:
       local : local-db, dev-port, common
       dev: dev-db, dev-port, common
