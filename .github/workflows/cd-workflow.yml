@@ -46,10 +46,8 @@ jobs:
 
       - name: "🐳 Docker build & push"
         run: |
-          docker build -f Dockerfile \
-            -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }} .
-
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+          docker-compose -f docker-compose.yml --env-file .env build
+          docker-compose -f docker-compose.yml --env-file .env push
 
       # AWS 인증
       - name: AWS configure credentials
