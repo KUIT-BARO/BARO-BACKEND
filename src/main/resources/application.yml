@@ -1,12 +1,12 @@
 spring:
   application:
     name: baro
-  profiles: prod
+  profiles:
     group:
       local : local-db, dev-port, common
       dev: dev-db, dev-port, common
       prod: prod-db, prod-port,common
-    active: local
+    active: prod
 ---
 # 로컬용 DB
 spring:
