@@ -43,14 +43,24 @@ jobs:
         run: |
           mkdir -p $OCCUPY_SECRET_DIR
           echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
+   
+      - name: 📝 Generate .env file
+        run: |
+          echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
+          echo "DOCKER_IMAGE=${{ secrets.DOCKER_IMAGE }}" >> .env
+          echo "PROD_DATASOURCE_URL=${{ secrets.PROD_DATASOURCE_URL }}" >> .env
+          echo "PROD_DATASOURCE_USERNAME=${{ secrets.PROD_DATASOURCE_USERNAME }}" >> .env
+          echo "PROD_DATASOURCE_PASSWORD=${{ secrets.PROD_DATASOURCE_PASSWORD }}" >> .env
+          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
+          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env
 
       - name: "🐳 Docker build & push"
         run: |
-          docker-compose -f docker-compose.yml --env-file .env build
-          docker-compose -f docker-compose.yml --env-file .env push
+          docker compose -f docker-compose.yml --env-file .env build
+          docker compose -f docker-compose.yml --env-file .env push
 
-      # AWS 인증
-      - name: AWS configure credentials
+
+      - name: ✅ AWS configure credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -77,5 +87,4 @@ jobs:
               "sudo docker-compose -f docker-compose.yml --env-file .env down || true",
               "sudo docker-compose -f docker-compose.yml --env-file .env up -d",
               "sudo docker image prune -f"
-            ]' 
-            --output text
+            ]' --output text
