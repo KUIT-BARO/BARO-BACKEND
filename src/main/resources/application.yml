@@ -61,7 +61,7 @@ spring:
     activate:
       on-profile: prod-db
   datasource:
-    url: ${PROD_DATASOURCE_USERNAME}
+    url: ${PROD_DATASOURCE_URL}
     username: ${PROD_DATASOURCE_USERNAME}
     password: ${PROD_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
