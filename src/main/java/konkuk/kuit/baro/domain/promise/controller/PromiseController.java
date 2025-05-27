@@ -9,6 +9,7 @@ import konkuk.kuit.baro.domain.place.dto.response.PlaceSearchResponseDTO;
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseSuggestRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.request.PromiseVoteRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.request.SetPromiseAvailableTimeRequestDTO;
+import konkuk.kuit.baro.domain.promise.dto.request.SetPromiseSuggestedPlaceRequestDTO;
 import konkuk.kuit.baro.domain.promise.dto.response.*;
 import konkuk.kuit.baro.domain.promise.service.PromiseAvailableTimeService;
 import konkuk.kuit.baro.domain.promise.service.PromiseService;
@@ -105,11 +106,10 @@ public class PromiseController {
     @PostMapping("{promiseId}/place-choice")
     @CustomExceptionDescription(SET_SUGGESTED_PLACE)
     public BaseResponse<Void> setSuggestedPlaces(
-            @PathVariable Long promiseId,
-            @RequestParam List<Long> placeIds,
+            @Validated @RequestBody SetPromiseSuggestedPlaceRequestDTO req,
             @CurrentUserId @Parameter(hidden = true) Long userId)
     {
-        promiseSuggestedPlaceService.setPromiseSuggestedPlace(placeIds, userId, promiseId);
+        promiseSuggestedPlaceService.setPromiseSuggestedPlace(req, userId);
         return BaseResponse.ok(null);
     }
 

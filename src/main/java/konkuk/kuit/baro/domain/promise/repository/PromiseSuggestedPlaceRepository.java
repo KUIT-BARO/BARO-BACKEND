@@ -27,8 +27,14 @@ public interface PromiseSuggestedPlaceRepository extends JpaRepository<PromiseSu
             "THEN TRUE ELSE FALSE END")
     boolean existsPromiseSuggestedPlaceByPromiseMemberId(@Param("promiseMemberId") Long promiseMemberId);
 
+    @Query("SELECT CASE WHEN EXISTS (" +
+           "SELECT 1 FROM PromiseSuggestedPlace psp " +
+           "WHERE psp.promiseMember.promise.id = :promiseId " +
+           "AND psp.place.id = :placeId) " +
+           "THEN TRUE ELSE FALSE END")
+    boolean existsByPlaceIdAndPromiseId(@Param("placeId") Long placeId, @Param("promiseId") Long promiseId);
 
-    // 특정 약속에 대한 약속 제안 장소들 중, 가장 제안이 많이 된 장소 순으로 내림차순 정렬
+
     @Query("""
             SELECT p.place
             FROM PromiseSuggestedPlace p
