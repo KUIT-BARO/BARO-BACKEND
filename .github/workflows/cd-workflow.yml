@@ -43,7 +43,7 @@ jobs:
         run: |
           mkdir -p $OCCUPY_SECRET_DIR
           echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
-
+   
       - name: 📝 Generate .env file
         run: |
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
@@ -86,5 +86,4 @@ jobs:
               "sudo docker-compose -f docker-compose.yml --env-file .env down || true",
               "sudo docker-compose -f docker-compose.yml --env-file .env up -d",
               "sudo docker image prune -f"
-            ]' 
-            --output text
+            ]' --output text
