@@ -77,8 +77,8 @@ public class AuthController {
             summary = "인증번호 검증",
             description = "메일로 받은 인증번호를 검증합니다. 액세스 토큰이 필요합니다."
     )
-    @GetMapping("/mail/check")
-    public BaseResponse<Boolean> checkAuthCode(@RequestBody CodeCheckRequestDTO checkCodeRequestDTO) {
+    @PostMapping("/mail/check")
+    public BaseResponse<Void> checkAuthCode(@RequestBody CodeCheckRequestDTO checkCodeRequestDTO) {
         mailService.checkAuthCode(checkCodeRequestDTO);
         return BaseResponse.ok(null);
     }
