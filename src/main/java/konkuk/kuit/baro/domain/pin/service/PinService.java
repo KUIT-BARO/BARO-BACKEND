@@ -66,6 +66,9 @@ public class PinService {
         Place place;
         if (request.getPlaceId() == -1) {
             Point placePoint = GeometryUtil.createPoint(request.getLatitude(), request.getLongitude());
+            Place checkPlace = placeRepository.findPlaceByPlaceAddress(request.getPlaceAddress())
+                    .orElseThrow((() -> new CustomException(ErrorCode.PLACE_ALREADY_EXISTS)));
+
             place = Place.builder()
                     .placeName(request.getPlaceName())
                     .location(placePoint)

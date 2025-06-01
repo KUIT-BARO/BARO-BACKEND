@@ -27,6 +27,8 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
     Optional<Place> findPlaceById(Long id);
 
+    Optional<Place> findPlaceByPlaceAddress(String placeAddress);
+
     @Query(value = """
         SELECT NEW
         konkuk.kuit.baro.domain.place.dto.response.PlaceSummaryInfoResponseDTO(

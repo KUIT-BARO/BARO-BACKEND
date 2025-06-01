@@ -33,6 +33,7 @@ public enum ErrorCode implements ResponseStatus {
     // Place
     INVALID_LOCATION(400, BAD_REQUEST.value(), "위도, 경도값이 올바르지 않습니다."),
     PLACE_NOT_FOUND(401, HttpStatus.NOT_FOUND.value(), "존재하지 않는 장소입니다."),
+    PLACE_ALREADY_EXISTS(402, BAD_REQUEST.value(), "이미 존재하는 장소입니다"),
     //Promise
     PROMISE_NOT_FOUND(500, HttpStatus.NOT_FOUND.value(),"존재하지 않는 약속입니다."),
     PROMISE_NOT_CONFIRMED(501, BAD_REQUEST.value(), "확정되지 않은 약속입니다."),
