@@ -26,6 +26,7 @@ import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescr
 public class UserController {
     private final UserService userService;
 
+    @Tag(name = "Auth API", description = "Auth 관련 API")
     @Operation(
             summary = "회원가입",
             description = "회원가입을 합니다. 토큰이 필요하지 않습니다."
