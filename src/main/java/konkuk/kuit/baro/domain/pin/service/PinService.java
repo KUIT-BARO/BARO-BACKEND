@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,9 +67,11 @@ public class PinService {
         Place place;
         if (request.getPlaceId() == -1) {
             Point placePoint = GeometryUtil.createPoint(request.getLatitude(), request.getLongitude());
-            Place checkPlace = placeRepository.findPlaceByPlaceAddress(request.getPlaceAddress())
-                    .orElseThrow((() -> new CustomException(ErrorCode.PLACE_ALREADY_EXISTS)));
+            Optional<Place> existingPlace = placeRepository.findPlaceByPlaceAddress(request.getPlaceAddress());
 
+            if (existingPlace.isPresent()) {
+                throw new CustomException(ErrorCode.PLACE_ALREADY_EXISTS);
+            }
             place = Place.builder()
                     .placeName(request.getPlaceName())
                     .location(placePoint)
