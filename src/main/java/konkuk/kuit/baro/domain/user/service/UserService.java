@@ -64,8 +64,9 @@ public class UserService {
 
 
     @Transactional
-    public void updateProfile(UserUpdateProfileRequestDTO req) {
-        User loginUser = userRepository.findById(1L).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+    public void updateProfile(UserUpdateProfileRequestDTO req, Long userId) {
+        User loginUser = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         validateName(req.getNewName());
 
@@ -81,18 +82,18 @@ public class UserService {
     }
 
     public UserProfileResponseDTO getProfile(Long userId){
-        User loginUser = userRepository.findById(1L).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        User loginUser = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         return new UserProfileResponseDTO(loginUser.getName(), loginUser.getProfileImage());
     }
 
     public UserProfileSettingResponseDTO getProfileSetting(Long userId){
-        User loginUser = userRepository.findById(1L).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        User loginUser = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         return new UserProfileSettingResponseDTO(loginUser.getName(), loginUser.getEmail(), loginUser.getProfileImage());
     }
 
     @Transactional
-    public void updatePassword(UserUpdatePasswordRequestDTO req){
-        User loginUser = userRepository.findById(1L).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+    public void updatePassword(UserUpdatePasswordRequestDTO req, Long userId){
+        User loginUser = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         validateCurrentPassword(req, loginUser);
         validateNewPassword(req);
@@ -124,7 +125,7 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long userId){
-        User loginUser = userRepository.findById(1L).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        User loginUser = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         userRepository.delete(loginUser);
     }
 
