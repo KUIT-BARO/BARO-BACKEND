@@ -26,8 +26,8 @@ public class ScheduleService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void addSchedule(AddScheduleRequestDTO req) {
-        User loginUser = userRepository.findById(1L)
+    public void addSchedule(AddScheduleRequestDTO req, Long userId) {
+        User loginUser = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         validateNewSchedule(req, loginUser);
@@ -45,8 +45,8 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void updateSchedule(AddScheduleRequestDTO req, Long scheduleId) {
-        User loginUser = userRepository.findById(1L)
+    public void updateSchedule(AddScheduleRequestDTO req, Long scheduleId, Long userId) {
+        User loginUser = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         Schedule existingSchedule = scheduleRepository.findById(scheduleId)
@@ -104,8 +104,8 @@ public class ScheduleService {
         }
     }
 
-    public GetSchedulesResponseDTO getSchedules() {
-        User loginUser = userRepository.findById(1L).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+    public GetSchedulesResponseDTO getSchedules(Long userId) {
+        User loginUser = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         List<SchedulesDTO> schedules = scheduleRepository.findAllByUserId(loginUser.getId());
         return new GetSchedulesResponseDTO(
                 loginUser.getProfileImage(),
