@@ -52,7 +52,7 @@ public class PromiseAvailableTimeService {
 
     @Transactional
     public void setPromiseAvailableTime(SetPromiseAvailableTimeRequestDTO req, Long userId, Long promiseId) {
-        User loginUser = userRepository.findById(1L).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        User loginUser = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         Promise promise = promiseRepository.findById(promiseId).orElseThrow(() -> new CustomException(PROMISE_NOT_FOUND));
 

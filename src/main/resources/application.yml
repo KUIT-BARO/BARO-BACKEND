@@ -6,7 +6,7 @@ spring:
       local : local-db, dev-port, common
       dev: dev-db, dev-port, common
       prod: prod-db, prod-port,common
-    active: local
+    active: prod
 ---
 # 로컬용 DB
 spring:
@@ -61,7 +61,7 @@ spring:
     activate:
       on-profile: prod-db
   datasource:
-    url: ${PROD_DATASOURCE_USERNAME}
+    url: ${PROD_DATASOURCE_URL}
     username: ${PROD_DATASOURCE_USERNAME}
     password: ${PROD_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver

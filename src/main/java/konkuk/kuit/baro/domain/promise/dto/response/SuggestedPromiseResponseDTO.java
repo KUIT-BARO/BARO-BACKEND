@@ -27,5 +27,5 @@ public class SuggestedPromiseResponseDTO {
     private LocalDate suggestedStartDate;
 
     @Schema(description = "약속 제안된 끝 날짜", example = "2025-01-02")
-    private LocalDate SuggestedEndDate;
+    private LocalDate suggestedEndDate;
 }

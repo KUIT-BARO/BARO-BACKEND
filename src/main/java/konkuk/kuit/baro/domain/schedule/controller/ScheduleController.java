@@ -6,6 +6,7 @@ import konkuk.kuit.baro.domain.schedule.dto.request.AddScheduleRequestDTO;
 import konkuk.kuit.baro.domain.schedule.dto.response.GetSchedulesResponseDTO;
 import konkuk.kuit.baro.domain.schedule.dto.response.SchedulesDTO;
 import konkuk.kuit.baro.domain.schedule.service.ScheduleService;
+import konkuk.kuit.baro.global.auth.resolver.CurrentUserId;
 import konkuk.kuit.baro.global.common.annotation.CustomExceptionDescription;
 import konkuk.kuit.baro.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,9 @@ public class ScheduleController {
     @Operation(summary = "일정 추가", description = "일정표에 일정을 추가합니다.")
     @PostMapping("")
     @CustomExceptionDescription(SCHEDULE_ADD)
-    public BaseResponse<Void> addSchedule(@RequestBody @Validated AddScheduleRequestDTO req){
-        scheduleService.addSchedule(req);
+    public BaseResponse<Void> addSchedule(@RequestBody @Validated AddScheduleRequestDTO req,
+                                          @CurrentUserId Long userId) {
+        scheduleService.addSchedule(req, userId);
         return BaseResponse.ok(null);
     }
 
@@ -37,8 +39,10 @@ public class ScheduleController {
     @Operation(summary = "일정 수정", description = "일정표의 일정을 수정합니다.")
     @PatchMapping("{scheduleId}")
     @CustomExceptionDescription(SCHEDULE_UPDATE)
-    public BaseResponse<Void> updateSchedule(@PathVariable Long scheduleId, @RequestBody @Validated AddScheduleRequestDTO req){
-        scheduleService.updateSchedule(req, scheduleId);
+    public BaseResponse<Void> updateSchedule(@PathVariable Long scheduleId,
+                                             @RequestBody @Validated AddScheduleRequestDTO req,
+                                             @CurrentUserId Long userId){
+        scheduleService.updateSchedule(req, scheduleId, userId);
         return BaseResponse.ok(null);
     }
 
@@ -46,8 +50,8 @@ public class ScheduleController {
     @Operation(summary = "일정표 조회", description = "마이페이지에서 일정표를 조회합니다.")
     @GetMapping("")
     @CustomExceptionDescription(GET_SCHEDULES)
-    public BaseResponse<GetSchedulesResponseDTO> getSchedules(){
-        return BaseResponse.ok(scheduleService.getSchedules());
+    public BaseResponse<GetSchedulesResponseDTO> getSchedules(@CurrentUserId Long userId){
+        return BaseResponse.ok(scheduleService.getSchedules(userId));
     }
 
     @Tag(name = "My Page", description = "유저 마이페이지 관련 API")

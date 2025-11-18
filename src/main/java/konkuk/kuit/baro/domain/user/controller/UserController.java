@@ -26,6 +26,7 @@ import static konkuk.kuit.baro.global.common.config.swagger.SwaggerResponseDescr
 public class UserController {
     private final UserService userService;
 
+    @Tag(name = "Auth API", description = "Auth 관련 API")
     @Operation(
             summary = "회원가입",
             description = "회원가입을 합니다. 토큰이 필요하지 않습니다."
@@ -41,8 +42,9 @@ public class UserController {
     @Operation(summary = "유저 프로필 수정", description = "유저의 이름, 프로필 사진을 변경합니다.")
     @PostMapping("profile")
     @CustomExceptionDescription(USER_PROFILE_UPDATE)
-    public BaseResponse<Void> updateProfile(@RequestBody @Validated UserUpdateProfileRequestDTO req){
-        userService.updateProfile(req);
+    public BaseResponse<Void> updateProfile(@RequestBody @Validated UserUpdateProfileRequestDTO req,
+                                            @CurrentUserId Long userId){
+        userService.updateProfile(req, userId);
         return BaseResponse.ok(null);
 
     }
@@ -59,7 +61,7 @@ public class UserController {
     @Operation(summary = "마이페이지 설정 화면", description = "마이페이지에서 설정 기능 호출 시 프로필을 조회하는 기능입니다.")
     @GetMapping("profile-setting")
     @CustomExceptionDescription(USER_PROFILE)
-    public BaseResponse<UserProfileSettingResponseDTO> getProfileSetting(Long userId){
+    public BaseResponse<UserProfileSettingResponseDTO> getProfileSetting(@CurrentUserId Long userId){
         return BaseResponse.ok(userService.getProfileSetting(userId));
     }
 
@@ -67,8 +69,9 @@ public class UserController {
     @Operation(summary = "비밀번호 변경", description = "사용자의 비밀번호를 변경합니다.")
     @PostMapping("password")
     @CustomExceptionDescription(USER_PASSWORD_UPDATE)
-    public BaseResponse<Void> updatePassword(@RequestBody @Validated UserUpdatePasswordRequestDTO req){
-        userService.updatePassword(req);
+    public BaseResponse<Void> updatePassword(@RequestBody @Validated UserUpdatePasswordRequestDTO req,
+                                             @CurrentUserId Long userId){
+        userService.updatePassword(req, userId);
         return BaseResponse.ok(null);
     }
 
@@ -76,7 +79,7 @@ public class UserController {
     @Operation(summary = "회원 탈퇴", description = "사용자가 회원 탈퇴를 합니다.")
     @DeleteMapping()
     @CustomExceptionDescription(USER_DELETE)
-    public BaseResponse<Void> delete(Long userId){
+    public BaseResponse<Void> delete(@CurrentUserId Long userId){
         userService.deleteUser(userId);
         return BaseResponse.ok(null);
     }
@@ -85,7 +88,7 @@ public class UserController {
     @Operation(summary = "홈 화면 조회", description = "메인 홈 화면을 조회합니다.")
     @GetMapping()
     @CustomExceptionDescription(USER_HOME)
-    public BaseResponse<UserHomePageResponseDTO> getHomePage(){
-        return BaseResponse.ok(userService.getHomePage(1L));
+    public BaseResponse<UserHomePageResponseDTO> getHomePage(@CurrentUserId Long userId){
+        return BaseResponse.ok(userService.getHomePage(userId));
     }
 }
