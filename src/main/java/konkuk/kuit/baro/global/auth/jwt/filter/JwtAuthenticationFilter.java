@@ -5,11 +5,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
-import konkuk.kuit.baro.global.auth.exception.AuthException;
-import konkuk.kuit.baro.global.common.redis.RedisService;
-import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import konkuk.kuit.baro.global.common.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,56 +15,43 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtService jwtService;
-    private final RedisService redisService;
-    private final JwtUtil jwtUtil;
 
-    // private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
+    private final JwtService jwtService;
+    private final JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        checkLogout(request); //로그아웃한 사용자면 인증 처리 안함
 
-        jwtService.extractAccessToken(request)
-                .ifPresent(accessToken -> {
-                    if (!jwtUtil.isTokenValid(accessToken)) { //accessToken 만료 시
-                        throw new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN);
-                    }
-                });
-        checkAccessTokenAndSaveAuthentication(request, response, filterChain);
-    }
+        log.info("JWT Filter Request URI: {}", request.getRequestURI());
 
-    private void checkLogout(HttpServletRequest request) {
-        jwtService.extractAccessToken(request).ifPresent(accessToken -> {
-            String value = redisService.getValues(accessToken);
-            if (value.equals("logout")) {
-                throw new AuthException(ErrorCode.SECURITY_UNAUTHORIZED);
-            }
-        });
-    }
+        Optional<String> optionalAccessToken = jwtUtil.extractAccessToken(request);
 
-    private void checkAccessTokenAndSaveAuthentication(HttpServletRequest request,
-                                                       HttpServletResponse response, FilterChain filterChain) {
-        jwtService.extractAccessToken(request)
-                .ifPresent(accessToken -> {
-                    String email = jwtUtil.extractUserInfo(accessToken);
-                    saveAuthentication(email);
-                });
-        try {
-            filterChain.doFilter(request, response);  // 필터 체인 실행
-        } catch (IOException | ServletException e) {
-            throw new AuthException(ErrorCode.SERVER_ERROR);  // 예외 처리
+        // 토큰이 없으면 그냥 통과
+        if (optionalAccessToken.isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
         }
-    }
 
-    private void saveAuthentication(String email) {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, new ArrayList<>());
-        SecurityContextHolder.getContext().setAuthentication(authentication); // 인증 정보 저장
-    }
+        String accessToken = optionalAccessToken.get();
 
+        // 토큰 검증
+        jwtUtil.validateToken(accessToken);
+        jwtService.checkBlacklistedToken(accessToken);
+
+        // SecurityContext에 인증 정보 저장
+        Long userId = jwtUtil.getUserId(accessToken);
+        log.info("Authenticated userId: {}", userId);
+
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        filterChain.doFilter(request, response);
+    }
 }

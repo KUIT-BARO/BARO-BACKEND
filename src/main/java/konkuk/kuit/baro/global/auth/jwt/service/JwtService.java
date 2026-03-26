@@ -1,97 +1,113 @@
 package konkuk.kuit.baro.global.auth.jwt.service;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import konkuk.kuit.baro.global.auth.exception.AuthException;
-import konkuk.kuit.baro.global.common.util.JwtUtil;
+import konkuk.kuit.baro.global.auth.security.exception.CustomAuthenticationException;
 import konkuk.kuit.baro.global.common.redis.RedisService;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.HexFormat;
 
+/**
+ * [JwtService]
+ * JWT Redis 저장 및 중복 로그인 방지 담당
+ *
+ * Redis 키 구조:
+ *   auth:user:{userId}  → SHA-256(refreshToken)   (SETNX + TTL)
+ *   auth:blacklist:{accessTokenHash} → "logout"    (TTL = access 만료시간)
+ */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JwtService {
 
-    @Value("${jwt.access.header}")
-    private String accessHeader;
+    @Value("${jwt.access.expiration}")
+    private Long ACCESS_TOKEN_EXPIRED_IN;
 
-    @Value("${jwt.refresh.header}")
-    private String refreshHeader;
+    @Value("${jwt.refresh.expiration}")
+    private Long REFRESH_TOKEN_EXPIRED_IN;
 
-    private static final String ACCESS_TOKEN_KEY_PREFIX = "auth:access:";
-    private static final String REFRESH_TOKEN_KEY_PREFIX = "auth:refresh:";
-
-    private static final String BEARER = "Bearer ";
-    private static final String NOT_EXIST = "false";
+    private static final String USER_KEY_PREFIX = "auth:user:";
+    private static final String BLACKLIST_KEY_PREFIX = "auth:blacklist:";
+    private static final String LOGOUT_VALUE = "logout";
 
     private final RedisService redisService;
-    private final JwtUtil jwtUtil;
 
-    public Optional<String> extractRefreshToken(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(refreshHeader))
-                .filter(refreshToken -> refreshToken.startsWith(BEARER))
-                .map(refreshToken -> refreshToken.replace(BEARER, ""));
-    }
+    /**
+     * Refresh Token 저장 (SETNX + EX 원자 처리)
+     * 이미 로그인된 유저면 저장 실패 → 중복 로그인 차단
+     */
+    public void storeRefreshToken(String refreshToken, Long userId) {
+        String key = USER_KEY_PREFIX + userId;
+        String tokenHash = hashToken(refreshToken);
 
-    public Optional<String> extractAccessToken(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(accessHeader))
-                .filter(accessToken -> accessToken.startsWith(BEARER))
-                .map(accessToken -> accessToken.replace(BEARER, ""));
-    }
-
-    public void storeRefreshToken(String refreshToken, String userInfo) {
-        redisService.setValues(REFRESH_TOKEN_KEY_PREFIX + refreshToken, userInfo,
-                Duration.ofMillis(jwtUtil.getRefreshTokenExpirationPeriod()));
-    }
-
-    public void deleteRefreshToken(String refreshToken) {
-        if (refreshToken == null) {
-            throw new AuthException(ErrorCode.SECURITY_UNAUTHORIZED);
+        boolean stored = redisService.setIfAbsent(key, tokenHash, Duration.ofMillis(REFRESH_TOKEN_EXPIRED_IN));
+        if (!stored) {
+            throw new CustomAuthenticationException(ErrorCode.DUPLICATED_LOGIN);
         }
-        redisService.delete(REFRESH_TOKEN_KEY_PREFIX + refreshToken);
     }
 
+    /**
+     * Refresh Token 검증 (쿠키의 토큰 해시 vs Redis 저장 해시 비교)
+     */
+    public void validateRefreshTokenOwnership(String refreshToken, Long userId) {
+        String key = USER_KEY_PREFIX + userId;
+        String storedHash = redisService.getValues(key);
+        String requestHash = hashToken(refreshToken);
+
+        if (!requestHash.equals(storedHash)) {
+            throw new CustomAuthenticationException(ErrorCode.SECURITY_UNAUTHORIZED);
+        }
+    }
+
+    /**
+     * Refresh Token 삭제 (로그아웃 시)
+     */
+    public void deleteRefreshToken(Long userId) {
+        redisService.delete(USER_KEY_PREFIX + userId);
+    }
+
+    /**
+     * Refresh Token 갱신 (재발급 시: 기존 삭제 → 새로 저장)
+     */
+    public void rotateRefreshToken(String newRefreshToken, Long userId) {
+        String key = USER_KEY_PREFIX + userId;
+        String tokenHash = hashToken(newRefreshToken);
+        redisService.setValues(key, tokenHash, Duration.ofMillis(REFRESH_TOKEN_EXPIRED_IN));
+    }
+
+    /**
+     * Access Token 블랙리스트 등록 (로그아웃 시)
+     */
     public void invalidAccessToken(String accessToken) {
-        redisService.setValues(ACCESS_TOKEN_KEY_PREFIX + accessToken, "logout",
-                Duration.ofMillis(jwtUtil.getAccessTokenExpirationPeriod()));
+        String key = BLACKLIST_KEY_PREFIX + hashToken(accessToken);
+        redisService.setValues(key, LOGOUT_VALUE, Duration.ofMillis(ACCESS_TOKEN_EXPIRED_IN));
     }
 
-    public String findRefreshTokenAndExtractUserInfo(String refreshToken) {
-        String userInfo = redisService.getValues(REFRESH_TOKEN_KEY_PREFIX + refreshToken);
-
-        if (userInfo.equals(NOT_EXIST)) {
-            throw new AuthException(ErrorCode.SECURITY_INVALID_REFRESH_TOKEN);
+    /**
+     * Access Token 블랙리스트 확인
+     */
+    public void checkBlacklistedToken(String accessToken) {
+        String key = BLACKLIST_KEY_PREFIX + hashToken(accessToken);
+        String value = redisService.getValues(key);
+        if (LOGOUT_VALUE.equals(value)) {
+            throw new CustomAuthenticationException(ErrorCode.SECURITY_UNAUTHORIZED);
         }
-        return userInfo;
     }
 
-    private void sendTokens(HttpServletResponse response, String reissuedAccessToken,
-                            String reissuedRefreshToken) {
-        response.setHeader(accessHeader, BEARER + reissuedAccessToken);
-        response.setHeader(refreshHeader, BEARER + reissuedRefreshToken);
-    }
-
-    public void reissueAndSendTokens(HttpServletResponse response, String refreshToken) {
-        // 기존 Refresh Token 검증 및 사용자 정보 추출
-        String userInfo = findRefreshTokenAndExtractUserInfo(refreshToken);
-
-        // 기존 Refresh Token 폐기 (DB나 Redis에서 삭제)
-        deleteRefreshToken(refreshToken);
-
-        // 새로운 Refresh Token 발급
-        String reissuedRefreshToken = jwtUtil.createRefreshToken();
-        String reissuedAccessToken = jwtUtil.createAccessToken(userInfo);
-
-        // 새로운 Refresh Token을 DB나 Redis에 저장
-        storeRefreshToken(reissuedRefreshToken, userInfo);
-
-        sendTokens(response, reissuedAccessToken, reissuedRefreshToken);
+    private String hashToken(String token) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(token.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256 알고리즘을 찾을 수 없습니다.", e);
+        }
     }
 }

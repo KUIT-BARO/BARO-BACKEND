@@ -105,6 +105,7 @@ jwt:
   refresh:
     expiration: ${jwt.refresh.expiration}
     header: ${jwt.refresh.header}
+    cookie-name: Authorization-refresh
 
 ---
 # 개발용 포트

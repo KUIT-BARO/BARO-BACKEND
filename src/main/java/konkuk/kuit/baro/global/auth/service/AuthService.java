@@ -2,73 +2,72 @@ package konkuk.kuit.baro.global.auth.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import konkuk.kuit.baro.domain.user.model.User;
-import konkuk.kuit.baro.domain.user.repository.UserRepository;
-import konkuk.kuit.baro.global.auth.dto.request.LoginRequestDTO;
-import konkuk.kuit.baro.global.auth.dto.response.LoginResponseDTO;
 import konkuk.kuit.baro.global.auth.exception.AuthException;
 import konkuk.kuit.baro.global.auth.jwt.service.JwtService;
-import konkuk.kuit.baro.global.common.exception.CustomException;
+import konkuk.kuit.baro.global.auth.security.util.CookieUtil;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
 import konkuk.kuit.baro.global.common.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class AuthService {
 
-    public final JwtService jwtService;
-    public final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    public final JwtUtil jwtUtil;
+    private final JwtService jwtService;
+    private final JwtUtil jwtUtil;
+    private final CookieUtil cookieUtil;
 
-    public LoginResponseDTO login(LoginRequestDTO request) {
-        String email = request.getEmail();
-        String password = request.getPassword();
-        authenticate(email, password);
+    @Value("${jwt.access.header}")
+    private String accessHeader;
 
-        String accessToken = jwtUtil.createAccessToken(email);
-        String refreshToken = jwtUtil.createRefreshToken();
-        jwtService.storeRefreshToken(refreshToken, email);
-
-        return new LoginResponseDTO(accessToken, refreshToken);
-    }
+    private static final String BEARER = "Bearer ";
 
     public void reissueTokens(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = jwtService.extractRefreshToken(request)
-                .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
-        jwtUtil.isTokenValid(refreshToken);
-        jwtService.reissueAndSendTokens(response, refreshToken);
-    }
-
-    public void logout(HttpServletRequest request) {
-        Optional<String> accessToken = jwtService.extractAccessToken(request);
-        Optional<String> refreshToken = jwtService.extractRefreshToken(request);
-
-        String access = accessToken
-                .orElseThrow(() -> new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
-        String refresh = refreshToken
+        // 쿠키에서 Refresh Token 추출
+        String refreshToken = cookieUtil.getRefreshTokenCookie(request)
                 .orElseThrow(() -> new AuthException(ErrorCode.REFRESH_TOKEN_REQUIRED));
 
-        jwtUtil.isTokenValid(refresh);
-        jwtUtil.isTokenValid(access);
-        jwtService.deleteRefreshToken(refresh);
-        //access token blacklist 처리 -> 로그아웃한 사용자가 요청 시 access token이 redis에 존재하면 jwtAuthenticationFilter에서 인증처리 거부
-        jwtService.invalidAccessToken(access);
-    }
-
-    public void authenticate(String email, String password) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new AuthException(ErrorCode.LOGIN_FAILED);
+        if (!jwtUtil.isTokenValid(refreshToken)) {
+            throw new AuthException(ErrorCode.SECURITY_INVALID_REFRESH_TOKEN);
         }
+
+        // Refresh Token에서 userId 추출
+        Long userId = jwtUtil.getUserId(refreshToken);
+
+        // Refresh Token 소유권 검증
+        jwtService.validateRefreshTokenOwnership(refreshToken, userId);
+
+        // 새로운 토큰 발급
+        String newAccessToken = jwtUtil.createAccessToken(userId);
+        String newRefreshToken = jwtUtil.createRefreshToken(userId);
+
+        // Redis에 Refresh Token 갱신
+        jwtService.rotateRefreshToken(newRefreshToken, userId);
+
+        // Access Token은 헤더로, Refresh Token은 쿠키로 전달
+        response.setHeader(accessHeader, BEARER + newAccessToken);
+        cookieUtil.addRefreshTokenCookie(response, newRefreshToken, jwtUtil.getRefreshTokenExpirationPeriod());
+    }
+
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        String accessToken = jwtUtil.extractAccessToken(request)
+                .orElseThrow(() -> new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+
+        if (!jwtUtil.isTokenValid(accessToken)) {
+            throw new AuthException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN);
+        }
+
+        Long userId = jwtUtil.getUserId(accessToken);
+
+        // Redis에서 Refresh Token 삭제 + Access Token 블랙리스트 등록
+        jwtService.deleteRefreshToken(userId);
+        jwtService.invalidAccessToken(accessToken);
+
+        // 쿠키에서 Refresh Token 삭제
+        cookieUtil.deleteRefreshTokenCookie(response);
     }
 }

@@ -29,6 +29,11 @@ public class RedisService {
         return (String) values.get(key);
     }
 
+    public boolean setIfAbsent(String key, String data, Duration duration) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        return Boolean.TRUE.equals(values.setIfAbsent(key, data, duration));
+    }
+
     public void delete(String key) {
         redisTemplate.delete(key);
     }

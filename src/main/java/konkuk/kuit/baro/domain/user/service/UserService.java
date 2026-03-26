@@ -4,7 +4,6 @@ import konkuk.kuit.baro.domain.promise.model.Promise;
 import konkuk.kuit.baro.domain.promise.model.PromiseMember;
 import konkuk.kuit.baro.domain.promise.repository.PromiseMemberRepository;
 import konkuk.kuit.baro.domain.promise.repository.PromiseRepository;
-import konkuk.kuit.baro.domain.user.dto.request.UserUpdatePasswordRequestDTO;
 import konkuk.kuit.baro.domain.user.dto.request.UserUpdateProfileRequestDTO;
 import konkuk.kuit.baro.domain.user.dto.response.UserHomePagePromiseDTO;
 import konkuk.kuit.baro.domain.user.dto.response.UserHomePageResponseDTO;
@@ -89,38 +88,6 @@ public class UserService {
     public UserProfileSettingResponseDTO getProfileSetting(Long userId){
         User loginUser = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         return new UserProfileSettingResponseDTO(loginUser.getName(), loginUser.getEmail(), loginUser.getProfileImage());
-    }
-
-    @Transactional
-    public void updatePassword(UserUpdatePasswordRequestDTO req, Long userId){
-        User loginUser = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-
-        validateCurrentPassword(req, loginUser);
-        validateNewPassword(req);
-
-        loginUser.setPassword(req.getNewPassword());
-        userRepository.save(loginUser);
-    }
-
-    private void validateNewPassword(UserUpdatePasswordRequestDTO req) {
-        if(req.getNewPassword().length() < 8){
-            throw new CustomException(USER_PASSWORD_LENGTH);
-        }
-
-        if(!req.getNewPassword().equals(req.getConfirmPassword())){
-            throw new CustomException(USER_NEW_PASSWORD_NOT_MATCH);
-        }
-    }
-
-    private void validateCurrentPassword(UserUpdatePasswordRequestDTO req, User loginUser) {
-        if(!loginUser.getPassword().equals(req.getCurrentPassword())){
-            throw new CustomException(USER_CURRENT_PASSWORD_WRONG);
-        }
-
-        if(loginUser.getPassword().equals(req.getNewPassword())){
-            throw new CustomException(USER_NEW_PASSWORD_SAME);
-        }
-
     }
 
     @Transactional
