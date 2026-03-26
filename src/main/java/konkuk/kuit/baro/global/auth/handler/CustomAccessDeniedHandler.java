@@ -12,6 +12,9 @@ import konkuk.kuit.baro.global.common.response.BaseErrorResponse;
 
 import java.io.IOException;
 
+import static konkuk.kuit.baro.global.auth.security.util.AuthErrorResponseUtil.setErrorResponse;
+
+
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
@@ -20,22 +23,5 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                        AccessDeniedException accessDeniedException) {
 
         setErrorResponse(response, ErrorCode.SECURITY_ACCESS_DENIED);
-    }
-
-    private void setErrorResponse(
-            HttpServletResponse response,
-            ErrorCode errorCode
-    ) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        response.setCharacterEncoding("UTF-8");
-        response.setStatus(errorCode.getHttpStatus());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        BaseErrorResponse errorResponse = new BaseErrorResponse(errorCode, errorCode.getMessage());
-        try {
-            response.getWriter().write(objectMapper.registerModule(new JavaTimeModule())
-                    .writeValueAsString(errorResponse));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

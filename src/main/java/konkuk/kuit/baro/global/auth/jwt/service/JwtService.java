@@ -1,5 +1,7 @@
 package konkuk.kuit.baro.global.auth.jwt.service;
 
+import konkuk.kuit.baro.global.auth.exception.AuthException;
+import konkuk.kuit.baro.global.auth.jwt.exception.CustomJwtException;
 import konkuk.kuit.baro.global.auth.security.exception.CustomAuthenticationException;
 import konkuk.kuit.baro.global.common.redis.RedisService;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
@@ -49,7 +51,7 @@ public class JwtService {
 
         boolean stored = redisService.setIfAbsent(key, tokenHash, Duration.ofMillis(REFRESH_TOKEN_EXPIRED_IN));
         if (!stored) {
-            throw new CustomAuthenticationException(ErrorCode.DUPLICATED_LOGIN);
+            throw new AuthException(ErrorCode.DUPLICATED_LOGIN);
         }
     }
 
@@ -62,7 +64,7 @@ public class JwtService {
         String requestHash = hashToken(refreshToken);
 
         if (!requestHash.equals(storedHash)) {
-            throw new CustomAuthenticationException(ErrorCode.SECURITY_UNAUTHORIZED);
+            throw new CustomJwtException(ErrorCode.SECURITY_UNAUTHORIZED);
         }
     }
 
@@ -93,7 +95,7 @@ public class JwtService {
     /**
      * Access Token 블랙리스트 확인
      */
-    public void checkBlacklistedToken(String accessToken) {
+    public void checkBlacklistedToken(String accessToken) throws CustomAuthenticationException {
         String key = BLACKLIST_KEY_PREFIX + hashToken(accessToken);
         String value = redisService.getValues(key);
         if (LOGOUT_VALUE.equals(value)) {

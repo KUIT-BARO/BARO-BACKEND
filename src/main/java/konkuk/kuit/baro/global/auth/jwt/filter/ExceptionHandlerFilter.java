@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import konkuk.kuit.baro.global.auth.jwt.exception.CustomJwtException;
 import konkuk.kuit.baro.global.auth.security.exception.CustomAuthenticationException;
 import konkuk.kuit.baro.global.common.exception.CustomException;
 import konkuk.kuit.baro.global.common.response.status.ErrorCode;
@@ -25,7 +26,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
         try {
             filterChain.doFilter(request, response);
-        } catch (CustomAuthenticationException e) {
+        } catch (CustomJwtException e) {
             SecurityContextHolder.clearContext();
             setErrorResponse(response, e.getErrorCode());
         } catch (CustomException e) {
